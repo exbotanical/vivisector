@@ -70,9 +70,9 @@ let config = {
     }
 }
 ```
-This is my personal configuration. In addition to extending the native `info`, `warn`, and `error` methods, I have also implemented a custom `success` method. In the config, I have specified certain options for each method which afford a considerably granular control-scope. For instance, here I can set a prefix for the specific logger method, a delimiter with which to separate said prefix from the actual logged data, as well as colors for each the prefix with delimiter and logged data. 
+This is my personal configuration. In addition to extending the native `info`, `warn`, and `error` methods, I have also implemented a custom `success` method. In the config, I have specified certain options for each method which afford a considerably granular control-scope. For instance, here I can set a prefix for the specific logger method, a delimiter with which to separate said prefix from the actual logged data, as well as colors for the prefix-delimiter.
 
-The logger will actually resolve objects using `JSON.stringify`. As such, some of the `options` of the config correlate specifically to the format of object output. If you want to prettify/format the output, consider entering as the `options.whiteSpace` value a whole integer greater than 0. Furthermore, the `replacer` can be set to filter the stringified object.
+The logger will actually resolve objects using `JSON.stringify`. As such, some of the `options` of the config correlate specifically to the format of object output. To colorize the logged data, specify the desired hex value key as `options.bodyColor`. If you want to prettify/format the output, consider entering as the `options.whiteSpace` value a whole integer greater than 0. Furthermore, the `replacer` can be set to filter the stringified object.
 
 To configure the logger, add a method to the config:
 ```
@@ -91,10 +91,10 @@ logger.yourMethod("hello, world");
 // [method prefix] --> "hello, world"
 ```
 
-`aliasMethodName`: Object key, arbitrary label for readability. I recommend matching these to `name`.
-`name`: String representing allable method name.
-`color`: Case-insensitive string representing color of prefix + delimiter. Key which maps to hex value. 
-`delimiter`: String with which to delimit label/prefix from logged data. 
+  - `aliasMethodName`: Object key, arbitrary label for readability. I recommend matching these to `name`.
+  - `name`: String representing allable method name.
+  - `color`: Case-insensitive string representing color of prefix + delimiter. Key which maps to hex value. 
+  - `delimiter`: String with which to delimit label/prefix from logged data. 
 
 Now, for the options:
 ```
@@ -107,9 +107,9 @@ const yourConfig = {
     }
 }
 ```
-`bodyColor`: Color of logged data, applies to all methods. Key which maps to hex value. String, case-insensitive. 
-`replacer`: Function which alters the behavior of the stringification process, OR an array comprised of elements of types String and/or Number which serves as an 'allowlist' for filtering the properties of the value object to be included in the JSON string. If this value is `null` or not provided, all properties of the object will be included in the resulting string output.
-`whiteSpace`: String or Number object used to insert white space into the output JSON string for readability purposes.
+  - `bodyColor`: Color of logged data, applies to all methods. Key which maps to hex value. String, case-insensitive. 
+  - `replacer`: Function which alters the behavior of the stringification process, OR an array comprised of elements of types String and/or Number which serves as an 'allowlist' for filtering the properties of the value object to be included in the JSON string. If this value is `null` or not provided, all properties of the object will be included in the resulting string output.
+  - `whiteSpace`: String or Number object used to insert white space into the output JSON string for readability purposes.
 
 
 
