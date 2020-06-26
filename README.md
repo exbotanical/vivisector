@@ -17,7 +17,11 @@ License: MIT
 
 ### <a name="packages"></a> Packages and Libraries
 
-  - [Custom Polymorphic Logging]()
+#### Observable Primitives
+  - [Observable Arrays](https://github.com/MatthewZito/vivisector-js/blob/master/packages/datatypes/ObservableArray.js)
+
+#### Informatics and I/O
+  - [Custom Polymorphic Logging](https://github.com/MatthewZito/vivisector-js/blob/master/packages/informatics/PolymorphicLogger.js)
 
 
 
