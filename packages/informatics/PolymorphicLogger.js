@@ -47,16 +47,24 @@ class Logger {
                 var logToWrite = args.map(function (arg) {
                     var str;
                     var argType = typeof arg;
-                    // 
+                    // case null
                     if (arg === null) {
                         str = "null";
-                    } else if (arg === undefined) {
+                    } 
+                    // case undefined
+                    else if (arg === undefined) {
                         str = "";
-                    } else if (!arg.toString || arg.toString() === "[object Object]") {
-                        str = JSON.stringify(arg, null, "  ");
-                    } else if (argType === "string") {
+                    } 
+                    // case object
+                    else if (!arg.toString || arg.toString() === "[object Object]") {
+                        str = JSON.stringify(arg, null, "  "); // OPTIONAL prettify format
+                    } 
+                    // case string
+                    else if (argType === "string") {
                         str = `"${arg.toString()}"`;
-                    } else {
+                    } 
+                    // et al
+                    else {
                         str = arg.toString();
                     }
                     return str;
@@ -80,7 +88,8 @@ class Logger {
 
 module.exports = Logger
 
-/* Example Config */
+
+// /* Example Config */
 // let config = {
 //     methods: {
 //         info: {
