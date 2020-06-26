@@ -100,7 +100,7 @@ class Logger {
                         ` ${method.delimiter} ` + 
                         `${bodyColorSanitized ? _colorDict[bodyColorSanitized] : _colorDict.reset}` + 
                         mutatedArg
-                    ].concat(" ", _colorDict.reset);
+                    ].concat(method.suffix, _colorDict.reset);
                 }
                 // extend and invoke with formatted args
                 persistentReference.apply(null, args); 

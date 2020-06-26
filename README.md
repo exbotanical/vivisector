@@ -42,25 +42,29 @@ let config = {
             name: "info",
             color: "FgYellow",
             label: "[INFO]",
-            delimiter: "-"
+            delimiter: "-",
+            suffix: ""
         },
         warn: {
             name: "warn",
             color: "FgMagenta",
             label: "[WARN]",
             delimiter: "-"
+            suffix: ""
         },
         error: {
             name: "error",
             color: "FgRed",
             label: "[ERROR]",
             delimiter: "-"
+            suffix: "\n"
         },
         success: {
             name: "success",
             color: "FgGreen",
             label: "[ACK]",
             delimiter: "-"
+            suffix: ""
         }
     },
     options: {
@@ -71,6 +75,25 @@ let config = {
 }
 ```
 This is my personal configuration. In addition to extending the native `info`, `warn`, and `error` methods, I have also implemented a custom `success` method. In the config, I have specified certain options for each method which afford a considerably granular control-scope. For instance, here I can set a prefix for the specific logger method, a delimiter with which to separate said prefix from the actual logged data, as well as colors for the prefix-delimiter.
+Note that you can set the `label` property to a string like I did, or you can use an expression e.g. `new Date()`:
+```
+...
+yourMethod: {
+            name: "test",
+            color: "FgGreen",
+            label: new Date(),
+            delimiter: "- [+]",
+            suffix: "\n"
+        }
+...
+
+let logger = new Logger(yourConfig);
+logger.test("this is a test");
+logger.test("this is a second test");
+// Fri Jun 26 2020 08:08:15 GMT-0700 (Pacific Daylight Time) - [+] "this is a test" 
+//
+// Fri Jun 26 2020 08:08:15 GMT-0700 (Pacific Daylight Time) - [+] "this is a second test" 
+```
 
 The logger will actually resolve objects using `JSON.stringify`. As such, some of the `options` of the config correlate specifically to the format of object output. To colorize the logged data, specify the desired hex value key as `options.bodyColor`. If you want to prettify/format the output, consider entering as the `options.whiteSpace` value a whole integer greater than 0. Furthermore, the `replacer` can be set to filter the stringified object.
 
@@ -81,7 +104,8 @@ const yourConfig = {
             name: "yourMethod",
             color: "colorCaseDoesntMatter",
             label: "[method prefix]",
-            delimiter: "-->"
+            delimiter: "-->",
+            suffix: ""
         },
         ...
 }
@@ -94,7 +118,9 @@ logger.yourMethod("hello, world");
   - `aliasMethodName`: Object key, arbitrary label for readability. I recommend matching these to `name`.
   - `name`: String representing allable method name.
   - `color`: Case-insensitive string representing color of prefix + delimiter. Key which maps to hex value. 
+  - `label` String or expression value which will resolve as prefix/label for given log method. 
   - `delimiter`: String with which to delimit label/prefix from logged data. 
+  - `suffix`: String or expression value which will be concatenated to the end of each log. This is particularly useful if you want to separate logs with newlines, as demonstrated in the `error` method options in my config.
 
 Now, for the options:
 ```
