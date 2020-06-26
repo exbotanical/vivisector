@@ -167,21 +167,21 @@ function ObservableArray(items) {
             }
         }
     });
-    // override splice method
+    // override splice method -- modified code from SO post
     Object.defineProperty(_self, "splice", {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function(index, howMany /*, element1, element2, ... */ ) {
+        value: function(index, numElements) {
             var removed = [],
                     item,
                     pos;
 
             index = index == null ? 0 : index < 0 ? _array.length + index : index;
 
-            howMany = howMany == null ? _array.length - index : howMany > 0 ? howMany : 0;
+            numElements = numElements == null ? _array.length - index : numElements > 0 ? numElements : 0;
 
-            while (howMany--) {
+            while (numElements--) {
                 item = _array.splice(index, 1)[0];
                 removed.push(item);
                 delete _self[_array.length];
