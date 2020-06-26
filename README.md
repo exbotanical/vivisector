@@ -25,7 +25,7 @@ License: MIT
 ### <a name="demo"></a> Demonstrations and Abstractions
 Logger Usage Demo:
 
-![demo]((https://github.com/MatthewZito/vivisector-js/blob/master/documentation/polymorphic-logger-demo.gif))
+![demo](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/polymorphic-logger-demo.gif)
 
 ## <a name="docs"></a> Documentation
 
