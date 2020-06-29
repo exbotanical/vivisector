@@ -75,7 +75,7 @@ let config = {
 }
 ```
 This is my personal configuration. In addition to extending the native `info`, `warn`, and `error` methods, I have also implemented a custom `success` method. In the config, I have specified certain options for each method which afford a considerably granular control-scope. For instance, here I can set a prefix for the specific logger method, a delimiter with which to separate said prefix from the actual logged data, as well as colors for the prefix-delimiter.
-Note that you can set the `label` property to a string like I did, or you can use an expression e.g. `new Date()`:
+Note that you can set the `label` or `suffix` properties to a string (like I did with the labels here), or you can use an expression e.g. `new Date()`:
 ```
 ...
 yourMethod: {
@@ -118,9 +118,9 @@ logger.yourMethod("hello, world");
   - `aliasMethodName`: Object key, arbitrary label for readability. I recommend matching these to `name`.
   - `name`: String representing allable method name.
   - `color`: Case-insensitive string representing color of prefix + delimiter. Key which maps to hex value. 
-  - `label` String or expression value which will resolve as prefix/label for given log method. 
-  - `delimiter`: String with which to delimit label/prefix from logged data. 
-  - `suffix`: String or expression value which will be concatenated to the end of each log. This is particularly useful if you want to separate logs with newlines, as demonstrated in the `error` method options in my config.
+  - `label` String or expression value which will resolve as prefix/label for given log method. Null or empty string if none.
+  - `delimiter`: String with which to delimit label/prefix from logged data. Null or empty string if none.
+  - `suffix`: String or expression value which will be concatenated to the end of each log. This is particularly useful if you want to separate logs with newlines, as demonstrated in the `error` method options in my config. Null or empty string if none.
 
 Now, for the options:
 ```

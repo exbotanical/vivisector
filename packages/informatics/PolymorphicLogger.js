@@ -58,6 +58,7 @@ class Logger {
             const color = method.color.toLowerCase();
             // if provided method is extant in native source, extend props of console obj; else, apply to `log`
             let persistentReference = console[method.name] || console.log;
+            // extend base log functionality to each config-specified method
             this[method.name] = function () {
                 // collate all given args into a 'real' array
                 let args = Array.prototype.slice.call(arguments);
@@ -96,11 +97,11 @@ class Logger {
                     */
                     args = [
                         _colorDict[color] + 
-                        method.label + 
-                        ` ${method.delimiter} ` + 
+                        `${method.label ? method.label : ""}` + 
+                        `${method.delimiter ? ` ${method.delimiter} ` : ""}` + 
                         `${bodyColorSanitized ? _colorDict[bodyColorSanitized] : _colorDict.reset}` + 
                         mutatedArg
-                    ].concat(method.suffix, _colorDict.reset);
+                    ].concat(method.suffix ? method.suffix : "", _colorDict.reset);
                 }
                 // extend and invoke with formatted args
                 persistentReference.apply(null, args); 
@@ -137,7 +138,7 @@ module.exports = Logger
 //             color: "FgGreen",
 //             label: "[ACK]",
 //             delimiter: "-"
-//         }
+//         },
 //     },
 //     options: {
 //         bodyColor: "FgYellow",
