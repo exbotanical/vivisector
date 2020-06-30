@@ -14,7 +14,9 @@ License: MIT
     * [Demos](#demo)
 
 ## <a name="intro"></a> Introduction
-*Vivisector.js* is a light-weight JavaScript library which exposes an API to the Nodejs runtime's global object allowing one to instantiate new Observable datatypes 'on-the-fly'. *Vivisector* recursively points child objects at its own prototype so as to expose myriad useful methods for managing *all* Observables extant in a given code-base. This is a powerful feature that allows you to centralize a singular source-of-truth for managing your Observable Arrays, Strings, *et al* via the core *Vivisector* API.
+*Vivisector.js* is a light-weight JavaScript library that enables one to instantiate observable datatypes - that is, Arrays, Strings, et cetera that can have event listeners attached to them. 
+
+*Vivisector* recursively points child objects at its own prototype so as to expose myriad useful methods for managing *all* Observables extant in a given code-base. This is a powerful feature that allows you to centralize a singular source-of-truth for managing your Observable Arrays, Strings, *et al* via the core *Vivisector* API.
 
 Each *Vivisector* child object - a given `Observable` - extends its respective type's interface so as to expose custom event-driven methods. As such, one can attach event listeners to datatypes such as Arrays, Strings, *et cetera*.
 
