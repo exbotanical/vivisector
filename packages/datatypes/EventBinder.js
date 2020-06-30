@@ -1,5 +1,5 @@
-/* Simulates EventEmitter base, binds to and extends a given primitive type
-
+/* Simulates EventEmitter base, binds to and extends a given type
+in-progress
 */
 class EventBinder {
     listeners = {};
@@ -31,7 +31,7 @@ class EventBinder {
     off(eventName, fn) {
         return this.removeListener(eventName, fn);
     }
-    
+    // add `once` functionality; it's the least we can do
     once(eventName, fn) {
         this.listeners[eventName] = this.listeners[eventName] || [];
         const executeOnceWrapper = () => {

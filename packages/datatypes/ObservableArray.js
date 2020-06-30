@@ -1,16 +1,16 @@
 /**
  * @override 
  * @readonly
- * @summary A custom observable Array-like synthetic-primitive
+ * @summary Factory for instantiating observable Array-like objects.
  * @description Copies array into Array-like object and hijacks specific instance's base prototype,
- *     thus creating an observable synthetic-primitive of type Array. Provides custom handlers for
+ *     thus creating an observable of type Array. Provides custom handlers for
  *     Array methods `push`, `pop`, `shift`, `unshift`, `slice`, `splice`.
  *     Makes available custom index accessors provided the ObservableArray has been mutated by way 
  *     of aforementioned methods OR `length`.
  * @augments Array
  */
-
 function ObservableArray(items) {
+    // assign outer execution context vars for easier reference
     var _self = this,
         _array = [],
         _handlers = {
@@ -18,12 +18,12 @@ function ObservableArray(items) {
             itemremoved: [],
             itemset: []
         };
-    // configure index accessors
+    // helper configuring index accessors
     function defineIndexProperty(index) {
         if (!(index in _self)) {
             Object.defineProperty(_self, index, {
                 configurable: true, // type of descriptor may be changed / deleted from corresponding obj
-                enumerable: true, // enumerate prop ?
+                enumerable: true, // enumerate to `true` so as to expose item indices 
                 get: function() {
                     return _array[index];
                 },
@@ -38,7 +38,7 @@ function ObservableArray(items) {
             });
         }
     }
-    // configure event-listener injections
+    // helper for event executions
     function raiseEvent(event) {
         _handlers[event.type].forEach(function(h) {
             h.call(_self, event);
@@ -60,6 +60,8 @@ function ObservableArray(items) {
             }
             // persist handler relative to given event
             _handlers[eventName].push(handler);
+            // return `this` to allow method chaining across consistent parent Object / execution context
+            return _self
         }
     });
     // override removeEventListener method of given array
@@ -83,6 +85,8 @@ function ObservableArray(items) {
                     h.splice(len, 1);
                 }
             }
+            // return `this` to allow method chaining across consistent parent Object / execution context
+            return _self
         }
     });
     // override push method
@@ -229,8 +233,9 @@ function ObservableArray(items) {
             return value;
         }
     });
-    // process prototype for self instance
+    // process prototype for self instance to ensure we extend Array methods
     Object.getOwnPropertyNames(Array.prototype).forEach(function(name) {
+        // ensure prop isn't already allocated so as to avoid collisions 
         if (!(name in _self)) {
             Object.defineProperty(_self, name, {
                 configurable: false,
@@ -257,7 +262,7 @@ module.exports = ObservableArray
 // });
 
 // users.addEventListener("itemremoved", function(syntheticEvent) {
-//     console.log(`Removed ${syntheticEvent.item} at index ${syntheticEvent.index}."`);
+//     console.log(`Removed ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
 // });
 
 // users.push("user three");
