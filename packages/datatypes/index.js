@@ -14,6 +14,8 @@ module.exports = (function (global) {
     }
 
     /* Private/Unexposed Props */
+
+    // global aggregation object - used to store and index all Observables
     var _observables = {};
 
     // meta-prototype for storing methods accessible to all `Observable` instances
@@ -60,7 +62,7 @@ module.exports = (function (global) {
             return intermediateObject
         }
     }
-    // point macro `Observable` proto to the aforementioned meta obj prototype chain 
+    // point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
     ObservableArray.prototype = Observable.prototype;
     // point proto to same execution context so as to provide an optional caller alias, `Vx`
     global.Observable = global.Vx = Observable;
