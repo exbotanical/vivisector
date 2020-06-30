@@ -77,7 +77,19 @@ let y = Vx("Array").addEventListener("itemadded", function(syntheticEvent) {
 y.push(8);
 // "y: Added 8 at index 0."
 ```
-Excellent. 
+
+Excellent. Let's register one more type of event that we've yet to use:
+```
+y.addEventListener("itemset", function(syntheticEvent) {
+    console.log(`Item at index ${syntheticEvent.index} set to ${syntheticEvent.item} `);
+});
+```
+And let's change the value at the 0th index of `y`:
+```
+y[0] = 9;
+// "Item at index 0 set to 9"
+```
+
 
 Now, this will throw an Error because we've already assigned id `1` to an `Observable`:
 ```
