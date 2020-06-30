@@ -31,35 +31,50 @@ module.exports = (function (global) {
         // set defaults here, if applicable
         var _self = this;
         if (datatype === "Array") {
+            var _identifier;
             // this assignment will point to the execution context of the newly generated `ObservableArray`
             var intermediateObject = new ObservableArray(data);
+            var observableKeys = Object.keys(_observables);
             // set defaults
             if (options) {
-                // destructure id and enforce unique filter 
-                const { uniqueIdentifier } = (({ id }) => ({ uniqueIdentifier: Object.keys(_observables).includes(id.toString()) ? undefined : id, /* prop2, prop3... */ }))(options);
-                // if id is found in keys array of `_observables`, the instantiation should be terminated
+                
+                /* 
+                // ~destructure id and enforce unique filter~
+                //
+                // What's happening here is we are evaluating a ternary expression wrapped inside of an IIFE. 
+                // This IIFE accepts as input the `options` object and destructures the id inline. We are explicitly
+                // mapping the prop `uniqueIdentifier` and destructuring it away from the resolved IIFE.
+                */
+
+                const { uniqueIdentifier } = (({ id }) => ({ uniqueIdentifier: observableKeys.includes(id.toString()) ? undefined : id, /* prop2, prop3... */ }))(options);
+                
+
+                // if id is found in keys array of `_observables`, the instantiation should be terminated as the id is a duplicate
                 if (!uniqueIdentifier) {
-                    console.log(`Error: Identifier ${options.id} is currently in use.`);
+                    return console.log(`Error: Identifier ${options.id} is currently in use.`);
                 }
-                // use `defineProperty` for greater control granularity; set prop to non-enumerable
-                Object.defineProperty(intermediateObject, "identifier", {
-                    configurable: false,
-                    enumerable: false,
-                    value: uniqueIdentifier
-                });
-                _observables[uniqueIdentifier] = intermediateObject;
+
+                _identifier = uniqueIdentifier;
             }
             // no options object param provided
             else {
-                let { length } = Object.keys(_observables);
-                Object.defineProperty(intermediateObject, "identifier", {
-                    configurable: false,
-                    enumerable: false,
-                    value: length
-                });
-                _observables[length] = intermediateObject;
+                // destructure length from keys Array
+                let { length } = observableKeys;
+                _identifier = length;
             }
-            return intermediateObject
+            // use `defineProperty` for greater control granularity; set prop to non-enumerable
+            Object.defineProperty(intermediateObject, "identifier", {
+                configurable: false,
+                enumerable: false,
+                value: _identifier
+            });
+            // persist new Observable inside `_observables` at index `_identifier`
+            _observables[_identifier] = intermediateObject;
+            
+            return intermediateObject;
+        }
+        else {
+            return console.log(`Error: datatype ${datatype} is not available as an Observable.`)
         }
     }
     // point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
