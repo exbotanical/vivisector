@@ -27,7 +27,7 @@ users.getId();
 ```
 Okay, the id is `0`.
 
-Let's create a second Observable of type 'Array', initialized with two elements: "Carol", "Carlos". This time, we will manually assign an id of `1`. This id will suffice because we know we've only created one other Observable; its id is `0`.
+Let's create a second `Observable` of type 'Array', initialized with two elements: "Carol", "Carlos". This time, we will manually assign an id of `1`. This id will suffice because we know we've only created one other `Observable`; its id is `0`.
 
 ```
 let usersTwo = Observable("Array", ["Carol","Carlos"], { id: 1 });
@@ -51,7 +51,7 @@ usersTwo.addEventListener("itemremoved", function(syntheticEvent) {
 });
 ```
 
-Now, the fun begins. Let's modify the `ObservableArray` 'users':
+Now, the fun begins. Let's modify the `ObservableArray` assigned to `users`:
 
 ```
 users.push("Charlie");
@@ -62,7 +62,7 @@ Nice! What happens when we remove the item we just added?
 users.pop();
 // "Removed Charlie at index 2."
 ```
-What about the listeners on "usersTwo"?
+What about the listeners on `usersTwo`?
 ```
 usersTwo.push(6)
 // "Two: Added 6 at index 2."
@@ -79,7 +79,7 @@ y.push(8);
 ```
 Excellent. 
 
-Now, this will throw an Error because we've already assigned id 1 to an Observable:
+Now, this will throw an Error because we've already assigned id `1` to an `Observable`:
 ```
 let usersThree = Observable("Array", ["user one","user two"], { id: 1 });
 // "Error: Identifier 1 is currently in use."
