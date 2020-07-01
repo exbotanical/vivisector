@@ -10,7 +10,8 @@
  * @augments Array
  */
 function ObservableArray(items) {
-    // assign outer execution context vars for easier reference
+
+    // assign outermost local execution context vars for easier reference
     var _self = this,
         _array = [],
         _handlers = {
@@ -18,7 +19,8 @@ function ObservableArray(items) {
             itemremoved: [],
             itemset: []
         };
-    // helper configuring index accessors
+
+    // helper for configuring index accessors
     function defineIndexProperty(index) {
         if (!(index in _self)) {
             Object.defineProperty(_self, index, {
@@ -38,12 +40,14 @@ function ObservableArray(items) {
             });
         }
     }
+
     // helper for event executions
     function raiseEvent(event) {
-        _handlers[event.type].forEach(function(h) {
-            h.call(_self, event);
+        _handlers[event.type].forEach(function(handler) {
+            handler.call(_self, event);
         });
     }
+
     // override addEventListener method of given array
     Object.defineProperty(_self, "addEventListener", {
         configurable: false,
@@ -51,19 +55,22 @@ function ObservableArray(items) {
         writable: false, // false; we do not want further tampering here
         value: function(eventName, handler) {
             // sanitize and validate handler submissions
+            // simple type-check: concatenate an empty string to coerce `eventName`
             eventName = ("" + eventName).toLowerCase(); 
+            // ensure registered event's name corresponds to one of the presets in `_handlers`
             if (!(eventName in _handlers)) {
                 throw new Error("Invalid event name.");
             }
             if (typeof handler !== "function") {
                 throw new Error("Invalid handler.");
             }
-            // persist handler relative to given event
+            // add handler to respective event nested Array
             _handlers[eventName].push(handler);
             // return `this` to allow method chaining across consistent parent Object / execution context
             return _self
         }
     });
+
     // override removeEventListener method of given array
     Object.defineProperty(_self, "removeEventListener", {
         configurable: false,
@@ -77,18 +84,21 @@ function ObservableArray(items) {
             if (typeof handler !== "function") {
                 throw new Error("Invalid handler.");
             }
-            var h = _handlers[eventName];
-            var len = h.length;
+            // reference all handlers of given `eventName`
+            var handlerSet = _handlers[eventName];
+            var handlerSetLen = handlerSet.length;
             // ensure handler exists, lookup, remove
-            while (--len >= 0) {
-                if (h[len] === handler) {
-                    h.splice(len, 1);
+            while (--handlerSetLen >= 0) {
+                if (handlerSet[handlerSetLen] === handler) {
+                    // handler exists, remove 
+                    handlerSet.splice(handlerSetLen, 1);
                 }
             }
             // return `this` to allow method chaining across consistent parent Object / execution context
             return _self
         }
     });
+
     // override push method
     Object.defineProperty(_self, "push", {
         configurable: false,
@@ -96,10 +106,13 @@ function ObservableArray(items) {
         writable: false,
         value: function() {
             var index;
-            for (var i = 0, len = arguments.length; i < len; i++) {
+            // for each provided element, push into Array copy `_array`
+            for (var i = 0, argsLen = arguments.length; i < argsLen; i++) {
                 index = _array.length;
                 _array.push(arguments[i]);
+                // define index accessor for each element
                 defineIndexProperty(index);
+                // raise event for added element
                 raiseEvent({
                     type: "itemadded",
                     index: index,
@@ -109,6 +122,7 @@ function ObservableArray(items) {
             return _array.length;
         }
     });
+
     // override pop method
     Object.defineProperty(_self, "pop", {
         configurable: false,
@@ -128,13 +142,14 @@ function ObservableArray(items) {
             }
         }
     });
+
     // override unshift method
     Object.defineProperty(_self, "unshift", {
         configurable: false,
         enumerable: false,
         writable: false,
         value: function() {
-            for (var i = 0, len = arguments.length; i < len; i++) {
+            for (var i = 0, argsLen = arguments.length; i < argsLen; i++) {
                 _array.splice(i, 0, arguments[i]);
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
@@ -153,6 +168,7 @@ function ObservableArray(items) {
             return _array.length;
         }
     });
+
     // override shift method
     Object.defineProperty(_self, "shift", {
         configurable: false,
@@ -171,6 +187,7 @@ function ObservableArray(items) {
             }
         }
     });
+
     // override splice method -- modified code from SO post
     Object.defineProperty(_self, "splice", {
         configurable: false,
@@ -196,7 +213,7 @@ function ObservableArray(items) {
                 });
             }
 
-            for (var i = 2, len = arguments.length; i < len; i++) {
+            for (var i = 2, argsLen = arguments.length; i < argsLen; i++) {
                 _array.splice(index, 0, arguments[i]);
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
@@ -245,6 +262,7 @@ function ObservableArray(items) {
             });
         }
     });
+    
     // allocate inputs
     if (items instanceof Array) {
         _self.push.apply(_self, items);
