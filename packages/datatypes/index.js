@@ -22,6 +22,9 @@ module.exports = (function (global) {  // wrap in IIFE to align execution contex
     Observable.prototype = {
         getId: function() {
             console.log(this.identifier)
+        },
+        all: function() {
+            console.log(_observables)
         }
     }
 
@@ -53,7 +56,6 @@ module.exports = (function (global) {  // wrap in IIFE to align execution contex
             return console.log(`Error: datatype ${datatype} is not available as an Observable.`)
         }
 
-        
         // set defaults here
 
 
@@ -96,9 +98,11 @@ module.exports = (function (global) {  // wrap in IIFE to align execution contex
         return _intermediateObject;
         
     }
+
     // point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
     ObservableArray.prototype = Observable.prototype;
     ObservableString.prototype = Observable.prototype;
+
     // point proto to same execution context so as to provide an optional caller alias, `Vx`
     global.Observable = global.Vx = Observable;
 

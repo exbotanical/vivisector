@@ -29,6 +29,7 @@ This means that in addition to 'listening' to data types, the library itself exp
 #### Observable Datatypes
   - [Observables Module Entrypoint](https://github.com/MatthewZito/vivisector-js/blob/master/packages/datatypes/index.js)
   - [Observable Arrays](https://github.com/MatthewZito/vivisector-js/blob/master/packages/datatypes/ObservableArray.js)
+  - [Observable Strings](https://github.com/MatthewZito/vivisector-js/blob/master/packages/datatypes/ObservableString.js)
 
 #### Informatics and I/O
   - [Polymorphic Logger](https://github.com/MatthewZito/vivisector-js/blob/master/packages/informatics/PolymorphicLogger.js)
@@ -54,3 +55,11 @@ It works because each `Observable` instance prototype ultimately points to the `
 Logger Usage Demo:
 
 ![demo](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/polymorphic-logger-demo.gif)
+
+
+
+// Imminent Todos
+
+  - build out `transmogrify` method on base prototype for handling observable transfers
+  - error handling
+  - config jest + travis CI for automated testing

@@ -14,7 +14,7 @@ function ObservableString(item) {
         };
 
     if (typeof item === "string") {
-        _self = new String(item);
+        _self[0] = new String(item);
     }
     
     // helper for event executions
@@ -75,6 +75,34 @@ function ObservableString(item) {
         }
     });
 
+    // override `split` method
+    Object.defineProperty(_self, "split", {
+        configurable: false,
+        enumerable: false,
+        writable: false, 
+        value: function(delimiter) {
+            var currentStringVal = _self[0].valueOf();
+            var splitArr = currentStringVal.split(delimiter);
+            // raiseEvent({
+            //     type: "mutated",
+            //     value: currentStringVal,
+            //     mutant: splitArr
+            // });
+            console.log("split", splitArr)
+            return splitArr
+        }
+    });
+
+    // override `split` method
+    Object.defineProperty(_self, "length", {
+        configurable: false,
+        enumerable: false,
+        get: function() {
+            return _self[0].length;
+        }
+    });
+
+
     // schematic for custom method `reassign`
     Object.defineProperty(_self, "reassign", {
         configurable: false,
@@ -83,12 +111,12 @@ function ObservableString(item) {
         value: function(stringInput) {
             // type-check and validations go here
             if (!(typeof stringInput === "string")) {
-                throw new Error("Invalid type.")
+                throw new Error("Invalid type.");
             }
             // persist pre-mutated value (note, not the String Object but the value therein)
-            var oldVal = _self.valueOf();
+            var oldVal = _self[0].valueOf();
             // reassign to new String instance
-            _self = new String(stringInput);
+            _self[0] = new String(stringInput);
             // raise event to signal mutation
             raiseEvent({
                 type: "mutated",
@@ -129,8 +157,10 @@ module.exports = ObservableString;
 // console.log(a);
 
 // a.reassign("hi");
-// console.log(a.length);
-// console.log(a.split(""));
+
+// console.log("len:", a.length);
+// let b = a.split("");
+// console.log(b);
 
 /* Notes */
 
