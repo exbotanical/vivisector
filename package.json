@@ -1,0 +1,30 @@
+{
+  "name": "vivisector",
+  "version": "0.0.1",
+  "description": "node.js library for creating observable datatypes",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "jest",
+    "repl": "node playground.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatthewZito/vivisector-js.git"
+  },
+  "keywords": [
+    "observable datatypes",
+    "custom datatypes",
+    "observables",
+    "event-driven",
+    "event-bound objects"
+  ],
+  "author": "Matthew T Zito",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatthewZito/vivisector-js/issues"
+  },
+  "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
+  "devDependencies": {
+    "jest": "^26.1.0"
+  }
+}
