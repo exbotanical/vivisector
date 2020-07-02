@@ -17,7 +17,8 @@ function ObservableArray(items) {
         _handlers = {
             itemadded: [],
             itemremoved: [],
-            itemset: []
+            itemset: [],
+            mutated: []
         };
 
     // helper for configuring index accessors
@@ -29,12 +30,13 @@ function ObservableArray(items) {
                 get: function() {
                     return _array[index];
                 },
-                set: function(v) {
-                    _array[index] = v;
+                set: function(inboundItem) {
+                    // set actual item to provided index
+                    _array[index] = inboundItem;
                     raiseEvent({
                         type: "itemset",
                         index: index,
-                        item: v
+                        item: inboundItem
                     });
                 }
             });
@@ -47,6 +49,25 @@ function ObservableArray(items) {
             handler.call(_self, event);
         });
     }
+
+    // define accessor for actual array value
+    Object.defineProperty(_self, "value", {
+        configurable: false,
+        enumerable: false,
+        get: function() {
+            return _array;
+        },
+        set: function(inboundItems) {
+            if (inboundItems instanceof Array) {
+                _array = inboundItems;
+                raiseEvent({
+                    type: "mutated",
+                    index: "all",
+                    item: inboundItems
+                });
+            }
+        },
+    });
 
     // override addEventListener method of given array
     Object.defineProperty(_self, "addEventListener", {
@@ -188,7 +209,7 @@ function ObservableArray(items) {
         }
     });
 
-    // override splice method -- modified code from SO post
+    // override splice method
     Object.defineProperty(_self, "splice", {
         configurable: false,
         enumerable: false,
@@ -196,10 +217,13 @@ function ObservableArray(items) {
         value: function(index, numElements) {
             var removed = [],
                     item,
+                    // optionally hoist position of item
                     pos;
-
+                        
+            // calculate index qua splice parameters
             index = index == null ? 0 : index < 0 ? _array.length + index : index;
 
+            // calculate number of elements qua splice parameters
             numElements = numElements == null ? _array.length - index : numElements > 0 ? numElements : 0;
 
             while (numElements--) {
@@ -227,6 +251,7 @@ function ObservableArray(items) {
             return removed;
         }
     });
+
     // override length method
     Object.defineProperty(_self, "length", {
         configurable: false,
@@ -247,7 +272,6 @@ function ObservableArray(items) {
                 throw new RangeError("Invalid array length");
             }
             _array.length = ephemeralLength;
-            return value;
         }
     });
     // process prototype for self instance to ensure we extend Array methods
@@ -265,8 +289,10 @@ function ObservableArray(items) {
     
     // allocate inputs
     if (items instanceof Array) {
+        // coerces _self into a container Array into which we copy ephemeral Array of `items`
         _self.push.apply(_self, items);
     }
+
 }
     
 module.exports = ObservableArray

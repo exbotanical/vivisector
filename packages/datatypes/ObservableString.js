@@ -14,7 +14,12 @@ function ObservableString(item) {
         };
 
     if (typeof item === "string") {
-        _self[0] = new String(item);
+        /*
+            The actual primitive value is stored in String Object.
+            Unlike the `ObservableArray`, we don't need to copy the value to an internal, nested var given the limited scope of operations
+            to be performed on a primitive i.e. the String versus an Object such as an Array
+        */
+        _self[0] = String(item);
     }
     
     // helper for event executions
@@ -23,6 +28,63 @@ function ObservableString(item) {
             handler.call(_self, event);
         });
     }
+
+    function mutateCoreValue(coreObject, coreValue) {
+        // persist pre-mutated value (note, not the String Object but the value therein)
+        var value = coreObject[0].valueOf();
+        coreObject[0] = String(coreValue);
+        // get current mutated/new String value
+        var mutant = coreObject[0].valueOf();
+        // execute callback; 
+        return { value, mutant }
+    }
+
+    // define accessor for actual primitive value
+    Object.defineProperty(_self, "value", {
+        configurable: false,
+        enumerable: false,
+        get: function() {
+            return _self[0].valueOf();
+        },
+        set: function(arg) {
+            if (typeof arg === "string") {
+
+                /* 
+                    By using `Object.assign`, we can create, in-line, a new Object consisting of a key/value pair to denote our desired event type.
+                    `assign` will 'merge' the in-line Object with that returned from `mutateCoreValue`. 
+                    Given `raiseEvent` accepts as input an Object, we can pass this expression directly; it will resolve to the necessary values.
+                */
+                raiseEvent(Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)));
+
+            }
+        }
+    });
+
+     // schematic for custom method `reassign`
+     Object.defineProperty(_self, "reassign", {
+        configurable: false,
+        enumerable: false,
+        writable: false, 
+        value: function(arg) {
+            // type-check and validations go here
+            if (!(typeof arg === "string")) {
+                throw new Error("Invalid type.");
+            }
+            
+            /* 
+                _self.value = stringInput; 
+                
+                Mutating the `value` prop here as demonstrated in the above-commented code *would* fire all `mutated` events given the
+                execution context of prop `value` is recursively applicable. However, we'd like to maintain as great a degree and 
+                granularity of control as possible. As such, we do *not* use the `value` accessor here, instead opting to raise
+                the `mutated` event in a discrete context.
+            */
+           raiseEvent(Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)));
+          
+            // return `_self` to allow method to be chainable; see other like-comments
+            return _self
+        }
+    });
 
     // override addEventListener method of given array
     Object.defineProperty(_self, "addEventListener", {
@@ -81,54 +143,21 @@ function ObservableString(item) {
         enumerable: false,
         writable: false, 
         value: function(delimiter) {
+            // get current String value
             var currentStringVal = _self[0].valueOf();
+            // split current with provided argument `delimiter`
             var splitArr = currentStringVal.split(delimiter);
-            // raiseEvent({
-            //     type: "mutated",
-            //     value: currentStringVal,
-            //     mutant: splitArr
-            // });
-            console.log("split", splitArr)
-            return splitArr
+            // non-mutating, no need to raise event; return
+            return splitArr;
         }
     });
 
-    // override `split` method
-    Object.defineProperty(_self, "length", {
-        configurable: false,
-        enumerable: false,
-        get: function() {
-            return _self[0].length;
-        }
-    });
+    /*
+        Extend `String` prototype as computed values
 
-
-    // schematic for custom method `reassign`
-    Object.defineProperty(_self, "reassign", {
-        configurable: false,
-        enumerable: false,
-        writable: false, // false; we do not want further tampering here
-        value: function(stringInput) {
-            // type-check and validations go here
-            if (!(typeof stringInput === "string")) {
-                throw new Error("Invalid type.");
-            }
-            // persist pre-mutated value (note, not the String Object but the value therein)
-            var oldVal = _self[0].valueOf();
-            // reassign to new String instance
-            _self[0] = new String(stringInput);
-            // raise event to signal mutation
-            raiseEvent({
-                type: "mutated",
-                value: oldVal,
-                mutant: stringInput
-            });
-            // return for chainable; see other like-comments
-            return _self
-        }
-    });
-
-    // extend onto `ObservableString` all String prototype methods not already extant
+        Here, we extend onto `ObservableString` all String prototype methods not already extant 
+        and, for each, conform get/set to the execution context of the primitive value contained therein.
+    */
     Object.getOwnPropertyNames(String.prototype).forEach(function(name) {
         // ensure prop isn't already allocated so as to avoid collisions 
         if (!(name in _self)) {
@@ -136,12 +165,19 @@ function ObservableString(item) {
                 configurable: false,
                 enumerable: false,
                 writable: false,
-                value: String.prototype[name]
+                // Here, we intercept the getter/setter conformation of each method on `String`'s prototype
+                // We do this so as to set the execution context to point to the primitive `String` and *not* its parent Object, 
+                // in this case `ObservableString`
+                value: function(...args) {
+                    return _self[0][name](...args);
+                }
             });
         }
     });
 
-    return _self
+    
+
+    // return _self
 }
 
 module.exports = ObservableString;
@@ -161,28 +197,3 @@ module.exports = ObservableString;
 // console.log("len:", a.length);
 // let b = a.split("");
 // console.log(b);
-
-/* Notes */
-
-// let a = new Proxy(new String("hello"), {
-//     get(target, key) {
-//       if (!target.hasOwnProperty(key) && typeof target[key] === "function") {
-//         return function(...args) {
-//           return target[key].call(target, args);
-//         }
-//       }
-//       return target[key];
-//     },
-//     set(...args) {
-//         console.log("fired", ...args)
-//     }
-//   });
-  
-//   console.log(a.valueOf());
-
-
-
-// (function (){
-//     var counterValue = 0;
-//     define("count", {get: function(){ return counterValue++ }});
-// }());

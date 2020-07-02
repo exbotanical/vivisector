@@ -20,12 +20,14 @@ module.exports = (function (global) {  // wrap in IIFE to align execution contex
 
     // meta-prototype for storing methods accessible to all `Observable` instances
     Observable.prototype = {
-        getId: function() {
-            console.log(this.identifier)
-        },
-        all: function() {
-            console.log(_observables)
-        }
+        // any methods added here will be exposed to *all* Observables 
+        // we can actually import other modules or libs here; in doing so, we need to further tighten the security 
+        // on global denominations so as to mitigate nasty dependency collisions
+
+        // typecast: function(inboundType) {
+        //     // do stuff
+        //     // return new Observable.init(datatype, data, options);
+        // }
     }
 
     // the actual method which is executed
@@ -33,27 +35,29 @@ module.exports = (function (global) {  // wrap in IIFE to align execution contex
         // this assignment will point to the execution context of the newly generated `Observable`
         // remaining vars are hoisted
         var _self = this,
+            _observableKeys = Object.keys(_observables),
+            // the unique identifier for a given Observable instance
             _identifier,
-            _intermediateObject,
-            _observableKeys;
+            // the type of a given Observable instance e.g. 'Array'
+            _type,
+            // transient Object for assembling prototype and defaults injection
+            _intermediateObject;
 
         // selected type: Array
         if (datatype === "Array") {
             // this assignment will point to the execution context of the newly generated `ObservableArray`
             _intermediateObject = new ObservableArray(data);
-            _observableKeys = Object.keys(_observables);
         }
 
         // selected type: String
         else if (datatype === "String") {
             // this assignment will point to the execution context of the newly generated `ObservableArray`
             _intermediateObject = new ObservableString(data);
-            _observableKeys = Object.keys(_observables);
         }
 
         // unsupported / unprovided type
         else {
-            return console.log(`Error: datatype ${datatype} is not available as an Observable.`)
+            return console.log(`Error: datatype ${datatype} is not available as an Observable.`);
         }
 
         // set defaults here
@@ -86,12 +90,21 @@ module.exports = (function (global) {  // wrap in IIFE to align execution contex
             let { length } = _observableKeys;
             _identifier = length;
         }
-        // use `defineProperty` for greater control granularity; set prop to non-enumerable
-        Object.defineProperty(_intermediateObject, "identifier", {
-            configurable: false,
-            enumerable: false,
-            value: _identifier
-        });
+        // we can do this later at any point within this scope; leave until we need to do something with the type
+        // _type = datatype;
+
+        // Here, we are creating a new Object of all ubiquitous props for which `defineProperty` will be called. Then,
+        // we destructure the key/value pairs from the Array produced by `Object.entries` and call `forEach` thereon
+        // ea. key will become the prop name; each value (that which is preceded by an underscore), the prop value
+        Object.entries({ identifier: _identifier, type: datatype }).forEach(([key, value]) => 
+            // use `defineProperty` for greater control granularity; set prop to non-enumerable
+            Object.defineProperty(_intermediateObject, key, {
+                configurable: false,
+                enumerable: false,
+                value: value
+            })
+        );
+
         // persist new Observable inside `_observables` at index `_identifier`
         _observables[_identifier] = _intermediateObject;
         
