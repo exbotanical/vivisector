@@ -1,6 +1,6 @@
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
-const ObservableArray = require("../lib/packages/datatypes/ObservableArray.js");
+const ObservableArray = require("../src/packages/datatypes/ObservableArray.js");
 
 /* Mocks */
 

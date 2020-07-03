@@ -1,31 +1,50 @@
 {
-  "name": "vivisector",
-  "version": "0.0.1",
-  "description": "node.js library for creating observable datatypes",
-  "main": "./lib/index.js",
-  "scripts": {
-    "test": "jest --coverage",
-    "testmon": "jest --watch *test.js",
-    "repl": "node playground.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MatthewZito/vivisector-js.git"
-  },
-  "keywords": [
-    "observable datatypes",
-    "custom datatypes",
-    "observables",
-    "event-driven",
-    "event-bound objects"
-  ],
-  "author": "Matthew T Zito",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/MatthewZito/vivisector-js/issues"
-  },
-  "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
-  "devDependencies": {
-    "jest": "^26.1.0"
-  }
+    "name": "vivisector",
+    "version": "0.0.1",
+    "description": "node.js library for creating observable datatypes",
+    "main": "./src/index.js",
+    "jest": {
+        "coverageDirectory": "./coverage",
+        "collectCoverage": true,
+        "collectCoverageFrom": [
+            "src/packages/datatypes/*.js",
+            "!src/packages/datatypes/ObservableObject.js"
+        ],
+        "coverageThreshold": {
+            "global": {
+                "branches": 75,
+                "functions": 95,
+                "lines": 90,
+                "statements": 90
+            }
+        }
+    },
+    "scripts": {
+        "test": "jest",
+        "coverage": "jest --coverage && rm -rf ./coverage",
+        "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+        "testmon": "jest --watch *test.js",
+        "repl": "node playground.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MatthewZito/vivisector-js.git"
+    },
+    "keywords": [
+        "observable datatypes",
+        "custom datatypes",
+        "observables",
+        "event-driven",
+        "event-bound objects"
+    ],
+    "author": "Matthew T Zito",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/MatthewZito/vivisector-js/issues"
+    },
+    "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
+    "devDependencies": {
+        "coveralls": "^3.1.0",
+        "jest": "^26.1.0"
+    }
 }
