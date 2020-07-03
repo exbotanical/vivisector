@@ -40,8 +40,8 @@ With `ObservableString`s comes *another* way to reassign/mutate the primitive va
 Let's first define a callback for the new event listener we will chain to our newly reassigned ObservableString:
 
 ```
-const processUpdates = (incomingObject)  => {
-    console.log(`Value '${incomingObject.value}' has been updated to '${incomingObject.mutant}!!!'`);
+const processUpdates = (inboundData)  => {
+    console.log(`Value '${inboundData.value}' has been updated to '${inboundData.mutant}!!!'`);
     // do stuff
 };
 

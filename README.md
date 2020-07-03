@@ -63,3 +63,4 @@ Logger Usage Demo:
   - build out `transmogrify` method on base prototype for handling observable transfers
   - error handling
   - config jest + travis CI for automated testing
+  - enumerate event-listeners method on all `Observables` (see: jQuery 1.1.0 source's `data` method)

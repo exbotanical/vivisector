@@ -4,7 +4,8 @@
   "description": "node.js library for creating observable datatypes",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
+    "testmon": "jest --watch *test.js",
     "repl": "node playground.js"
   },
   "repository": {

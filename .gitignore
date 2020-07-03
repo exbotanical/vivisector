@@ -2,5 +2,6 @@ node_modules
 .env
 .DS_STORE
 *.DS_STORE
-repl.js
+playground.js
 notes.js
+coverage
