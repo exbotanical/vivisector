@@ -1,6 +1,7 @@
 <img src="https://github.com/MatthewZito/vivisector-js/blob/master/documentation/vx.png" width="390" height="390">
 
 # Vivisector.js | A Node.js library for observable JavaScript datatypes and informatics
+[![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
 ```
 Author: Matthew T Zito
 License: MIT
