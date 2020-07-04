@@ -1,38 +1,43 @@
 
-let target = {}
-let targetProxy = new Proxy(target, {
-  get:(obj,key)=>{
-    let value = Reflect.get(obj,key);
-    if(typeof(value) == "function"){
-      return value.bind(obj);
-    }
-    return value;
-  }
-});
+// const target =  { data: "hello, world", type: "String" };
 
-targetProxy.addEventListener('click',()=>console.log('clicked'));
-
-/* Notes */
-
-let a = new Proxy(new String("hello"), {
-    get(target, key) {
-      if (!target.hasOwnProperty(key) && typeof target[key] === "function") {
-        return function(...args) {
-          return target[key].call(target, args);
-        }
-      }
-      return target[key];
-    },
-    set(...args) {
-        console.log("fired", ...args)
-    }
-  });
-  
-  console.log(a.valueOf());
+// const mockHandler = () => console.log("Fired!");
 
 
+// const transmogrifyObject = (obj, fn) => {
+//     const handler = {
+//         get(target, property, receiver) {
+//             fn();
+//             // recurse and continue chain of Proxies for nested props
+//             const value = Reflect.get(target, property, receiver);
+            
+//             if (typeof value === "object") {
+//                 return new Proxy(value, handler);
+//             }
+//             return value;
+//             // return Reflect[trapName](...arguments);
+//         },
+//         set(target, property, value) {
+//             fn();
+//             console.log("T" , target)
+//             Object.entries({ target, property, value }).forEach(([key, value]) => console.log("SET FIRED", `${key}:  ${JSON.stringify(value)}`));
+//             return Reflect.set(target, property, value);
+//         },
+//         deleteProperty(target, property) {
+//             fn();
+//             return Reflect.deleteProperty(target, property);
+//         }
+//     };
+//     return new Proxy(obj, handler);
+// };
 
-// (function (){
-//     var counterValue = 0;
-//     define("count", {get: function(){ return counterValue++ }});
-// }());
+// const obj = transmogrifyObject(target, mockHandler);
+
+// obj.data = 1
+
+// // obj.data = { hello:"hello" }
+// // console.log(obj.data);
+
+
+
+

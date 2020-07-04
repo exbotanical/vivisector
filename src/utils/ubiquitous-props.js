@@ -21,7 +21,7 @@ const defineAddEventListener = (context, handlers) => {
             return context;
         }
     });
-}
+};
 
 const defineRemoveEventListener = (context, handlers) => {
     // override removeEventListener method of given array
@@ -51,9 +51,9 @@ const defineRemoveEventListener = (context, handlers) => {
             return context;
         }
     });
-}
+};
 
 module.exports = {
     defineAddEventListener,
     defineRemoveEventListener
-}
+};

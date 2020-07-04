@@ -232,7 +232,7 @@ function ObservableArray(items) {
                 if (ephemeralLength < length) {
                     _self.splice(ephemeralLength);
                 } else if (ephemeralLength > length) {
-                    _self.push.apply(_self, new Array(ephemeralLength - length));
+                    Reflect.apply(_self.push, _self, new Array(ephemeralLength - length));
                 }
             } else {
                 throw new RangeError("Invalid array length");
@@ -256,8 +256,8 @@ function ObservableArray(items) {
 
     // allocate inputs
     if (items instanceof Array) {
-        // coerces _self into a container Array into which we copy ephemeral Array of `items`
-        _self.push.apply(_self, items);
+        // coerces _self to a container Array into which we copy `items`
+        Reflect.apply(_self.push, _self, items);
     }
 
 }
