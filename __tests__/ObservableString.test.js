@@ -1,6 +1,6 @@
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
-const ObservableString = require("../lib/datatypes/ObservableString.js");
+const ObservableString = require("../src/datatypes/ObservableString.js");
 
 /* Mocks */
 

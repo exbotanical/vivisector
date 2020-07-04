@@ -1,11 +1,11 @@
 /**
- * @override 
+ * @override
  * @readonly
  * @summary Factory for instantiating observable Array-like objects.
  * @description Copies array into Array-like object and hijacks specific instance's base prototype,
  *     thus creating an observable of type Array. Provides custom handlers for
  *     Array methods `push`, `pop`, `shift`, `unshift`, `splice`. `length`,
- *     Makes available custom index accessors provided the ObservableArray has been mutated by way 
+ *     Makes available custom index accessors provided the ObservableArray has been mutated by way
  *     of aforementioned methods, `length`, or the `value` accessor, which is common to all `Observables`.
  * @augments Array
  */
@@ -26,7 +26,7 @@ function ObservableArray(items) {
         if (!(index in _self)) {
             Object.defineProperty(_self, index, {
                 configurable: true, // type of descriptor may be changed / deleted from corresponding obj
-                enumerable: true, // enumerate to `true` so as to expose item indices 
+                enumerable: true, // enumerate to `true` so as to expose item indices
                 get: function() {
                     return _array[index];
                 },
@@ -77,7 +77,7 @@ function ObservableArray(items) {
         value: function(eventName, handler) {
             // sanitize and validate handler submissions
             // simple type-check: concatenate an empty string to coerce `eventName`
-            eventName = ("" + eventName).toLowerCase(); 
+            eventName = ("" + eventName).toLowerCase();
             // ensure registered event's name corresponds to one of the presets in `_handlers`
             if (!(eventName in _handlers)) {
                 throw new Error("Invalid event name.");
@@ -111,7 +111,7 @@ function ObservableArray(items) {
             // ensure handler exists, lookup, remove
             while (--handlerSetLen >= 0) {
                 if (handlerSet[handlerSetLen] === handler) {
-                    // handler exists, remove 
+                    // handler exists, remove
                     handlerSet.splice(handlerSetLen, 1);
                 }
             }
@@ -170,7 +170,7 @@ function ObservableArray(items) {
         enumerable: false,
         writable: false,
         value: function() {
-            // NOTE this is one of those rare instances where we *need* `var`, lest the next loop's `i` be undefined due to 
+            // NOTE this is one of those rare instances where we *need* `var`, lest the next loop's `i` be undefined due to
             // scoping behaviors of `let`
             for (var i = 0, argsLen = arguments.length; i < argsLen; i++) {
                 _array.splice(i, 0, arguments[i]);
@@ -202,8 +202,8 @@ function ObservableArray(items) {
             // only actionable if Array contains elements
             if (_array.length > -1) {
                 let item = _array.shift();
-                // NOTE imperative; `shift` will not persist this change; 
-                // changes will, however, be reflected in _array.length 
+                // NOTE imperative; `shift` will not persist this change;
+                // changes will, however, be reflected in _array.length
                 delete _self[_array.length];
                 raiseEvent({
                     type: "itemremoved",
@@ -225,7 +225,7 @@ function ObservableArray(items) {
                     item,
                     // optionally hoist position of item
                     pos;
-                        
+
             // calculate index qua splice parameters
             index = index == null ? 0 : index < 0 ? _array.length + index : index;
 
@@ -268,7 +268,7 @@ function ObservableArray(items) {
         set: function(value) {
             let ephemeralLength = Number(value);
             let length = _array.length;
-            if (ephemeralLength % 1 === 0 && ephemeralLength >= 0) {                
+            if (ephemeralLength % 1 === 0 && ephemeralLength >= 0) {
                 if (ephemeralLength < length) {
                     _self.splice(ephemeralLength);
                 } else if (ephemeralLength > length) {
@@ -283,7 +283,7 @@ function ObservableArray(items) {
 
     // process prototype for self instance to ensure we extend Array methods
     Object.getOwnPropertyNames(Array.prototype).forEach(function(name) {
-        // ensure prop isn't already allocated so as to avoid collisions 
+        // ensure prop isn't already allocated so as to avoid collisions
         if (!(name in _self)) {
             Object.defineProperty(_self, name, {
                 configurable: false,
@@ -293,7 +293,7 @@ function ObservableArray(items) {
             });
         }
     });
-    
+
     // allocate inputs
     if (items instanceof Array) {
         // coerces _self into a container Array into which we copy ephemeral Array of `items`
@@ -301,7 +301,7 @@ function ObservableArray(items) {
     }
 
 }
-    
+
 module.exports = ObservableArray
 
 // /* Direct Usage */
@@ -318,3 +318,5 @@ module.exports = ObservableArray
 
 // users.push("user three");
 // users.pop();
+
+

@@ -4,7 +4,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
 /**
  * @summary A wrapper for exporting the Vivisector.js Observable model and its associated properties.
  * @description Exposes various JavaScript datatypes and primitives and extends them with both event-driven 
- *     properties (qua the Observable's execution context), and ubiquitous Vivisector-contingent properties (qua the macro execution context)
+ *     properties (qua the Observable's execution context), and ubiquitous Vivisector-contingent properties (qua the macro execution context).
  */
 
 // wrap in IIFE to align execution context in prospective 'non-Node' environments
@@ -122,8 +122,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
 
     // // point proto to same execution context so as to provide an optional caller alias, `Vx`
     // global.Observable = global.Vx = Observable;
-    let Vx = Observable;
-    module.exports = Vx;
+    module.exports = Vx = Observable;
 
 }());
 /* 
