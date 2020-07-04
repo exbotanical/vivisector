@@ -12,14 +12,15 @@
 function ObservableArray(items) {
 
     // assign outermost local execution context vars for easier reference
-    let _self = this,
-        _array = [],
+    const _self = this,
         _handlers = {
             itemadded: [],
             itemremoved: [],
             itemset: [],
             mutated: []
         };
+
+    let _array = [];
 
     // helper for configuring index accessors
     function defineIndexProperty(index) {
@@ -45,7 +46,7 @@ function ObservableArray(items) {
 
     // helper for event executions
     function raiseEvent(event) {
-        _handlers[event.type].forEach(function(handler) {
+        _handlers[event.type].forEach((handler) => {
             handler.call(_self, event);
         });
     }
@@ -88,7 +89,7 @@ function ObservableArray(items) {
             // add handler to respective event nested Array
             _handlers[eventName].push(handler);
             // return `this` to allow method chaining across consistent parent Object / execution context
-            return _self
+            return _self;
         }
     });
 
@@ -106,7 +107,7 @@ function ObservableArray(items) {
                 throw new Error("Invalid handler.");
             }
             // reference all handlers of given `eventName`
-            let handlerSet = _handlers[eventName];
+            const handlerSet = _handlers[eventName];
             let handlerSetLen = handlerSet.length;
             // ensure handler exists, lookup, remove
             while (--handlerSetLen >= 0) {
@@ -116,7 +117,7 @@ function ObservableArray(items) {
                 }
             }
             // return `this` to allow method chaining across consistent parent Object / execution context
-            return _self
+            return _self;
         }
     });
 
@@ -125,19 +126,19 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function() {
+        value: function(...args) {
             let index;
             // for each provided element, push into Array copy `_array`
-            for (let i = 0, argsLen = arguments.length; i < argsLen; i++) {
+            for (let i = 0, argsLen = args.length; i < argsLen; i++) {
                 index = _array.length;
-                _array.push(arguments[i]);
+                _array.push(args[i]);
                 // define index accessor for each element
                 defineIndexProperty(index);
                 // raise event for added element
                 raiseEvent({
                     type: "itemadded",
                     index: index,
-                    item: arguments[i]
+                    item: args[i]
                 });
             }
             return _array.length;
@@ -151,13 +152,14 @@ function ObservableArray(items) {
         writable: false,
         value: function() {
             if (_array.length > -1) {
-                let index = _array.length - 1,
+                const index = _array.length - 1,
                     item = _array.pop();
                 delete _self[index];
+
                 raiseEvent({
                     type: "itemremoved",
-                    index: index,
-                    item: item
+                    index,
+                    item
                 });
                 return item;
             }
@@ -169,16 +171,16 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function() {
+        value: function(...args) {
             // NOTE this is one of those rare instances where we *need* `var`, lest the next loop's `i` be undefined due to
             // scoping behaviors of `let`
-            for (var i = 0, argsLen = arguments.length; i < argsLen; i++) {
-                _array.splice(i, 0, arguments[i]);
+            for (var i = 0, argsLen = args.length; i < argsLen; i++) {
+                _array.splice(i, 0, args[i]);
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
                     type: "itemadded",
                     index: i,
-                    item: arguments[i]
+                    item: args[i]
                 });
             }
             for (; i < _array.length; i++) {
@@ -201,14 +203,14 @@ function ObservableArray(items) {
         value: function() {
             // only actionable if Array contains elements
             if (_array.length > -1) {
-                let item = _array.shift();
+                const item = _array.shift();
                 // NOTE imperative; `shift` will not persist this change;
                 // changes will, however, be reflected in _array.length
                 delete _self[_array.length];
                 raiseEvent({
                     type: "itemremoved",
                     index: 0,
-                    item: item
+                    item
                 });
                 return item;
             }
@@ -220,13 +222,16 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function(index, numElements) {
-            let removed = [],
-                    item,
-                    // optionally hoist position of item
-                    pos;
+        value: function(...args) {
+            let index = args[0];
+            let numElements = args[1];
+            const removed = [];
+            let item,
+                // optionally hoist position of item as `pos`
+                pos;
 
             // calculate index qua splice parameters
+            // we need `==` so as to coerce possible `undefined` to null during eval
             index = index == null ? 0 : index < 0 ? _array.length + index : index;
 
             // calculate number of elements qua splice parameters
@@ -239,17 +244,16 @@ function ObservableArray(items) {
                 raiseEvent({
                     type: "itemremoved",
                     index: index + removed.length - 1,
-                    item: item
+                    item
                 });
             }
-
-            for (let i = 2, argsLen = arguments.length; i < argsLen; i++) {
-                _array.splice(index, 0, arguments[i]);
+            for (let i = 2, argsLen = args.length; i < argsLen; i++) {
+                _array.splice(index, 0, args[i]);
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
                     type: "itemadded",
                     index: index,
-                    item: arguments[i]
+                    item: args[i]
                 });
                 index++;
             }
@@ -266,8 +270,8 @@ function ObservableArray(items) {
             return _array.length;
         },
         set: function(value) {
-            let ephemeralLength = Number(value);
-            let length = _array.length;
+            const ephemeralLength = Number(value);
+            const length = _array.length;
             if (ephemeralLength % 1 === 0 && ephemeralLength >= 0) {
                 if (ephemeralLength < length) {
                     _self.splice(ephemeralLength);
@@ -282,7 +286,7 @@ function ObservableArray(items) {
     });
 
     // process prototype for self instance to ensure we extend Array methods
-    Object.getOwnPropertyNames(Array.prototype).forEach(function(name) {
+    Object.getOwnPropertyNames(Array.prototype).forEach((name) => {
         // ensure prop isn't already allocated so as to avoid collisions
         if (!(name in _self)) {
             Object.defineProperty(_self, name, {
@@ -302,7 +306,7 @@ function ObservableArray(items) {
 
 }
 
-module.exports = ObservableArray
+module.exports = ObservableArray;
 
 // /* Direct Usage */
 // let users = new ObservableArray(["user one","user two"]);

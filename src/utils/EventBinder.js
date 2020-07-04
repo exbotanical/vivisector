@@ -17,7 +17,7 @@ class EventBinder {
     }
     
     removeListener(eventName, fn) {
-        let listeners = this.listeners[eventName];
+        const listeners = this.listeners[eventName];
         for (let i = listeners.length; i > 0; i--) {
             if (listeners[i] === fn) {
                 listeners.splice(i,1);
@@ -37,13 +37,13 @@ class EventBinder {
         const executeOnceWrapper = () => {
             fn();
             this.off(eventName, executeOnceWrapper);
-        }
+        };
         this.listeners[eventName].push(executeOnceWrapper);
         return this;
     }
     
     emit(eventName, ...args) { 
-        let listeners = this.listeners[eventName];
+        const listeners = this.listeners[eventName];
         if (!listeners) {
             return false;
         }
@@ -54,7 +54,7 @@ class EventBinder {
     }
     
     listenerCount(eventName) {
-        let listeners = this.listeners[eventName] || [];
+        const listeners = this.listeners[eventName] || [];
         return listeners.length;
     }
     

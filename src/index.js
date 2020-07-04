@@ -12,14 +12,14 @@ const ObservableString = require("./datatypes/ObservableString.js");
 (function (global) {  
     // mitigate need to use `new` keyword by returning a discrete function constructor 
     // to generate the object   
-    var Observable = function(datatype, data, options) {
+    const Observable = function(datatype, data, options) {
         return new Observable.init(datatype, data, options);
-    }
+    };
 
     /* Private/Unexposed Props */
 
     // global aggregation object - used to store and index all Observables
-    var _observables = {};
+    const _observables = {};
 
     // meta-prototype for storing methods accessible to all `Observable` instances
     Observable.prototype = {
@@ -31,21 +31,17 @@ const ObservableString = require("./datatypes/ObservableString.js");
         //     // do stuff
         //     // return new Observable.init(datatype, data, options);
         // }
-    }
+    };
 
     // the actual method which is executed
     // this is mostly config for prospective macro-object use and ubiquitous methods
     Observable.init = function(datatype, data, options) {
         // this assignment will point to the execution context of the newly generated `Observable`
         // remaining vars are hoisted
-        var _self = this,
-            _observableKeys = Object.keys(_observables),
-            // the unique identifier for a given Observable instance
-            _identifier,
-            // the type of a given Observable instance e.g. 'Array'
-            _type,
-            // transient Object for assembling prototype and defaults injection
-            _intermediateObject;
+        const _self = this,
+            _observableKeys = Object.keys(_observables);
+        // transient Object for assembling prototype and defaults injection
+        let _intermediateObject;
 
         // selected type: Array
         if (datatype === "Array") {
@@ -64,8 +60,12 @@ const ObservableString = require("./datatypes/ObservableString.js");
             return console.log(`Error: datatype ${datatype} is not available as an Observable.`);
         }
 
-        // set defaults here
-        _type = datatype;
+        /* set defaults here */
+
+        // the type of a given Observable instance e.g. 'Array'
+        const _type = datatype;
+        // the unique identifier for a given Observable instance
+        let _identifier;
 
         // if options passed, configure accordingly
         if (options) {
@@ -91,7 +91,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
         // no options object param provided
         else {
             // destructure length from keys Array
-            let { length } = _observableKeys;
+            const { length } = _observableKeys;
             _identifier = length;
         }
         // we can do this later at any point within this scope; leave until we need to do something with the type
@@ -114,7 +114,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
         
         return _intermediateObject;
         
-    }
+    };
 
     // point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
     ObservableArray.prototype = Observable.prototype;

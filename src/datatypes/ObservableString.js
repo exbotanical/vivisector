@@ -10,7 +10,7 @@
  * @augments String
  */
 function ObservableString(item) {
-    let _self = this,
+    const _self = this,
         _handlers = {
             mutated: []
         };
@@ -26,19 +26,19 @@ function ObservableString(item) {
     
     // helper for event executions
     function raiseEvent(event) {
-        _handlers[event.type].forEach(function(handler) {
+        _handlers[event.type].forEach((handler) => {
             handler.call(_self, event);
         });
     }
 
     function mutateCoreValue(coreObject, coreValue) {
         // persist pre-mutated value (note, not the String Object but the value therein)
-        let value = coreObject[0].valueOf();
+        const value = coreObject[0].valueOf();
         coreObject[0] = String(coreValue);
         // get current mutated/new String value
-        let mutant = coreObject[0].valueOf();
+        const mutant = coreObject[0].valueOf();
         // execute callback; 
-        return { value, mutant }
+        return { value, mutant };
     }
 
     // define accessor for actual primitive value
@@ -84,7 +84,7 @@ function ObservableString(item) {
            raiseEvent(Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)));
           
             // return `_self` to allow method to be chainable; see other like-comments
-            return _self
+            return _self;
         }
     });
 
@@ -107,7 +107,7 @@ function ObservableString(item) {
             // add handler to respective event nested Array
             _handlers[eventName].push(handler);
             // return `this` to allow method chaining across consistent parent Object / execution context
-            return _self
+            return _self;
         }
     });
 
@@ -125,7 +125,7 @@ function ObservableString(item) {
                 throw new Error("Invalid handler.");
             }
             // reference all handlers of given `eventName`
-            let handlerSet = _handlers[eventName];
+            const handlerSet = _handlers[eventName];
             let handlerSetLen = handlerSet.length;
             // ensure handler exists, lookup, remove
             while (--handlerSetLen >= 0) {
@@ -135,7 +135,7 @@ function ObservableString(item) {
                 }
             }
             // return `this` to allow method chaining across consistent parent Object / execution context
-            return _self
+            return _self;
         }
     });
 
@@ -146,9 +146,9 @@ function ObservableString(item) {
         writable: false, 
         value: function(delimiter) {
             // get current String value
-            let currentStringVal = _self[0].valueOf();
+            const currentStringVal = _self[0].valueOf();
             // split current with provided argument `delimiter`
-            let splitArr = currentStringVal.split(delimiter);
+            const splitArr = currentStringVal.split(delimiter);
             // non-mutating, no need to raise event; return
             return splitArr;
         }
@@ -160,6 +160,12 @@ function ObservableString(item) {
         enumerable: false,
         get: function() {
             return _self[0].length;
+        },
+        // use noop here lest babel 7 complain
+        set: function() {
+            // essentially the 'only' noop in JavaScript (save for an empty function expression)
+            // note we do not use an empty arrow func for linting/consistency purposes
+            Function.prototype();
         }
     });
 
@@ -169,7 +175,7 @@ function ObservableString(item) {
         Here, we extend onto `ObservableString` all String prototype methods not already extant 
         and, for each, conform get/set to the execution context of the primitive value contained therein.
     */
-    Object.getOwnPropertyNames(String.prototype).forEach(function(name) {
+    Object.getOwnPropertyNames(String.prototype).forEach((name) => {
         // ensure prop isn't already allocated so as to avoid collisions 
         if (!(name in _self)) {
             Object.defineProperty(_self, name, {

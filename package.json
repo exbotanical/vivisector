@@ -24,7 +24,10 @@
         "coverage": "jest --coverage && rm -rf ./coverage",
         "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
         "testmon": "jest --watch *test.js",
-        "repl": "node playground.js"
+        "repl": "node playground.js",
+        "lint": "eslint ./",
+        "build": "npm run lint && babel ./src -d ./lib",
+        "clean": "rm -rf ./coverage && rm -rf ./lib"
     },
     "repository": {
         "type": "git",
@@ -35,7 +38,8 @@
         "custom datatypes",
         "observables",
         "event-driven",
-        "event-bound objects"
+        "event-bound objects",
+        "micro-library"
     ],
     "author": "Matthew T Zito",
     "license": "MIT",
@@ -44,7 +48,12 @@
     },
     "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
     "devDependencies": {
+        "@babel/cli": "^7.10.4",
+        "@babel/plugin-proposal-class-properties": "^7.10.4",
+        "@babel/preset-env": "^7.10.4",
+        "babel-eslint": "^10.1.0",
         "coveralls": "^3.1.0",
+        "eslint": "^7.4.0",
         "jest": "^26.1.0"
     }
 }
