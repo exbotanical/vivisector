@@ -43,8 +43,8 @@ users.push("Charlie");
 
 Have a look at these usage guides for a full overview:
 
-  - [See Usage Guide for ObservableArray](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-array.md)
-  - [See Usage Guide for ObservableArray](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-string.md)
+  - [See Usage Guide for `ObservableArray`](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-array.md)
+  - [See Usage Guide for `ObservableString`](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-string.md)
 
 ## <a name="docs"></a> Documentation
 

@@ -223,6 +223,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
             // apply all - the handler should only fire once given there is only 1 Array in the `typesPool`
             typesPool.forEach(value => users.value = value);
+            expect(users.value).toEqual([""]);
             expect(callbackFiredCount).toEqual(1);
         });
     });

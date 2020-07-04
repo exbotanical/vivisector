@@ -1,3 +1,5 @@
+const { defineAddEventListener, defineRemoveEventListener } = require("../utils/ubiquitous-props.js");
+
 /**
  * @override
  * @readonly
@@ -70,56 +72,10 @@ function ObservableArray(items) {
         },
     });
 
-    // override addEventListener method of given array
-    Object.defineProperty(_self, "addEventListener", {
-        configurable: false,
-        enumerable: false,
-        writable: false, // false; we do not want further tampering here
-        value: function(eventName, handler) {
-            // sanitize and validate handler submissions
-            // simple type-check: concatenate an empty string to coerce `eventName`
-            eventName = ("" + eventName).toLowerCase();
-            // ensure registered event's name corresponds to one of the presets in `_handlers`
-            if (!(eventName in _handlers)) {
-                throw new Error("Invalid event name.");
-            }
-            if (typeof handler !== "function") {
-                throw new Error("Invalid handler.");
-            }
-            // add handler to respective event nested Array
-            _handlers[eventName].push(handler);
-            // return `this` to allow method chaining across consistent parent Object / execution context
-            return _self;
-        }
-    });
-
-    // override removeEventListener method of given array
-    Object.defineProperty(_self, "removeEventListener", {
-        configurable: false,
-        enumerable: false,
-        writable: false,
-        value: function(eventName, handler) {
-            eventName = ("" + eventName).toLowerCase();
-            if (!(eventName in _handlers)) {
-                throw new Error("Invalid event name.");
-            }
-            if (typeof handler !== "function") {
-                throw new Error("Invalid handler.");
-            }
-            // reference all handlers of given `eventName`
-            const handlerSet = _handlers[eventName];
-            let handlerSetLen = handlerSet.length;
-            // ensure handler exists, lookup, remove
-            while (--handlerSetLen >= 0) {
-                if (handlerSet[handlerSetLen] === handler) {
-                    // handler exists, remove
-                    handlerSet.splice(handlerSetLen, 1);
-                }
-            }
-            // return `this` to allow method chaining across consistent parent Object / execution context
-            return _self;
-        }
-    });
+    // define props for event-binding
+    defineAddEventListener(_self, _handlers);
+    defineRemoveEventListener(_self, _handlers);
+    
 
     // override push method
     Object.defineProperty(_self, "push", {

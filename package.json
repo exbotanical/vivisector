@@ -7,15 +7,16 @@
         "coverageDirectory": "./coverage",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "src/datatypes/*.js",
-            "!src/datatypes/ObservableObject.js"
+            "src/**/*.js",
+            "!src/datatypes/ObservableObject.js",
+            "!src/index.js"
         ],
         "coverageThreshold": {
             "global": {
-                "branches": 75,
+                "branches": 80,
                 "functions": 95,
-                "lines": 90,
-                "statements": 90
+                "lines": 95,
+                "statements": 95
             }
         }
     },

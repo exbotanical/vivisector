@@ -5,6 +5,8 @@ const ObservableString = require("../src/datatypes/ObservableString.js");
 
 const stringMock = "hello, world ";
 const handlerMock = () => "fired";
+const invalidTypesPool = [{}, 1, handlerMock, [""], undefined, null];
+
 /* Assertions */
 describe("evaluation of ObservableString datatype", () => {
 
@@ -13,6 +15,14 @@ describe("evaluation of ObservableString datatype", () => {
         it(`should create a String, ${stringMock}`, () => {
             const user = new ObservableString(stringMock);
             expect(user).toEqual({ "0": stringMock });
+           
+        });
+
+        it("should only accept String values", () => {
+             // iterate through invalid types
+             invalidTypesPool.forEach(value => {
+                expect(new ObservableString(value).value).toBeUndefined();
+            });
            
         });
 
@@ -129,8 +139,6 @@ describe("evaluation of ObservableString datatype", () => {
 
         it("should throw an Error when an attempting to call `reassign` with a non-String value", () => {
             const user = new ObservableString(stringMock);
-            const invalidTypesPool = [{}, 1, handlerMock, [""], undefined, null];
-
             // iterate through invalid types
             invalidTypesPool.forEach(value => {
                 expect(() => user.reassign(value)).toThrow("Invalid type");
