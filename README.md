@@ -17,11 +17,31 @@ License: MIT
 ## <a name="intro"></a> Introduction
 *Vivisector.js* is a light-weight Nodejs library that enables one to instantiate observable datatypes - that is, Arrays, Strings, et cetera that can have event listeners attached to them. 
 
-Each *Vivisector* child object - any given `Observable` - extends its respective type's interface so as to expose custom event-driven methods. As such, one can attach event listeners to datatypes such as Arrays, Strings, *et cetera*. 
+Each *Vivisector* child object - any given `Observable` - extends its respective type's interface so as to expose custom event-driven methods. As such, one can attach event listeners to variables and render them event-bound.
 
 *Vivisector* is a 'plug-and-play' library - no configuration is required; you'll simply have observable datatypes at your disposal. 
 
 ## <a name="usage"></a> Installation and Usage
+
+Import `Vivisector's` caller alias `Vx`:
+```
+const Vx = require("vivisector");
+```
+
+Create a new `Observable` - in this example, of type `Array` - and register a handler to fire when any *new elements* are added:
+```
+let users = Vx("Array", ["Alice","Bob"])
+    .addEventListener("itemadded", 
+        function(syntheticEvent) {
+            // every time an item is added to the array, fire this event
+            console.log(`Added ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
+        });
+
+users.push("Charlie");
+// "Added Charlie at index 2."
+```
+
+Have a look at these usage guides for a full overview:
 
   - [See Usage Guide for ObservableArray](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-array.md)
   - [See Usage Guide for ObservableArray](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-string.md)
