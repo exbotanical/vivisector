@@ -1,6 +1,6 @@
 <img src="https://github.com/MatthewZito/vivisector-js/blob/master/documentation/vx.png" width="390" height="390">
 
-# Vivisector.js | A Node.js library for observable JavaScript datatypes
+# Vivisector.js | Create observable JavaScript datatypes
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
 ```
 Author: Matthew T Zito
@@ -13,6 +13,9 @@ License: MIT
  - [Documentation](#docs)
     * [About](#about)
     * [Notes](#notes)
+
+
+## *Listen to Arrays or Objects, even Strings for changes with Vivisector.js*
 
 ## <a name="intro"></a> Introduction
 *Vivisector.js* is a light-weight Nodejs library that enables one to instantiate observable datatypes - that is, Arrays, Strings, et cetera that can have event listeners attached to them. 
