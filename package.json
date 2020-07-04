@@ -2,13 +2,13 @@
     "name": "vivisector",
     "version": "0.0.1",
     "description": "node.js library for creating observable datatypes",
-    "main": "./src/index.js",
+    "main": "./lib/index.js",
     "jest": {
         "coverageDirectory": "./coverage",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "src/packages/datatypes/*.js",
-            "!src/packages/datatypes/ObservableObject.js"
+            "lib/datatypes/*.js",
+            "!lib/datatypes/ObservableObject.js"
         ],
         "coverageThreshold": {
             "global": {

@@ -3,10 +3,10 @@
 Let's see how we can use an `ObservableString`. First, let's import the Vivisector library:
 
 ```
-const Vivisector = require("vivisector");
+const Vx = require("vivisector");
 ```
 
-Using the shorthand syntax `Vx`, let's instantiate a new `Observable` of type `String` with an event handler bound to its sole event, `mutated`. As usual, we don't need to use the `new` keyword, as `vivisector` takes care of that for you:
+Let's instantiate a new `Observable` of type `String` with an event handler bound to its sole event, `mutated`. As usual, we don't need to use the `new` keyword, as `vivisector` takes care of that for you:
 
 ```
 let str = Vx("String", "hello").addEventListener("mutated", function(syntheticEvent) {
@@ -35,7 +35,7 @@ str.value = "hallo";
 ## Advanced Usage for `Observable` of Type `String`
 Let us continue where we left off in the last section and review some of the more involved features of an `ObservableString`...
 
-With `ObservableString`s comes *another* way to reassign/mutate the primitive value: `reassign`. *This method is only available for Observables of type `String`.* The `reassign` method does precisely the same thing as assignment by way of the `value` accessor prop, however `reassign` is *chainable*.
+With `ObservableString`s comes *another* way to reassign/'mutate' the primitive value: `reassign`. *This method is only available for Observables of type `String`.* The `reassign` method does precisely the same thing as assignment by way of the `value` accessor prop, however `reassign` is *chainable*.
 
 Let's first define a callback for the new event listener we will chain to our newly reassigned ObservableString:
 

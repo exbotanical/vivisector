@@ -1,13 +1,13 @@
 ## Basic Usage for `Observable` of Type `Array`
 
-First, let's import the Vivisector library:
+Let's learn how to use `ObservableArrays`. First, let's import the Vivisector library:
 ```
-const Vivisector = require("vivisector");
+const Vx = require("vivisector");
 ```
 
-Let's create a new Array with two items. We'll also add some event listeners to the Array so we are notified any time the Array has been mutated. Recall that listener methods are optionally chainable:
+Let's create a new Array with two items. We'll also add some event listeners to the Array so we are notified any time the Array has been 'mutated'. Recall that listener methods are optionally chainable:
 ```
-let users = Observable("Array", ["Alice","Bob"])
+let users = Vx("Array", ["Alice","Bob"])
     .addEventListener("itemadded", 
         function(syntheticEvent) {
             // every time an item is added to the array, fire this event
@@ -31,14 +31,21 @@ Okay, the id is `0`.
 Let's create a second `Observable` of type 'Array', initialized with two elements: "Carol", "Carlos". This time, we will manually assign an id of `1`. This id will suffice because we know we've only created one other `Observable`; its id is `0`.
 
 ```
-let usersTwo = Observable("Array", ["Carol","Carlos"], { id: 1 });
+let usersTwo = Vx("Array", ["Carol","Carlos"], { id: 1 });
 ```
 Great. Let's ensure the id prop is set as expected:
 ```
 console.log(usersTwo.identifier);
 // 1
 ```
-Now, we'll add an event listener to `usersTwo`:
+
+Now, this will throw an Error because we've already assigned id `1` to an `Observable`:
+```
+let usersThree = Vx("Array", ["user one","user two"], { id: 1 });
+// "Error: Identifier 1 is currently in use."
+```
+
+Let's add an event listener to `usersTwo`:
 ```
 usersTwo.addEventListener("itemadded", function(syntheticEvent) {
     console.log(`Two: Added ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
@@ -69,7 +76,7 @@ usersTwo.push(6)
 // "Two: Added 6 at index 2."
 ```
 
-We can also use the shortened `Vx` alias in lieu of `Observable`:
+Let's instantiate yet another `ObservableArray`:
 ```
 let y = Vx("Array").addEventListener("itemadded", function(syntheticEvent) {
     console.log(`y: Added ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
@@ -89,12 +96,6 @@ And let's change the value at the 0th index of `y`:
 ```
 y[0] = 9;
 // "Item at index 0 set to 9"
-```
-
-Now, this will throw an Error because we've already assigned id `1` to an `Observable`:
-```
-let usersThree = Observable("Array", ["user one","user two"], { id: 1 });
-// "Error: Identifier 1 is currently in use."
 ```
 
 All `Observables` share non-enumerable properties `value`, `type`, and `identifier`. Should you need to, you can change the actual value of an `ObservableArray` by setting the `value` prop:
@@ -150,7 +151,7 @@ console.log(observableArr[0].value);
 // hallo
 ```
 
-However, keep in mind that we added the `ObservableString` itself to the `ObservableArray`. Note how mutating copies of the value via the accessor will mutate the original `ObservableString` - this is a standard upheld by `Vivisector` to enforce a singular source-of-truth across `Observables`:
+However, keep in mind that we added the `ObservableString` itself to the `ObservableArray`. Note how mutating copies of the value via the accessor will mutate the original `ObservableString` - this is standard JavaScript behavior (see by reference versus by value) that is further upheld by `Vivisector` to enforce a singular source-of-truth across `Observables`:
 
 ```
 let copiedObservableStr = observableArr[0];
@@ -159,11 +160,6 @@ console.log(copiedObservableStr.value);
 // hallo
 
 console.log(observableArr[0].value);
-// hallo
-
-let copiedObservableStr = observableArr[0];
-
-console.log(copiedObservableStr.value);
 // hallo
 
 copiedObservableStr.value = "" 
