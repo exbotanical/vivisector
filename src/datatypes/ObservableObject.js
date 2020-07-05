@@ -1,42 +1,130 @@
 
-// const target =  { data: "hello, world", type: "String" };
+const { defineAddEventListener, defineRemoveEventListener } = require("../utils/ubiquitous-props.js");
 
-// const mockHandler = () => console.log("Fired!");
+const setNIntervals = (fn, delay, rounds) => {
+    if (!rounds) {
+        return;
+    }
+    setTimeout(() => {
+        fn();
+        setNIntervals(fn, delay, (rounds -1));
+    }, delay);
+}
+
+// const newFunc = (...args) => setNIntervals(() => console.log(...args), 1000, 3);
+
+// const mockEventHandler = (eventData) => {
+//     const { type, prop, target, value }  = eventData;
+//         console.log("EVENT", { type, prop, target, value });
+// }
 
 
-// const transmogrifyObject = (obj, fn) => {
-//     const handler = {
-//         get(target, property, receiver) {
-//             fn();
-//             // recurse and continue chain of Proxies for nested props
-//             const value = Reflect.get(target, property, receiver);
-            
-//             if (typeof value === "object") {
-//                 return new Proxy(value, handler);
-//             }
-//             return value;
-//             // return Reflect[trapName](...arguments);
-//         },
-//         set(target, property, value) {
-//             fn();
-//             console.log("T" , target)
-//             Object.entries({ target, property, value }).forEach(([key, value]) => console.log("SET FIRED", `${key}:  ${JSON.stringify(value)}`));
-//             return Reflect.set(target, property, value);
-//         },
-//         deleteProperty(target, property) {
-//             fn();
-//             return Reflect.deleteProperty(target, property);
-//         }
-//     };
-//     return new Proxy(obj, handler);
-// };
+const proxyWrapper = (obj) => {
+    let _self;
+    const  _handlers = {
+            itemget: [],
+            itemdeleted: [],
+            itemset: []
+        };
 
-// const obj = transmogrifyObject(target, mockHandler);
+    
+    // helper for event executions
+    const raiseEvent = (event) => {
+        _handlers[event.type].forEach((handler) => {
+            handler.call(_self, event);
+        });
+    }
+    
+    const _rootHandler = {
+        get(target, prop, recv) {
+            // we use `Reflect` here as a simple mitigative effort to avoid violating Proxy invariants, as described in the specification here: 
+            // https://www.ecma-international.org/ecma-262/8.0/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver
+            const value = Reflect.get(target, prop, recv);
 
-// obj.data = 1
+            // recurse and continue chain of Proxies for nested props to ensure traps are executed upon access thereof
+            if (typeof value === "object") {
+                return new Proxy(value, _rootHandler);
+            }
+            raiseEvent({
+                type: "itemget",
+                prop,
+                target,
+                value
+            });
+        
+            return value;
+        },
+        set(target, prop, value, recv) {
+            raiseEvent({
+                type: "itemset",
+                prop,
+                target,
+                value
+            });
+            // 
+            return Reflect.set(target, prop, value);
+        },
+        deleteProperty(target, prop) {
 
-// // obj.data = { hello:"hello" }
-// // console.log(obj.data);
+            const value = Reflect.deleteProperty(target, property);
+            raiseEvent({
+                type: "itemdeleted",
+                prop,
+                target,
+                value
+            });
+
+            return value;
+        }
+    };
+
+    /* Root Object Conformations */
+    
+    _self = new Proxy(obj, _rootHandler);
+    // define `addEventListener` on Proxy Obj
+    defineAddEventListener(_self, _handlers);
+    // define `removeEventListener` on Proxy Obj
+    defineRemoveEventListener(_self, _handlers);
+
+    return _self;
+
+};
+
+// const mockTarget = { items: ["foo", "bar"], data: { meta: 1 } };
+
+// const obj = proxyWrapper(mockTarget).addEventListener("itemset", mockEventHandler);
+
+// obj.data.meta = { 1: "hello" };
+
+// obj.data.meta[1]= "john";
+// console.log(obj);
+// let a = obj.data
+// a.data = "mopo"
+// obj.data.meta[0] = function (...args) {
+//     [...args].forEach(arg => console.log(arg));
+// }
+
+// obj.data.meta[0]("HELLO", "WORLD");
+
+// Object.keys(obj).forEach(i => console.log(i));
+// const mockHandler = args => {
+//     let [targetObject, targetProp, givenValue, receiverObject ] = args,
+//         _operationType;
+
+//     if (args.length === 2) {
+//         _operationType = "DEL";
+
+//     }
+//     else if (args.length === 3) {
+//         _operationType = "GET";
+//     }
+//     else if (args.length === 4) {
+//         _operationType = "SET"
+//     }
+//     console.log(_operationType, givenValue, "on prop", targetProp, "of object", targetObject);
+// }
+
+
 
 
 

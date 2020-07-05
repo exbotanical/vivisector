@@ -11,19 +11,19 @@ const { defineAddEventListener, defineRemoveEventListener } = require("../utils/
  *     Registers as events `mutated`.
  * @augments String
  */
-function ObservableString(item) {
+function ObservableString(value) {
     const _self = this,
         _handlers = {
             mutated: []
         };
 
-    if (typeof item === "string") {
+    if (typeof value === "string") {
         /*
             The actual primitive value is stored in String Object.
             Unlike the `ObservableArray`, we don't need to copy the value to an internal, nested let given the limited scope of operations
             to be performed on a primitive i.e. the String versus an Object such as an Array
         */
-        _self[0] = String(item);
+        _self[0] = String(value);
     }
     
     // helper for event executions

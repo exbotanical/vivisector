@@ -72,6 +72,15 @@ describe("evaluation of ObservableArray datatype", () => {
         });
     });
 
+    describe("evaluation of custom ObservableArray prototype methods", () => {
+
+        it("`findIndexAll` should return all indices matching a given value", () => {
+            const users = new ObservableArray(itemsMock);
+            const matchedIndices = users.findIndexAll("Alice");
+            expect(matchedIndices).toEqual([0]);
+        });
+    });
+
     describe("evaluation of ObservableArray event methods", () => {
 
         it("should register and fire handlers on `itemset` events", () => {
@@ -225,6 +234,11 @@ describe("evaluation of ObservableArray datatype", () => {
             typesPool.forEach(value => users.value = value);
             expect(users.value).toEqual([""]);
             expect(callbackFiredCount).toEqual(1);
+        });
+
+        it("the `length` accessor setter should throw an Error when provided non-whole numbers", () => {
+            const users = new ObservableArray(itemsMock);
+            expect(() => users.length = 1.5).toThrow();
         });
     });
 });

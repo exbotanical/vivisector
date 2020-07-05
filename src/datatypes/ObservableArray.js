@@ -72,6 +72,25 @@ function ObservableArray(items) {
         },
     });
 
+    /* Custom Methods */
+
+    // given a value, returns an Array of indices which match said value
+    Object.defineProperty(_self, "findIndexAll", {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: function(value) {
+            let indices = [];
+            _array.forEach((item, index) => {
+                if (item === value) {
+                    indices.push(index);
+                }
+            });
+            return indices;
+        }
+    });
+
+
     // define props for event-binding
     defineAddEventListener(_self, _handlers);
     defineRemoveEventListener(_self, _handlers);
@@ -228,6 +247,7 @@ function ObservableArray(items) {
         set: function(value) {
             const ephemeralLength = Number(value);
             const length = _array.length;
+            // must be whole number
             if (ephemeralLength % 1 === 0 && ephemeralLength >= 0) {
                 if (ephemeralLength < length) {
                     _self.splice(ephemeralLength);
