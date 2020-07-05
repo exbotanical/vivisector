@@ -80,7 +80,7 @@ function ObservableArray(items) {
         enumerable: false,
         writable: false,
         value: function(value) {
-            let indices = [];
+            const indices = [];
             _array.forEach((item, index) => {
                 if (item === value) {
                     indices.push(index);

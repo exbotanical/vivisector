@@ -22,8 +22,6 @@ License: MIT
 
 Each *Vivisector* child object - any given `Observable` - extends its respective type's interface so as to expose custom event-driven methods. As such, one can attach event listeners to variables and render them event-bound.
 
-*Vivisector* is a 'plug-and-play' library - no configuration is required; you'll simply have observable datatypes at your disposal. 
-
 ## <a name="usage"></a> Installation and Usage
 
 Import `Vivisector's` caller alias `Vx`:

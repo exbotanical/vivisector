@@ -7,9 +7,9 @@ const setNIntervals = (fn, delay, rounds) => {
     }
     setTimeout(() => {
         fn();
-        setNIntervals(fn, delay, (rounds -1));
+        setNIntervals(fn, delay, rounds - 1);
     }, delay);
-}
+};
 
 // const newFunc = (...args) => setNIntervals(() => console.log(...args), 1000, 3);
 
@@ -18,22 +18,21 @@ const setNIntervals = (fn, delay, rounds) => {
 //         console.log("EVENT", { type, prop, target, value });
 // }
 
-
 const proxyWrapper = (obj) => {
+    // val is read before assignment, imperative use of `let`
     let _self;
-    const  _handlers = {
+    const _handlers = {
             itemget: [],
             itemdeleted: [],
             itemset: []
         };
-
     
     // helper for event executions
     const raiseEvent = (event) => {
         _handlers[event.type].forEach((handler) => {
             handler.call(_self, event);
         });
-    }
+    };
     
     const _rootHandler = {
         get(target, prop, recv) {
@@ -80,6 +79,7 @@ const proxyWrapper = (obj) => {
 
     /* Root Object Conformations */
     
+    // initialize root Proxy
     _self = new Proxy(obj, _rootHandler);
     // define `addEventListener` on Proxy Obj
     defineAddEventListener(_self, _handlers);

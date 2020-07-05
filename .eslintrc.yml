@@ -58,7 +58,9 @@ rules:
     no-with: 2
     operator-assignment: 2
     prefer-arrow-callback: 2
-    prefer-const: 2
+    prefer-const: 
+        - 2 
+        - ignoreReadBeforeAssign: true
     prefer-rest-params: 2
     rest-spread-spacing: 2
     semi: 2
