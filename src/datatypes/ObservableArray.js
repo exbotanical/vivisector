@@ -255,7 +255,7 @@ function ObservableArray(items) {
                     Reflect.apply(_self.push, _self, new Array(ephemeralLength - length));
                 }
             } else {
-                throw new RangeError("Invalid array length");
+                throw new RangeError("Invalid array length.");
             }
             _array.length = ephemeralLength;
         }

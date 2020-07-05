@@ -238,7 +238,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("the `length` accessor setter should throw an Error when provided non-whole numbers", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.length = 1.5).toThrow();
+            expect(() => users.length = 1.5).toThrow("Invalid array length.");
         });
     });
 });

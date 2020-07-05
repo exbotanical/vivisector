@@ -8,8 +8,7 @@
         "collectCoverage": true,
         "collectCoverageFrom": [
             "src/**/*.js",
-            "!src/datatypes/ObservableObject.js",
-            "!src/index.js"
+            "!src/datatypes/ObservableObject.js"
         ],
         "coverageThreshold": {
             "global": {

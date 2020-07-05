@@ -57,7 +57,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
 
         // unsupported / unprovided type
         else {
-            return console.log(`Error: datatype ${datatype} is not available as an Observable.`);
+            throw new Error(`Error: datatype ${datatype} is not available as an Observable.`);
         }
 
         /* set defaults here */
@@ -83,7 +83,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
 
             // if id is found in keys array of `_observables`, the instantiation should be terminated as the id is a duplicate
             if (!uniqueIdentifier) {
-                return console.log(`Error: Identifier ${options.id} is currently in use.`);
+                throw new Error(`Error: Identifier ${options.id} is currently in use.`);
             }
 
             _identifier = uniqueIdentifier;
@@ -122,7 +122,8 @@ const ObservableString = require("./datatypes/ObservableString.js");
 
     // // point proto to same execution context so as to provide an optional caller alias, `Vx`
     // global.Observable = global.Vx = Observable;
-    module.exports = Vx = Observable;
+    const Vx = Observable;
+    module.exports = Vx;
 
 }());
 /* 
