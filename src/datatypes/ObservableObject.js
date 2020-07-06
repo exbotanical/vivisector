@@ -11,12 +11,7 @@ const setNIntervals = (fn, delay, rounds) => {
     }, delay);
 };
 
-// const newFunc = (...args) => setNIntervals(() => console.log(...args), 1000, 3);
 
-// const mockEventHandler = (eventData) => {
-//     const { type, prop, target, value }  = eventData;
-//         console.log("EVENT", { type, prop, target, value });
-// }
 
 const proxyWrapper = (obj) => {
     // val is read before assignment, imperative use of `let`
@@ -54,6 +49,8 @@ const proxyWrapper = (obj) => {
             return value;
         },
         set(target, prop, value, recv) {
+            console.log("VA", value);
+
             raiseEvent({
                 type: "itemset",
                 prop,
@@ -64,12 +61,12 @@ const proxyWrapper = (obj) => {
             return Reflect.set(target, prop, value);
         },
         deleteProperty(target, prop) {
-
-            const value = Reflect.deleteProperty(target, property);
+            const ephemeralTarget = JSON.stringify(target, null, 0);
+            const value = Reflect.deleteProperty(target, prop);
             raiseEvent({
                 type: "itemdeleted",
                 prop,
-                target,
+                target: ephemeralTarget,
                 value
             });
 
@@ -90,11 +87,18 @@ const proxyWrapper = (obj) => {
 
 };
 
+// const newFunc = (...args) => setNIntervals(() => console.log(...args), 1000, 3);
+
+// const mockEventHandler = (eventData) => {
+//     const { type, prop, target, value }  = eventData;
+//         console.log("EVENT", { type, prop, target, value });
+// }
 // const mockTarget = { items: ["foo", "bar"], data: { meta: 1 } };
 
-// const obj = proxyWrapper(mockTarget).addEventListener("itemset", mockEventHandler);
+// const obj = proxyWrapper(mockTarget).addEventListener("itemdeleted", mockEventHandler);
 
-// obj.data.meta = { 1: "hello" };
+// delete obj.data.meta.fourteen;
+// console.log(obj);
 
 // obj.data.meta[1]= "john";
 // console.log(obj);

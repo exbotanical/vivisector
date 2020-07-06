@@ -144,6 +144,26 @@ describe("evaluation of ObservableString datatype", () => {
                 expect(() => user.reassign(value)).toThrow("Invalid type");
             });
         });
+
+        it("should throw an Error when an attempting to register an invalid event name", () => {
+            const user = new ObservableString(stringMock);
+            expect(() => user.addEventListener("invalidevent", handlerMock)).toThrow("Invalid event name.");
+        });
+
+        it("should throw an Error when an attempting to register an invalid handler", () => {
+            const user = new ObservableString(stringMock);
+            expect(() => user.addEventListener("mutated", "string").toThrow("Invalid handler."));
+        });
+
+        it("should throw an Error when an attempting to unregister an invalid event name", () => {
+            const user = new ObservableString(stringMock);
+            expect(() => user.removeEventListener("invalidevent", handlerMock)).toThrow("Invalid event name.");
+        });
+
+        it("should throw an Error when an attempting to unregister an invalid handler", () => {
+            const user = new ObservableString(stringMock).addEventListener("mutated", handlerMock);
+            expect(() => user.removeEventListener("mutated", null).toThrow("Invalid handler."));
+        });
             
         it("should only persist values of type String when using the `value` accessor", () => {
             let callbackFiredCount = 0;

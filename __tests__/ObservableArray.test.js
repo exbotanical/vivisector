@@ -212,12 +212,12 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("should throw an Error when an attempting to unregister an invalid event name", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.removeEventListener("invalidevent",  handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Invalid event name.");
         });
 
         it("should throw an Error when an attempting to unregister an invalid handler", () => {
             const users = new ObservableArray(itemsMock).addEventListener("itemadded", handlerMock);
-            expect(() => users.addEventListener("itemadded", "string").toThrow("Invalid handler."));
+            expect(() => users.removeEventListener("itemadded", null).toThrow("Invalid handler."));
         });
 
         it("should only persist values of type Array when using the `value` accessor", () => {
