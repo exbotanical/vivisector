@@ -1,10 +1,11 @@
 const ObservableArray = require("./datatypes/ObservableArray.js");
 const ObservableString = require("./datatypes/ObservableString.js");
+const ObservableObject = require("./datatypes/ObservableObject.js");
 
 /**
- * @summary A wrapper for exporting the Vivisector.js Observable model and its associated properties.
+ * @summary A wrapper for exporting the Vivisector.js `Observables` and their associated properties.
  * @description Exposes various JavaScript datatypes and primitives and extends them with both event-driven 
- *     properties (qua the Observable's execution context), and ubiquitous Vivisector-contingent properties (qua the macro execution context).
+ *     properties (qua the `Observable`'s execution context), and ubiquitous Vivisector-contingent properties (qua the macro execution context).
  */
 
 // wrap in IIFE to align execution context in prospective 'non-Node' environments
@@ -12,30 +13,30 @@ const ObservableString = require("./datatypes/ObservableString.js");
 (function (global) {  
     // mitigate need to use `new` keyword by returning a discrete function constructor 
     // to generate the object   
-    const Observable = function(datatype, data, options) {
-        return new Observable.init(datatype, data, options);
+    const Vx = function(datatype, data, options) {
+        return new Vx.init(datatype, data, options);
     };
 
     /* Private/Unexposed Props */
 
-    // global aggregation object - used to store and index all Observables
+    // global aggregation object - used to store and index all `Observables`
     const _observables = {};
 
     // meta-prototype for storing methods accessible to all `Observable` instances
-    Observable.prototype = {
-        // any methods added here will be exposed to *all* Observables 
+    Vx.prototype = {
+        // any methods added here will be exposed to *all* `Observables`
         // we can actually import other modules or libs here; in doing so, we need to further tighten the security 
         // on global denominations so as to mitigate nasty dependency collisions
 
         // typecast: function(inboundType) {
         //     // do stuff
-        //     // return new Observable.init(datatype, data, options);
+        //     // return new Vx.init(datatype, data, options);
         // }
     };
 
     // the actual method which is executed
     // this is mostly config for prospective macro-object use and ubiquitous methods
-    Observable.init = function(datatype, data, options) {
+    Vx.init = function(datatype, data, options) {
         // this assignment will point to the execution context of the newly generated `Observable`
         // remaining vars are hoisted
         const _self = this,
@@ -48,13 +49,16 @@ const ObservableString = require("./datatypes/ObservableString.js");
             // this assignment will point to the execution context of the newly generated `ObservableArray`
             _intermediateObject = new ObservableArray(data);
         }
-
         // selected type: String
         else if (datatype === "String") {
             // this assignment will point to the execution context of the newly generated `ObservableArray`
             _intermediateObject = new ObservableString(data);
         }
-
+        // selected type: String
+        else if (datatype === "Object") {
+            // this assignment will point to the execution context of the newly generated `ObservableObject`
+            _intermediateObject = new ObservableObject(data);
+        }
         // unsupported / unprovided type
         else {
             throw new Error(`Error: datatype ${datatype} is not available as an Observable.`);
@@ -62,9 +66,9 @@ const ObservableString = require("./datatypes/ObservableString.js");
 
         /* set defaults here */
 
-        // the type of a given Observable instance e.g. 'Array'
+        // the type of a given `Observable` instance e.g. 'Array'
         const _type = datatype;
-        // the unique identifier for a given Observable instance
+        // the unique identifier for a given `Observable` instance
         let _identifier;
 
         // if options passed, configure accordingly
@@ -99,7 +103,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
 
         // Here, we are creating a new Object of all ubiquitous props for which `defineProperty` will be called. Then,
         // we destructure the key/value pairs from the Array produced by `Object.entries` and call `forEach` thereon
-        // ea. key will become the prop name; each value (that which is preceded by an underscore), the prop value
+        // Ea. key will become the prop name; each value (that which is preceded by an underscore), the prop value
         Object.entries({ identifier: _identifier, type: _type }).forEach(([key, value]) => 
             // use `defineProperty` for greater control granularity; set prop to non-enumerable
             Object.defineProperty(_intermediateObject, key, {
@@ -109,7 +113,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
             })
         );
 
-        // persist new Observable inside `_observables` at index `_identifier`
+        // persist new `Observable` inside `_observables` at index `_identifier`
         _observables[_identifier] = _intermediateObject;
         
         return _intermediateObject;
@@ -117,12 +121,11 @@ const ObservableString = require("./datatypes/ObservableString.js");
     };
 
     // point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
-    ObservableArray.prototype = Observable.prototype;
-    ObservableString.prototype = Observable.prototype;
-
+    ObservableArray.prototype = Vx.prototype;
+    ObservableString.prototype = Vx.prototype;
+    ObservableObject.prototype = Vx.prototype;
     // // point proto to same execution context so as to provide an optional caller alias, `Vx`
     // global.Observable = global.Vx = Observable;
-    const Vx = Observable;
     module.exports = Vx;
 
 }());

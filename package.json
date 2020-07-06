@@ -7,8 +7,7 @@
         "coverageDirectory": "./coverage",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "src/**/*.js",
-            "!src/datatypes/ObservableObject.js"
+            "src/**/*.js"
         ],
         "coverageThreshold": {
             "global": {
@@ -23,7 +22,7 @@
         "test": "jest",
         "coverage": "jest --coverage && rm -rf ./coverage",
         "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-        "testmon": "jest --watch *test.js",
+        "testmon": "jest --watch _tests_.*",
         "repl": "node playground.js",
         "lint": "eslint ./",
         "build": "npm run lint && babel ./src -d ./lib",

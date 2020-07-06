@@ -24,7 +24,7 @@ License: MIT
 *Vivisector* is flexible, compact, and straightforward; it affords you fine-grained control by allowing you to decide when and what happens when a variable changes.
 
 ### <a name="feat"></a> Features
-  - custom *Observable* datatypes for Array, Object, and String data
+  - custom *Observable* datatypes for Array, Object/Array, and String data
   - instantly link/unlink actions to a variable's state
   - bind unlimited callbacks to specific types of state-mutation events *e.g. `itemadded`, `itemremoved`*
   - custom, chainable methods maintain stable execution context *i.e. method-chaining without the need to explicitly pipe `this`*
@@ -55,6 +55,8 @@ Have a look at these usage guides for a full overview:
 
   - [See Usage Guide for `ObservableArray`](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-array.md)
   - [See Usage Guide for `ObservableString`](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-string.md)
+
+Because Arrays *are* Objects, you certainly can instantiate an `ObservableObject` with Array data. However, you might find some of the Array-specific properties of the decoupled `ObservableArray` useful in certain instances.
 
 ## <a name="docs"></a> Documentation
 

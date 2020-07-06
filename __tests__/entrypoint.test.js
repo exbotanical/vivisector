@@ -29,6 +29,14 @@ describe("evaluation of Vivisector entrypoint", () => {
             expect(user).toEqual({ "0": stringMock });
         });
 
+        it("should instantiate an Observable of type `Object`", () => {
+            const users = Vx("Object", itemsMock);
+            expect(users).toEqual( { "0":  itemsMock[0], "1":  itemsMock[1] } );
+            expect(users[0]).toEqual(itemsMock[0]);
+            expect(users[1]).toEqual(itemsMock[1]);
+            expect(users[2]).toBeUndefined();
+        });
+
     });
 
     describe("evaluation of custom accessors", () => {
@@ -37,15 +45,21 @@ describe("evaluation of Vivisector entrypoint", () => {
             const users = Vx("Array", itemsMock);
             expect(users.value).toEqual(itemsMock);
             expect(users.type).toEqual("Array");
-            expect(users.identifier).toBe(2);
+            expect(users.identifier).toBe(3);
             
         });
 
-        it("`value`, `type`, and `identifier` props are extant on Observable of type `Array`", () => {
+        it("`value`, `type`, and `identifier` props are extant on Observable of type `String`", () => {
             const user = Vx("String", stringMock);
             expect(user.value).toEqual(stringMock);
             expect(user.type).toEqual("String");
-            expect(user.identifier).toBe(3);
+            expect(user.identifier).toBe(4);
+        });
+
+        it("`type`, and `identifier` props are extant on Observable of type `String`", () => {
+            const user = Vx("Object", itemsMock);
+            expect(user.type).toEqual("Object");
+            expect(user.identifier).toBe(5);
         });
 
         it("should register eligible `identifier`", () => {

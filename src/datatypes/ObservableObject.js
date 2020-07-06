@@ -1,21 +1,19 @@
-
 const { defineAddEventListener, defineRemoveEventListener } = require("../utils/ubiquitous-props.js");
 
-const setNIntervals = (fn, delay, rounds) => {
-    if (!rounds) {
-        return;
-    }
-    setTimeout(() => {
-        fn();
-        setNIntervals(fn, delay, rounds - 1);
-    }, delay);
-};
+// const setNIntervals = (fn, delay, rounds) => {
+//     if (!rounds) {
+//         return;
+//     }
+//     setTimeout(() => {
+//         fn();
+//         setNIntervals(fn, delay, rounds - 1);
+//     }, delay);
+// };
 
-
-
-const proxyWrapper = (obj) => {
+function ObservableObject(obj) {
     // val is read before assignment, imperative use of `let`
     let _self;
+
     const _handlers = {
             itemget: [],
             itemdeleted: [],
@@ -31,26 +29,31 @@ const proxyWrapper = (obj) => {
     
     const _rootHandler = {
         get(target, prop, recv) {
+            // type-check mechanism for testing
+            if (prop === Symbol.for("_isProxy")) {
+                return true;
+            }
             // we use `Reflect` here as a simple mitigative effort to avoid violating Proxy invariants, as described in the specification here: 
             // https://www.ecma-international.org/ecma-262/8.0/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver
             const value = Reflect.get(target, prop, recv);
-
             // recurse and continue chain of Proxies for nested props to ensure traps are executed upon access thereof
             if (typeof value === "object") {
                 return new Proxy(value, _rootHandler);
             }
-            raiseEvent({
-                type: "itemget",
-                prop,
-                target,
-                value
-            });
+            // tradeoff here is `raiseEvent` won't be called for root getters; else, the cb would fire for each branch
+            // TODO fix this by caching the Object with a WeakMap or something and walking the tree on ea. `get`...I think this would work
+            if (value) {
+                raiseEvent({
+                    type: "itemget",
+                    prop,
+                    target,
+                    value
+                });
+            }
         
             return value;
         },
         set(target, prop, value, recv) {
-            console.log("VA", value);
-
             raiseEvent({
                 type: "itemset",
                 prop,
@@ -77,7 +80,13 @@ const proxyWrapper = (obj) => {
     /* Root Object Conformations */
     
     // initialize root Proxy
-    _self = new Proxy(obj, _rootHandler);
+    if (!(obj instanceof Object)) {
+        return;
+    }
+    // using `Object.assign` here breaks the chain of reference to the provided argument `obj` 
+    // if we pass `obj` directly, the Proxy will modifiy the original target
+    _self = new Proxy(Object.assign({}, obj), _rootHandler);
+
     // define `addEventListener` on Proxy Obj
     defineAddEventListener(_self, _handlers);
     // define `removeEventListener` on Proxy Obj
@@ -87,6 +96,8 @@ const proxyWrapper = (obj) => {
 
 };
 
+module.exports = ObservableObject;
+
 // const newFunc = (...args) => setNIntervals(() => console.log(...args), 1000, 3);
 
 // const mockEventHandler = (eventData) => {
@@ -95,8 +106,8 @@ const proxyWrapper = (obj) => {
 // }
 // const mockTarget = { items: ["foo", "bar"], data: { meta: 1 } };
 
-// const obj = proxyWrapper(mockTarget).addEventListener("itemdeleted", mockEventHandler);
-
+// const obj = ObservableObject(mockTarget).addEventListener("itemdeleted", mockEventHandler);
+// delete obj.items
 // delete obj.data.meta.fourteen;
 // console.log(obj);
 
