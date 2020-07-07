@@ -60,7 +60,6 @@ function ObservableObject(obj) {
                 target,
                 value
             });
-            // 
             return Reflect.set(target, prop, value);
         },
         deleteProperty(target, prop) {

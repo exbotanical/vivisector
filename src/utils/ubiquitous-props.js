@@ -17,7 +17,7 @@ const defineAddEventListener = (context, handlers) => {
             }
             // add handler to respective event nested Array
             handlers[eventName].push(handler);
-            // return `this` to allow method chaining across consistent parent Object / execution context
+            // explicitly return `context` to allow method chaining across consistent parent Object / execution context
             return context;
         }
     });
@@ -47,7 +47,7 @@ const defineRemoveEventListener = (context, handlers) => {
                     handlerSet.splice(handlerSetLen, 1);
                 }
             }
-            // return `this` to allow method chaining across consistent parent Object / execution context
+            // explicitly return `context` to allow method chaining across consistent parent Object / execution context
             return context;
         }
     });
