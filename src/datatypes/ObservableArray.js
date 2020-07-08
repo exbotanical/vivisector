@@ -283,20 +283,3 @@ function ObservableArray(items) {
 }
 
 module.exports = ObservableArray;
-
-// /* Direct Usage */
-// let users = new ObservableArray(["user one","user two"]);
-
-// /* Synthetic Events */
-// users.addEventListener("itemadded", function(syntheticEvent) {
-//     console.log(`Added ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
-// });
-
-// users.addEventListener("itemremoved", function(syntheticEvent) {
-//     console.log(`Removed ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
-// });
-
-// users.push("user three");
-// users.pop();
-
-

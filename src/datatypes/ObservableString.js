@@ -149,26 +149,6 @@ function ObservableString(value) {
             });
         }
     });
-
-    
-
-    // return _self
 }
 
 module.exports = ObservableString;
-
-/* Usage */
-
-// let a = new ObservableString("hello");
-
-// a.addEventListener("mutated", function(syntheticEvent) {
-//     console.log(`Value '${syntheticEvent.value}' has been updated to '${syntheticEvent.mutant}'`);
-// });
-
-// console.log(a);
-
-// a.reassign("hi");
-
-// console.log("len:", a.length);
-// let b = a.split("");
-// console.log(b);

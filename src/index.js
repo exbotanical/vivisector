@@ -3,7 +3,7 @@ const ObservableString = require("./datatypes/ObservableString.js");
 const ObservableObject = require("./datatypes/ObservableObject.js");
 
 /**
- * @summary A wrapper for exporting the Vivisector.js `Observables` and their associated properties.
+ * @summary A factory / wrapper for exporting the Vivisector.js `Observables` and their associated properties.
  * @description Exposes various JavaScript datatypes and primitives and extends them with both event-driven 
  *     properties (qua the `Observable`'s execution context), and ubiquitous Vivisector-contingent properties (qua the macro execution context).
  */
@@ -22,17 +22,22 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
     // global aggregation object - used to store and index all `Observables`
     const _observables = {};
 
+    /* Method Injection Library */
+
     // meta-prototype for storing methods accessible to all `Observable` instances
+    // place methods which you wish to expose on Vx instances here
     Vx.prototype = {
         // any methods added here will be exposed to *all* `Observables`
         // we can actually import other modules or libs here; in doing so, we need to further tighten the security 
-        // on global denominations so as to mitigate nasty dependency collisions
+        // on global denominations so as to mitigate nasty dependency collisions (assuming we are using `global` - currently, no)
 
         // typecast: function(inboundType) {
-        //     // do stuff
-        //     // return new Vx.init(datatype, data, options);
+            // do stuff
+            // return new Vx.init(datatype, data, options);
         // }
     };
+
+    /* Datatype Factory */
 
     // the actual method which is executed
     // this is mostly config for prospective macro-object use and ubiquitous methods
@@ -120,17 +125,27 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
         
     };
 
-    // point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
-    ObservableArray.prototype = Vx.prototype;
-    ObservableString.prototype = Vx.prototype;
-    ObservableObject.prototype = Vx.prototype;
-    // // point proto to same execution context so as to provide an optional caller alias, `Vx`
-    // global.Observable = global.Vx = Observable;
+    /* 
+        ~ For use with currently inactive `global` execution context wrapper ~
+
+        point prototype of each `Observable` instance to the aforementioned meta prototype to expose ubiquitous methods 
+
+        ObservableArray.prototype = Vx.prototype;
+        ObservableString.prototype = Vx.prototype;
+        ObservableObject.prototype = Vx.prototype;
+    
+        point proto to same execution context so as to provide an optional caller alias, `Vx`
+        global.Observable = global.Vx = Observable;
+    */
+
     module.exports = Vx;
 
 }());
+
 /* 
-    Passing `global` in lieu of `this`
+    Passing `global` in lieu of `this`. 
+    
+    Currently inactive, but applicable if we ever decide to go back to the `global` diad context approach.
 
     We pass the global object in lieu of `this` for a couple of very specific performance reasons:
 

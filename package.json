@@ -23,7 +23,7 @@
         "coverage": "jest --coverage && rm -rf ./coverage",
         "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
         "testmon": "jest --watch _tests_.*",
-        "repl": "node playground.js",
+        "repl": "node repl.js",
         "lint": "eslint ./",
         "build": "npm run lint && babel ./src -d ./lib",
         "clean": "rm -rf ./coverage && rm -rf ./lib"

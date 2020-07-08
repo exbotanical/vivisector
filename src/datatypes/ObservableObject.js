@@ -97,8 +97,6 @@ function ObservableObject(obj) {
 
 module.exports = ObservableObject;
 
-// const newFunc = (...args) => setNIntervals(() => console.log(...args), 1000, 3);
-
 // const mockEventHandler = (eventData) => {
 //     const { type, prop, target, value }  = eventData;
 //         console.log("EVENT", { type, prop, target, value });
