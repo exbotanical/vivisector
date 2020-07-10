@@ -18,15 +18,18 @@ script:
 
 jobs:
     include:
+        if: branch = master
         - stage: npm release
-        if: tag IS present
         node_js: "13"
-        script: npm run build
-        deploy:
-            provider: npm
-            email: "$NPM_EMAIL"
-            api_key: "$NPM_TOKEN"
-            skip_cleanup: true
-            on:
-                tags: true
-                branch: master
+        script: 
+            - npm run build
+        after_success:
+            - npm run semantic-release
+        # deploy:
+        #     provider: npm
+        #     email: "$NPM_EMAIL"
+        #     api_key: "$NPM_TOKEN"
+        #     skip_cleanup: true
+        #     on:
+        #         tags: true
+        #         branch: master

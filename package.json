@@ -1,63 +1,81 @@
 {
-    "name": "vivisector",
-    "version": "1.0.0",
-    "description": "node.js library for creating observable datatypes",
-    "main": "./lib/index.js",
-    "files": [
-        "lib/",
-        "CONTRIBUTING.md"
+  "name": "vivisector",
+  "version": "0.0.0-development",
+  "description": "node.js library for creating observable datatypes",
+  "main": "./lib/index.js",
+  "files": [
+    "lib/",
+    "CONTRIBUTING.md"
+  ],
+  "jest": {
+    "coverageDirectory": "./coverage",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js"
     ],
-    "jest": {
-        "coverageDirectory": "./coverage",
-        "collectCoverage": true,
-        "collectCoverageFrom": [
-            "src/**/*.js"
-        ],
-        "coverageThreshold": {
-            "global": {
-                "branches": 85,
-                "functions": 100,
-                "lines": 95,
-                "statements": 95
-            }
-        }
-    },
-    "scripts": {
-        "test": "jest",
-        "coverage": "jest --coverage && rm -rf ./coverage",
-        "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-        "testmon": "jest --watch _tests_.*",
-        "repl": "node repl.js",
-        "lint": "eslint ./",
-        "build": "npm run lint && babel ./src -d ./lib",
-        "clean": "rm -rf ./coverage && rm -rf ./lib",
-        "prerelease": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/MatthewZito/vivisector-js.git"
-    },
-    "keywords": [
-        "observable datatypes",
-        "custom datatypes",
-        "observables",
-        "event-driven",
-        "event-bound objects",
-        "micro-library"
-    ],
-    "author": "Matthew T Zito",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/MatthewZito/vivisector-js/issues"
-    },
-    "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
-    "devDependencies": {
-        "@babel/cli": "^7.10.4",
-        "@babel/plugin-proposal-class-properties": "^7.10.4",
-        "@babel/preset-env": "^7.10.4",
-        "babel-eslint": "^10.1.0",
-        "coveralls": "^3.1.0",
-        "eslint": "^7.4.0",
-        "jest": "^26.1.0"
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 100,
+        "lines": 95,
+        "statements": 95
+      }
     }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "scripts": {
+    "cm": "git-cz",
+    "test": "jest",
+    "coverage": "jest --coverage && rm -rf ./coverage",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "testmon": "jest --watch _tests_.*",
+    "repl": "node repl.js",
+    "lint": "eslint ./",
+    "build": "npm run lint && babel ./src -d ./lib",
+    "clean": "rm -rf ./coverage && rm -rf ./lib",
+    "prerelease": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MatthewZito/vivisector-js.git"
+  },
+  "keywords": [
+    "observable datatypes",
+    "custom datatypes",
+    "observables",
+    "event-driven",
+    "event-bound objects",
+    "micro-library"
+  ],
+  "author": "Matthew T Zito",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatthewZito/vivisector-js/issues"
+  },
+  "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@commitlint/cli": "^9.0.1",
+    "@commitlint/config-conventional": "^9.0.1",
+    "babel-eslint": "^10.1.0",
+    "coveralls": "^3.1.0",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.4.0",
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "semantic-release": "^17.1.1"
+  },
+  "dependencies": {},
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
