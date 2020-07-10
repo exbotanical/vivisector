@@ -15,21 +15,8 @@ install:
 script:
     - npm run lint
     - npm run coveralls
+    - npm run build
 
-jobs:
-    include:
-        - stage: npm release
-        node_js: "13"
-        script: 
-            - npm run build
-        after_success:
-        #     - npm run semantic-release
-            - ls -la
-        # deploy:
-        #     provider: npm
-        #     email: "$NPM_EMAIL"
-        #     api_key: "$NPM_TOKEN"
-        #     skip_cleanup: true
-        #     on:
-        #         tags: true
-        #         branch: master
+after_success:
+# - npm run semantic-release
+    - ls -la
