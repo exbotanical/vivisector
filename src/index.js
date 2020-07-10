@@ -25,7 +25,7 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
     /* Method Injection Library */
 
     // meta-prototype for storing methods accessible to all `Observable` instances
-    // place methods which you wish to expose on Vx instances here
+    // place methods which you wish to expose on Vx instances here and uncomment reassignments below (ln. 133-135)
     Vx.prototype = {
         // any methods added here will be exposed to *all* `Observables`
         // we can actually import other modules or libs here; in doing so, we need to further tighten the security 

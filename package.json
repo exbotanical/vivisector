@@ -1,8 +1,11 @@
 {
     "name": "vivisector",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "node.js library for creating observable datatypes",
-    "main": "./src/index.js",
+    "main": "./lib/index.js",
+    "files": [
+        "lib/"
+    ],
     "jest": {
         "coverageDirectory": "./coverage",
         "collectCoverage": true,

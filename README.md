@@ -13,8 +13,6 @@ License: MIT
  - [Installation + Usage](#usage)
  - [Documentation](#docs)
     * [About](#about)
-    * [Notes](#notes)
-
 
 ## *Listen to Arrays or Objects, even Strings for changes with Vivisector.js*
 
@@ -45,7 +43,7 @@ const logAdditions = ({item, index}) => console.log(`Added ${item} at index ${in
 const users = Vx("Array", ["Alice","Bob"]);
 
 users.addEventListener("itemadded", logAdditions);
-// every time an item is added to the array, fire this event
+// every time an item is added to the array, fire `logAdditions`
 
 users.push("Charlie");
 // "Added Charlie at index 2."
@@ -166,7 +164,7 @@ Full wiki coming soon...
 
   ```
   const logMsg = function(event) {
-            // every time an item is added to the array, fire this event
+            // every time an item is added to the array, fire this callback
             console.log(`Added ${event.item} at index ${event.index}.`);
         });
   let users = Vx("Array", ["Alice","Bob"]).addEventListener("itemadded", logMsg);
@@ -179,7 +177,7 @@ Full wiki coming soon...
 
   ```
   const logMsg = function(event) {
-            // every time an item is added to the array, fire this event
+            // every time an item is added to the array, fire this callback
             console.log(`Added ${event.item} at index ${event.index}.`);
         });
   let users = Vx("Array", ["Alice","Bob"]).addEventListener("itemadded", logMsg).removeEventListener("itemadded", logMsg);
@@ -198,21 +196,3 @@ Full wiki coming soon...
 This is the question I set out to answer when I started writing `ObservableArrays`. I read about things like Rxjs or the *Observer pattern* but found in them paradigms far too complex for what I was trying to do: simply fire events when variables had changed (and contingent on *what* those changes were). And so I continued with the creation of *Vivisector.js*, a very light-weight (and dependency-free) library for creating 'Observable' datatypes.
 
 For example, we can instantiate a new *Observable* of type `Array` and we will have available to us an Array-like object which extends native Array methods and properties, but is also equipped with the capacity to become event-bound. That is, *Vivisector* gives you an Array onto which you can bind (and chain) events. 
-
-### <a name="notes"></a> Notes 
-#### Unengaged Features 
-The following features have been built but not implemented:
-
-A Centralized Store for Observables
-
-The library itself is exposed as an API from which Observables can be instantiated on the fly; this centralizes a "store" of all active Observables for easy management and greater control granularity.
-
-*How does this work?*
-
-*Vivisector* recursively points child objects at its own prototype so as to expose an internal library of methods; this subset of methods is therefore ubiquitous to *all* *Observables*. The internal prototype also maintains a list of all *Observables* extant in a given code-base. This is a powerful feature that allows you to centralize a singular source-of-truth for managing your *Observables*.
-
-#### Imminent Todos
-
-  - build out `cast` method on base prototype for handling observable transfers
-  - error handling
-  - enumerate event-listeners method on all *Observables* (see: jQuery 1.1.0 source's `data` method)

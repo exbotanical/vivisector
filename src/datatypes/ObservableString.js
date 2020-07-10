@@ -140,8 +140,8 @@ function ObservableString(value) {
                 configurable: false,
                 enumerable: false,
                 writable: false,
-                // Here, we intercept the getter/setter conformation of each method on `String`'s prototype
-                // We do this so as to set the execution context to point to the primitive `String` and *not* its parent Object, 
+                // Here, we intercept the getter/setter conformation of each method on String's prototype
+                // We do this so as to set the execution context to point to the primitive String and *not* its parent Object, 
                 // in this case `ObservableString`
                 value: function(...args) {
                     return _self[0][name](...args);
