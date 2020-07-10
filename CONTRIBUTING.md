@@ -1,4 +1,4 @@
-# Contribution Guidelines and Local Development
+# Contribution and Local Development Guidelines
 
 This document outlines everything you need to know to contribute to *Vivisector*.
 
@@ -7,18 +7,17 @@ Clone or fork the repository; you'll need several files that are not included in
 
 Run `npm install` to grab all the dev deps. The entire repo is configured for you and should work straight away. 
 
-If you're running an old version of Node (and don't feel like upgrading), you can use `nvm` or install necessary Babel plugins.
+If you're running an old version of Node (and don't feel like upgrading), you can use `nvm` or install the necessary Babel plugins.
 
 ## Scripts
-Dev Scripts (good to know):
+### Dev Scripts (good to know)
   - `test` Run Jest test suites.
   - `coverage` Run Jest coverage. Creates coverage output for assessment if exit status is *not* 0.
   - `testmon` Run Jest in monitored / watch mode. Useful for developing new tests.
   - `lint` Runs Eslint config.
 
-Maintainer Scripts (ignore):
-  - `coveralls` For automated testing. Ignore.
-  - `repl` Maintainer local dev script. Ignore.
+### Maintainer Scripts (ignore)
+  - `coveralls` For automated coverage reporting.
   - `build` Transpile entire source.
   - `clean` Remove all build and/or coverage artifacts.
   - `prerelease` Used to locally assess what release will look like w/out publishing.
