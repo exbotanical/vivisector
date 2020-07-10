@@ -61,7 +61,6 @@ We encourage you write comments liberally, insofar as your commentary is effectu
 
 If using Visual Studio Code, we highly recommend that you install the `Code Spell Checker` extension, else something comparable. All we ask on this front is that you do your due diligence to ensure comments are comprehensible.
 
-
 Code documentation is pretty important here. We use a JSDocs format, albeit liberally. Constructors, modules, et al should be preceded by a JSDocs style comment block that provides a summary and any params/return values, if applicable.
 
 # TL;DR
