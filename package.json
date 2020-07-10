@@ -24,20 +24,20 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+    "pre-push": "npm run lint && npm run test"
     }
   },
   "scripts": {
-    "cm": "git-cz",
-    "test": "jest",
     "coverage": "jest --coverage && rm -rf ./coverage",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "testmon": "jest --watch _tests_.*",
-    "repl": "node repl.js",
     "lint": "eslint ./",
+    "test": "jest",
+    "testmon": "jest --watch _tests_.*",
     "build": "npm run lint && babel ./src -d ./lib",
     "clean": "rm -rf ./coverage && rm -rf ./lib",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "prerelease": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+    "repl": "node repl.js",
     "semantic-release": "semantic-release"
   },
   "repository": {

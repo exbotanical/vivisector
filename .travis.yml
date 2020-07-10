@@ -18,13 +18,13 @@ script:
 
 jobs:
     include:
-        if: branch = master
         - stage: npm release
         node_js: "13"
         script: 
             - npm run build
         after_success:
-            - npm run semantic-release
+        #     - npm run semantic-release
+            - ls -la
         # deploy:
         #     provider: npm
         #     email: "$NPM_EMAIL"
