@@ -4,7 +4,8 @@
     "description": "node.js library for creating observable datatypes",
     "main": "./lib/index.js",
     "files": [
-        "lib/"
+        "lib/",
+        "CONTRIBUTING.md"
     ],
     "jest": {
         "coverageDirectory": "./coverage",
@@ -29,7 +30,8 @@
         "repl": "node repl.js",
         "lint": "eslint ./",
         "build": "npm run lint && babel ./src -d ./lib",
-        "clean": "rm -rf ./coverage && rm -rf ./lib"
+        "clean": "rm -rf ./coverage && rm -rf ./lib",
+        "prerelease": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz"
     },
     "repository": {
         "type": "git",

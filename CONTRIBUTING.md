@@ -3,6 +3,7 @@
 This document outlines everything you need to know to contribute to *Vivisector*.
 
 ## Installation and Local Dev Setup
+Clone or fork the repository; you'll need several files that are not included in the NPM package.
 
 Run `npm install` to grab all the dev deps. The entire repo is configured for you and should work straight away. 
 
@@ -32,3 +33,12 @@ Code coverage thresholds must be maintained; this necessitates tests. If you are
 PRs need to be correlated to an issue. If you're submitting a PR, it should be coupled with the issue it resolves. If a new feature is being added, an issue should have been filed outlining the purpose of that new feature. 
 
 If you have submitted a PR for which there is no issue (for whatever reason), simply file one and reference it so your PR can be reviewed. This may seem arbitrary at times, but it helps me keep record of the development process and changelog. 
+
+# TL;DR
+1. Fork + Clone repo
+2. Install dependencies: `npm install` 
+3. Checkout a feature branch: `git checkout -b <issue number>-<concise but descriptive feature name>` *e.g. `git checkout -b 27-fix-tests`*
+4. Write your code (and tests, if applicable)
+5. Run linter: `npm run lint`
+6. Run tests: `npm run coverage`
+7. Commit and push changes; make a PR against master branch
