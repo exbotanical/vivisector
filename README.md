@@ -2,10 +2,9 @@
 
 # Vivisector.js | Create observable JavaScript datatypes
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
-```
-Author: Matthew T Zito
-License: MIT
-```
+[![npm version](https://badge.fury.io/js/vivisector.svg)](https://badge.fury.io/js/vivisector)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Table of Contents
 
  - [Introduction](#intro) 
@@ -13,8 +12,6 @@ License: MIT
  - [Installation + Usage](#usage)
  - [Documentation](#docs)
     * [About](#about)
-
-## *Listen to Arrays or Objects, even Strings for changes with Vivisector.js*
 
 ## <a name="intro"></a> Introduction
 *Vivisector.js* is a light-weight Nodejs library that exposes custom event-driven datatypes. *Vivisector's* *Observable* types broadcast unique events correlated to specific types of mutations and accessors. As such, one can bind methods to variables and render them event-bound. 
