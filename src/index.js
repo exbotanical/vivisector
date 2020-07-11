@@ -51,22 +51,20 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
 
         // selected type: Array
         if (datatype === "Array") {
-            // this assignment will point to the execution context of the newly generated `ObservableArray`
+            // point to the execution context of the newly generated `Observable`
             _intermediateObject = new ObservableArray(data);
         }
         // selected type: String
         else if (datatype === "String") {
-            // this assignment will point to the execution context of the newly generated `ObservableArray`
             _intermediateObject = new ObservableString(data);
         }
         // selected type: String
         else if (datatype === "Object") {
-            // this assignment will point to the execution context of the newly generated `ObservableObject`
             _intermediateObject = new ObservableObject(data);
         }
         // unsupported / unprovided type
         else {
-            throw new Error(`Error: datatype ${datatype} is not available as an Observable.`);
+            throw new Error(`Error: datatype ${datatype} is not a supported option.`);
         }
 
         /* set defaults here */

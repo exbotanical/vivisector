@@ -1,4 +1,4 @@
-<img src="https://github.com/MatthewZito/vivisector-js/blob/master/documentation/vx.png" width="390" height="390">
+![Vivisector Logo](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/vx.png)
 
 # Vivisector.js | Create observable JavaScript datatypes
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
@@ -57,12 +57,13 @@ Because Arrays *are* Objects, you certainly can instantiate an `ObservableObject
 
 Full wiki coming soon...
 
-### `Vivisector` Types
-#### `ObservableArray` (*extends `Array`*)
+### Vivisector Types
+
+#### ObservableArray (*extends Array*)
 *an Array-like Object*
 
 **Unique Methods and Props**
-   - **`findIndexAll`** Returns an Array of all indices that contain a match to given argument.
+   - **findIndexAll** Returns an Array of all indices that contain a match to given argument.
 
    ```
    const users = Vx("Array", ["hello", "world", "world", "hello", "world"]);
@@ -71,41 +72,41 @@ Full wiki coming soon...
    ```
 
 **Event Types**
-  - **`itemadded`** A new item has been added to the Array. Callbacks will receive an `events` Object consisting of 
-    - **`type`** String "itemadded", denoting the event-type that was triggered
-    - **`item`** the new item, now added to the Array, 
-    - **`index`** the index at which the item was added
+  - **itemadded** A new item has been added to the Array. Callbacks will receive an Object consisting of 
+    - **type** String "itemadded", denoting the event-type that was triggered
+    - **item** the new item, now added to the Array, 
+    - **index** the index at which the item was added
 
-    **Fires on:** *`push`, `unshift`, `splice`*
+    **Fires on:** *push, unshift, splice*
 
-  - **`itemset`** An item in the Array has moved. Callbacks will receive an `events` Object consisting of 
-    - **`type`** String "itemset", denoting the event-type that was triggered
-    - **`item`** the item set in the Array
-    - **`index`** the index to which the item was allocated
+  - **itemset** An item in the Array has moved. Callbacks will receive an Object consisting of 
+    - **type** String "itemset", denoting the event-type that was triggered
+    - **item** the item set in the Array
+    - **index** the index to which the item was allocated
 
-    **Fires on:** *`unshift`, using index accessors to set Array items*
+    **Fires on:** *unshift, using index accessors to set Array items*
 
     **Note:** Shuffling the Array or using methods like `unshift` will fire `itemset` for *each* index change
 
-  - **`itemremoved`** An item has been removed from the Array. Callbacks will receive an `events` Object consisting of 
-    - **`type`** String "itemremoved", denoting the event-type that was triggered
-    - **`item`** the item removed from the Array, 
-    - **`index`** the index at which the item was removed
+  - **itemremoved** An item has been removed from the Array. Callbacks will receive an Object consisting of 
+    - **type** String "itemremoved", denoting the event-type that was triggered
+    - **item** the item removed from the Array, 
+    - **index** the index at which the item was removed
 
-    **Fires on:** *`pop`, `shift`, `splice`*
+    **Fires on:** *pop, shift, splice*
 
-  - **`mutated`** The Array value has been reassigned. Callbacks will receive an `events` Object consisting of 
-    - **`type`** String "mutated", denoting the event-type that was triggered
-    - **`item`** the new Array value, 
-    - **`index`** "all", String - all indices will have been affected
+  - **mutated** The Array value has been reassigned. Callbacks will receive an Object consisting of 
+    - **type** String "mutated", denoting the event-type that was triggered
+    - **item** the new Array value, 
+    - **index** "all", String - all indices will have been affected
 
-    **Fires on:** *Using the `value` accessor to mutate the Array value*
+    **Fires on:** *Using the value accessor to mutate the Array value*
 
-#### `ObservableString` (*extends `String`*)
+#### ObservableString (*extends String*)
 *a mutable, String-like Object*
 
 **Unique Methods and Props**
-  - **`reassign`** Mutates String value, chainable (returns `this`).
+  - **reassign** Mutates String value, chainable (returns `this`).
 
   ```
   let str = Vx("String", "Hello, world");
@@ -115,36 +116,36 @@ Full wiki coming soon...
   // Hello, moon
   ```
 
-  - **`length`** Returns String value length; non-configurable. 
+  - **length** Returns String value length; non-configurable. 
 
 **Event Types**
-  - **`mutated`** The String value has been reassigned. Callbacks will receive an `events` Object consisting of 
-    - **`type`** String "mutated", denoting the event-type that was triggered
-    - **`value`** the previous String value, 
-    - **`mutant`** the reassigned String value
+  - **mutated** The String value has been reassigned. Callbacks will receive an Object consisting of 
+    - **type** String "mutated", denoting the event-type that was triggered
+    - **value** the previous String value, 
+    - **mutant** the reassigned String value
 
-#### `ObservableObject` (*extends Proxy*)
+#### ObservableObject (*extends Proxy*)
 *an extended Object Proxy*
 
 **Event Types**
-  - **`itemget`** An Object property value has been accessed. Callbacks will receive an `events` Object consisting of
-    - **`type`** String "itemget", denoting the event-type that was triggered
-    - **`prop`** The name or Symbol of the property being accessed
-    - **`target`** The target object
-    - **`value`** The specific value being accessed
-  - **`itemset`** An Object property value has been set. Callbacks will receive an `events` Object consisting of
-    - **`type`** String "itemset", denoting the event-type that was triggered
-    - **`prop`** The name or Symbol of the property being set
-    - **`target`** The target object
-    - **`value`** The new value that has been set on `prop`
-  - **`itemdeleted`** An Object property value has been deleted. Callbacks will receive an `events` Object consisting of
-    - **`type`** String "itemdeleted", denoting the event-type that was triggered
-    - **`prop`** The name or Symbol of the property being deleted
-    - **`target`** The stringified target object
-    - **`value`** A Boolean value indicating deletion success
+  - **itemget** An Object property value has been accessed. Callbacks will receive an Object consisting of
+    - **type** String "itemget", denoting the event-type that was triggered
+    - **prop** The name or Symbol of the property being accessed
+    - **target** The target object
+    - **value** The specific value being accessed
+  - **itemset** An Object property value has been set. Callbacks will receive an Object consisting of
+    - **type** String "itemset", denoting the event-type that was triggered
+    - **prop** The name or Symbol of the property being set
+    - **target** The target object
+    - **value** The new value that has been set on `prop`
+  - **itemdeleted** An Object property value has been deleted. Callbacks will receive an Object consisting of
+    - **type** String "itemdeleted", denoting the event-type that was triggered
+    - **prop** The name or Symbol of the property being deleted
+    - **target** The stringified target object
+    - **value** A Boolean value indicating deletion success
 
-### `Vivisector` Ubiquitous Methods and Props
-  - **`value`** A non-enumerable accessor for getting/setting the core value of a given *Observable*
+### Vivisector Ubiquitous Methods and Props
+  - **value** A non-enumerable accessor for getting/setting the core value of a given *Observable*
 
   ```
    const users = Vx("Array", ["Alice", "Bob"]);
@@ -155,9 +156,9 @@ Full wiki coming soon...
    // ["Alexei", "Quinn"]
    ```
     
-  - **`identifier`** A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
-  - **`type`** The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*
-  - **`addEventListener`** Bind a callback to fire whenever a given event-type has been triggered.
+  - **identifier** A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
+  - **type** The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*
+  - **addEventListener** Bind a callback to fire whenever a given event-type has been triggered.
 
   ```
   const logMsg = function(event) {
@@ -170,7 +171,7 @@ Full wiki coming soon...
   // "Added Charlie at index 2."
   ```
 
-  - **`removeEventListener`** Remove an existing callback from the respective event-type to which it has been registered.
+  - **removeEventListener** Remove an existing callback from the respective event-type to which it has been registered.
 
   ```
   const logMsg = function(event) {
@@ -183,13 +184,3 @@ Full wiki coming soon...
   users.push("Charlie");
   // no log - handler was removed ^
   ```
-  
-<hr>
-
-### <a name="about"></a> About
-
-*How can we listen to changes in an Object or Array, or even a String?*
-
-This is the question I set out to answer when I started writing `ObservableArrays`. I read about things like Rxjs or the *Observer pattern* but found in them paradigms far too complex for what I was trying to do: simply fire events when variables had changed (and contingent on *what* those changes were). And so I continued with the creation of *Vivisector.js*, a very light-weight (and dependency-free) library for creating 'Observable' datatypes.
-
-For example, we can instantiate a new *Observable* of type `Array` and we will have available to us an Array-like object which extends native Array methods and properties, but is also equipped with the capacity to become event-bound. That is, *Vivisector* gives you an Array onto which you can bind (and chain) events. 
