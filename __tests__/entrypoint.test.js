@@ -73,7 +73,7 @@ describe("evaluation of Vivisector entrypoint", () => {
 
         it("should throw an Error if provided an ineligible datatype", () => {
             const invalidType = "List";
-            expect(() => Vx(invalidType, itemsMock)).toThrow(`Error: datatype ${invalidType} is not available as an Observable.`);
+            expect(() => Vx(invalidType, itemsMock)).toThrow(`Error: datatype ${invalidType} is not a supported option.`);
         });
 
         it("should throw an Error if provided an ineligible identifier", () => {
