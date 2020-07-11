@@ -145,7 +145,7 @@ Full wiki coming soon...
     - **value** A Boolean value indicating deletion success
 
 ### Vivisector Ubiquitous Methods and Props
-  - **value** A non-enumerable accessor for getting/setting the core value of a given *Observable*
+  - **value** A non-enumerable accessor for getting/setting the core value of a given *Observable* (currently not applicable to `Observable` type "Object")
 
   ```
    const users = Vx("Array", ["Alice", "Bob"]);

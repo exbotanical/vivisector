@@ -56,7 +56,7 @@ describe("evaluation of Vivisector entrypoint", () => {
             expect(user.identifier).toBe(4);
         });
 
-        it("`type`, and `identifier` props are extant on Observable of type `String`", () => {
+        it("`type`, and `identifier` props are extant on Observable of type `Object`", () => {
             const user = Vx("Object", itemsMock);
             expect(user.type).toEqual("Object");
             expect(user.identifier).toBe(5);

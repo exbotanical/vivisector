@@ -11,21 +11,11 @@ const { defineAddEventListener, defineRemoveEventListener } = require("../utils/
 // };
 
 function ObservableObject(obj) {
-    // val is read before assignment, imperative use of `let`
-    let _self;
-
     const _handlers = {
             itemget: [],
             itemdeleted: [],
             itemset: []
         };
-    
-    // helper for event executions
-    const raiseEvent = (event) => {
-        _handlers[event.type].forEach((handler) => {
-            handler.call(_self, event);
-        });
-    };
     
     const _rootHandler = {
         get(target, prop, recv) {
@@ -84,16 +74,20 @@ function ObservableObject(obj) {
     }
     // using `Object.assign` here breaks the chain of reference to the provided argument `obj` 
     // if we pass `obj` directly, the Proxy will modifiy the original target
-    _self = new Proxy(Object.assign({}, obj), _rootHandler);
+    const _self = new Proxy(Object.assign({}, obj), _rootHandler);
 
-    // define `addEventListener` on Proxy Obj
+    // helper for event executions
+    const raiseEvent = (event) => {
+        _handlers[event.type].forEach((handler) => {
+            handler.call(_self, event);
+        });
+    };
     defineAddEventListener(_self, _handlers);
-    // define `removeEventListener` on Proxy Obj
     defineRemoveEventListener(_self, _handlers);
-
     return _self;
 
 };
+
 
 module.exports = ObservableObject;
 
