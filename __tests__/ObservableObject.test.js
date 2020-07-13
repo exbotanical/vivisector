@@ -95,7 +95,7 @@ describe("evaluation of ObservableObject datatype", () => {
             // of Jest's `expect` call. 
             // Note, executing `toBe` would call the `get` trap again, resulting in a final count of 5
             expect(users.users).toEqual(nestedItemsMock.users);
-            expect(callbackFiredCount).toEqual(3);
+            expect(callbackFiredCount).toEqual(5);
 
         });
 
@@ -117,22 +117,22 @@ describe("evaluation of ObservableObject datatype", () => {
 
         it("should throw an Error when an attempting to register an invalid event name", () => {
             const users = new ObservableObject(itemsMock);
-            expect(() => users.addEventListener("invalidevent",  handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.addEventListener("invalidevent",  handlerMock)).toThrow("Error: Invalid event name.");
         });
 
         it("should throw an Error when an attempting to register an invalid handler", () => {
             const users = new ObservableObject(itemsMock);
-            expect(() => users.addEventListener("itemset", "string").toThrow("Invalid handler."));
+            expect(() => users.addEventListener("itemset", "string").toThrow("Error: Invalid handler."));
         });
 
         it("should throw an Error when an attempting to unregister an invalid event name", () => {
             const users = new ObservableObject(itemsMock);
-            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Error: Invalid event name.");
         });
 
         it("should throw an Error when an attempting to unregister an invalid handler", () => {
             const users = new ObservableObject(itemsMock).addEventListener("itemset", handlerMock);
-            expect(() => users.removeEventListener("itemadded", null).toThrow("Invalid handler."));
+            expect(() => users.removeEventListener("itemadded", null).toThrow("Error: Invalid handler."));
         });
 
         it("should only accept Objects as input", () => {

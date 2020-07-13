@@ -202,22 +202,22 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("should throw an Error when an attempting to register an invalid event name", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.addEventListener("invalidevent",  handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.addEventListener("invalidevent",  handlerMock)).toThrow("Error: Invalid event name.");
         });
 
         it("should throw an Error when an attempting to register an invalid handler", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.addEventListener("itemadded", "string").toThrow("Invalid handler."));
+            expect(() => users.addEventListener("itemadded", "string").toThrow("Error: Invalid handler."));
         });
 
         it("should throw an Error when an attempting to unregister an invalid event name", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Error: Invalid event name.");
         });
 
         it("should throw an Error when an attempting to unregister an invalid handler", () => {
             const users = new ObservableArray(itemsMock).addEventListener("itemadded", handlerMock);
-            expect(() => users.removeEventListener("itemadded", null).toThrow("Invalid handler."));
+            expect(() => users.removeEventListener("itemadded", null).toThrow("Error: Invalid handler."));
         });
 
         it("should only persist values of type Array when using the `value` accessor", () => {
@@ -238,7 +238,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("the `length` accessor setter should throw an Error when provided non-whole numbers", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.length = 1.5).toThrow("Invalid array length.");
+            expect(() => users.length = 1.5).toThrow("Error: Invalid array length.");
         });
     });
 });

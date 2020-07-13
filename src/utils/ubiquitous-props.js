@@ -10,10 +10,10 @@ const defineAddEventListener = (context, handlers) => {
             eventName = ("" + eventName).toLowerCase(); 
             // ensure registered event's name corresponds to one of the presets in `_handlers`
             if (!(eventName in handlers)) {
-                throw new Error("Invalid event name.");
+                throw new Error("Error: Invalid event name.");
             }
             if (typeof handler !== "function") {
-                throw new Error("Invalid handler.");
+                throw new Error("Error: Invalid handler.");
             }
             // add handler to respective event nested Array
             handlers[eventName].push(handler);
@@ -32,10 +32,10 @@ const defineRemoveEventListener = (context, handlers) => {
         value: function(eventName, handler) {
             eventName = ("" + eventName).toLowerCase();
             if (!(eventName in handlers)) {
-                throw new Error("Invalid event name.");
+                throw new Error("Error: Invalid event name.");
             }
             if (typeof handler !== "function") {
-                throw new Error("Invalid handler.");
+                throw new Error("Error: Invalid handler.");
             }
             // reference all handlers of given `eventName`
             const handlerSet = handlers[eventName];
@@ -53,7 +53,15 @@ const defineRemoveEventListener = (context, handlers) => {
     });
 };
 
+ // helper for event executions
+ const raiseEvent = (event, context, handlers) => {
+    handlers[event.type].forEach((handler) => {
+        handler.call(context, event);
+    });
+};
+
 module.exports = {
     defineAddEventListener,
-    defineRemoveEventListener
+    defineRemoveEventListener,
+    raiseEvent
 };

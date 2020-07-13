@@ -1,4 +1,4 @@
-const { defineAddEventListener, defineRemoveEventListener } = require("../utils/ubiquitous-props.js");
+const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = require("../utils/ubiquitous-props.js");
 
 /**
  * @override
@@ -40,17 +40,10 @@ function ObservableArray(items) {
                         type: "itemset",
                         index: index,
                         item: inboundItem
-                    });
+                    }, _self, _handlers);
                 }
             });
         }
-    }
-
-    // helper for event executions
-    function raiseEvent(event) {
-        _handlers[event.type].forEach((handler) => {
-            handler.call(_self, event);
-        });
     }
 
     // define accessor for actual array value
@@ -67,7 +60,7 @@ function ObservableArray(items) {
                     type: "mutated",
                     index: "all",
                     item: inboundItems
-                });
+                }, _self, _handlers);
             }
         },
     });
@@ -114,7 +107,7 @@ function ObservableArray(items) {
                     type: "itemadded",
                     index: index,
                     item: args[i]
-                });
+                }, _self, _handlers);
             }
             return _array.length;
         }
@@ -135,7 +128,7 @@ function ObservableArray(items) {
                     type: "itemremoved",
                     index,
                     item
-                });
+                }, _self, _handlers);
                 return item;
             }
         }
@@ -156,7 +149,7 @@ function ObservableArray(items) {
                     type: "itemadded",
                     index: i,
                     item: args[i]
-                });
+                }, _self, _handlers);
             }
             for (; i < _array.length; i++) {
                 // raise event *for each* index change (i.e. all of them) ? currently, yes
@@ -164,7 +157,7 @@ function ObservableArray(items) {
                     type: "itemset",
                     index: i,
                     item: _array[i]
-                });
+                }, _self, _handlers);
             }
             return _array.length;
         }
@@ -186,7 +179,7 @@ function ObservableArray(items) {
                     type: "itemremoved",
                     index: 0,
                     item
-                });
+                }, _self, _handlers);
                 return item;
             }
         }
@@ -198,12 +191,10 @@ function ObservableArray(items) {
         enumerable: false,
         writable: false,
         value: function(...args) {
-            let index = args[0];
-            let numElements = args[1];
             const removed = [];
-            let item,
-                // optionally hoist position of item as `pos`
-                pos;
+            let index = args[0],
+                numElements = args[1],
+                item;
 
             // calculate index qua splice parameters
             // we need `==` so as to coerce possible `undefined` to null during eval
@@ -220,7 +211,7 @@ function ObservableArray(items) {
                     type: "itemremoved",
                     index: index + removed.length - 1,
                     item
-                });
+                }, _self, _handlers);
             }
             for (let i = 2, argsLen = args.length; i < argsLen; i++) {
                 _array.splice(index, 0, args[i]);
@@ -229,10 +220,9 @@ function ObservableArray(items) {
                     type: "itemadded",
                     index: index,
                     item: args[i]
-                });
+                }, _self, _handlers);
                 index++;
             }
-
             return removed;
         }
     });
@@ -249,13 +239,14 @@ function ObservableArray(items) {
             const length = _array.length;
             // must be whole number
             if (ephemeralLength % 1 === 0 && ephemeralLength >= 0) {
+                // if len provided less than that of current arr value, splice
                 if (ephemeralLength < length) {
                     _self.splice(ephemeralLength);
                 } else if (ephemeralLength > length) {
                     Reflect.apply(_self.push, _self, new Array(ephemeralLength - length));
                 }
             } else {
-                throw new RangeError("Invalid array length.");
+                throw new RangeError("Error: Invalid array length.");
             }
             _array.length = ephemeralLength;
         }
