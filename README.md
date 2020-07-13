@@ -145,7 +145,7 @@ Full wiki coming soon...
     - **value** A Boolean value indicating deletion success
 
 ### Vivisector Ubiquitous Methods and Props
-  - **value** A non-enumerable accessor for getting/setting the core value of a given *Observable* (currently not applicable to `Observable` type "Object")
+  - **value** A non-enumerable accessor for getting and/or setting the core value of a given *Observable*
 
   ```
    const users = Vx("Array", ["Alice", "Bob"]);
@@ -155,6 +155,9 @@ Full wiki coming soon...
    console.log(users.value);
    // ["Alexei", "Quinn"]
    ```
+
+   *Get/Set on types `String`, `Array`*
+   *Get on types `Object`*
     
   - **identifier** A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
   - **type** The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*

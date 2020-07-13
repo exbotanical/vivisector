@@ -13,7 +13,7 @@ const mockHandlers = {
         mockHandler,
         "mockHandler"
     ]
-}
+};
 
 /* Assertions */
 

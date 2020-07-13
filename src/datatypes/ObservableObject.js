@@ -1,17 +1,12 @@
 const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = require("../utils/ubiquitous-props.js");
 
-// const setNIntervals = (fn, delay, rounds) => {
-//     if (!rounds) {
-//         return;
-//     }
-//     setTimeout(() => {
-//         fn();
-//         setNIntervals(fn, delay, rounds - 1);
-//     }, delay);
-// };
-
 function ObservableObject(obj) {
-    const _handlers = {
+    /* Configuration Artifacts */
+    const _symbols = {
+        __INTERNAL__: Symbol.for("_internal"),
+        __ISPROXY__: Symbol.for("_isProxy")
+        },
+         _handlers = {
             itemget: [],
             itemdeleted: [],
             itemset: []
@@ -24,7 +19,7 @@ function ObservableObject(obj) {
             "type"
         ];
 
-    const isPropConfigurable = (prop) => {
+    const enforceConfigurableProps = (prop) => {
         if (_internals.includes(prop)) {
             throw new Error(`Error: Property '${prop}' is non-configurable.`);
         }
@@ -33,8 +28,12 @@ function ObservableObject(obj) {
     const _rootHandler = {
         get(target, prop, recv) {
             // type-check mechanism for testing
-            if (prop === Symbol.for("_isProxy")) {
+            if (prop === _symbols.__ISPROXY__) {
                 return true;
+            }
+            // conform to `value` accessor and return raw value
+            if (prop === _symbols.__INTERNAL__) {
+                return target;
             }
             // we use `Reflect` here as a simple mitigative effort to avoid violating Proxy invariants, as described in the specification here: 
             // https://www.ecma-international.org/ecma-262/8.0/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver
@@ -58,7 +57,7 @@ function ObservableObject(obj) {
             return value;
         },
         set(target, prop, value, recv) {
-            isPropConfigurable(prop);
+            enforceConfigurableProps(prop);
             raiseEvent({
                 type: "itemset",
                 prop,
@@ -68,7 +67,7 @@ function ObservableObject(obj) {
             return Reflect.set(target, prop, value);
         },
         deleteProperty(target, prop) {
-            isPropConfigurable(prop);
+            enforceConfigurableProps(prop);
             const ephemeralTarget = JSON.stringify(target, null, 0);
             const value = Reflect.deleteProperty(target, prop);
             raiseEvent({
@@ -90,6 +89,20 @@ function ObservableObject(obj) {
     // make a deep clone here so as to break the chain of reference to the provided argument `obj` 
     // if we pass `obj` directly, the Proxy will modify the original target
     const _self = new Proxy(JSON.parse(JSON.stringify(obj)), _rootHandler);
+
+    // define accessor for by-value designations
+    Object.defineProperty(_self, "value", {
+        configurable: false,
+        enumerable: false,
+        get: function() {
+            // `assign` here to decouple execution context from returned val
+            // this allows users to, at any time, copy internal value without Proxy properties
+            return Object.assign({},_self[_symbols.__INTERNAL__]);
+        },
+        set: function(inboundItems) {
+            return;
+            }
+        });
 
     defineAddEventListener(_self, _handlers);
     defineRemoveEventListener(_self, _handlers);
@@ -121,3 +134,12 @@ module.exports = ObservableObject;
 
 
 
+// const setNIntervals = (fn, delay, rounds) => {
+//     if (!rounds) {
+//         return;
+//     }
+//     setTimeout(() => {
+//         fn();
+//         setNIntervals(fn, delay, rounds - 1);
+//     }, delay);
+// };
