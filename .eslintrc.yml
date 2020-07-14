@@ -49,7 +49,6 @@ rules:
           allowShortCircuit: true
     no-use-before-define:
         - 2
-        - nofunc
     no-useless-call: 2
     no-useless-computed-key: 2
     no-useless-concat: 2
@@ -60,7 +59,7 @@ rules:
     prefer-arrow-callback: 2
     prefer-const: 
         - 2 
-        - ignoreReadBeforeAssign: true
+        - destructuring: all
     prefer-rest-params: 2
     rest-spread-spacing: 2
     semi: 2

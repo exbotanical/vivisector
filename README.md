@@ -11,7 +11,6 @@
     - [Features](#feat)
  - [Installation + Usage](#usage)
  - [Documentation](#docs)
-    * [About](#about)
 
 ## <a name="intro"></a> Introduction
 *Vivisector.js* is a light-weight Nodejs library that exposes custom event-driven datatypes. *Vivisector's* *Observable* types broadcast unique events correlated to specific types of mutations and accessors. As such, one can bind methods to variables and render them event-bound. 
@@ -25,8 +24,10 @@
   - custom, chainable methods maintain stable execution context *i.e. method-chaining without the need to explicitly pipe `this`*
   - helper accessors on all *Observables* to simplify evaluation
   - no need to use `new` keyword, no configuration; `Vivisector` types work out-of-the-box
+  - absolutely zero dependencies
 
 ## <a name="usage"></a> Installation and Usage
+[Install via NPM](https://www.npmjs.com/package/vivisector) with `npm i vivisector`.
 
 Import *Vivisector's* caller alias `Vx`:
 ```
@@ -54,8 +55,6 @@ Have a look at these usage guides for a full overview:
 Because Arrays *are* Objects, you certainly can instantiate an `ObservableObject` with Array data. However, you might find some of the Array-specific properties of the decoupled `ObservableArray` useful in certain instances.
 
 ## <a name="docs"></a> Documentation
-
-Full wiki coming soon...
 
 ### Vivisector Types
 
@@ -145,7 +144,7 @@ Full wiki coming soon...
     - **value** A Boolean value indicating deletion success
 
 ### Vivisector Ubiquitous Methods and Props
-  - **value** A non-enumerable accessor for getting/setting the core value of a given *Observable*
+  - **value** A non-enumerable accessor for getting and/or setting the core value of a given *Observable*
 
   ```
    const users = Vx("Array", ["Alice", "Bob"]);
@@ -155,6 +154,9 @@ Full wiki coming soon...
    console.log(users.value);
    // ["Alexei", "Quinn"]
    ```
+
+   *Get/Set on types `String`, `Array`*
+   *Get on types `Object`*
     
   - **identifier** A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
   - **type** The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*

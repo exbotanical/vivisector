@@ -32,7 +32,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("`push` adds an item to the internal Array", () => {
             const users = new ObservableArray();
-            users.push(itemsMock[0]);
+            expect(users.push(itemsMock[0])).toBe(users.length);
             expect(users).toEqual( { "0":  itemsMock[0] });
             expect(users.length).toEqual(1);
             expect(users[0]).toEqual(itemsMock[0]);
@@ -60,6 +60,16 @@ describe("evaluation of ObservableArray datatype", () => {
             expect(users.shift()).toEqual("Alice");
             // ensure persistence
             expect(users[0]).toEqual(itemsMock[1]);
+        });
+
+        it("`splice` coerces null index to 0", () => {
+            const users = new ObservableArray(itemsMock);
+            expect(users.splice(null,1)).toEqual([itemsMock[0]]);
+        });
+
+        it("`splice` accepts negative index accessors", () => {
+            const users = new ObservableArray(itemsMock);
+            expect(users.splice(-1,1)).toEqual([itemsMock[1]]);
         });
 
         it("the `length` accessor setter acts upon the internal Array", () => {
@@ -97,7 +107,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
             expect(callbackFiredCount).toBe(1);
             // unshift will fire "itemset" for each index changed i.e. the length of the Array
-            users.unshift("Alexei");
+            expect(users.unshift("Alexei")).toBe(itemsMock.length + 1);
             // num fired is num of items in Arr minus 1; sans minus 1 given `callbackFiredCount` will be set to 1 at this point
             expect(callbackFiredCount).toEqual(users.length);
         });
@@ -128,6 +138,10 @@ describe("evaluation of ObservableArray datatype", () => {
             let callbackFiredCount = 0;
             const users = new ObservableArray(itemsMock);
 
+            // ensure arr of len <= 0 does not fire
+            const usersTwo = new ObservableArray().addEventListener("itemremoved", () => callbackFiredCount++);
+            expect(usersTwo.shift()).toBeUndefined();
+            expect(usersTwo.pop()).toBeUndefined();
             expect(callbackFiredCount).toEqual(0);
 
             // register event handler
@@ -202,22 +216,22 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("should throw an Error when an attempting to register an invalid event name", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.addEventListener("invalidevent",  handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.addEventListener("invalidevent",  handlerMock)).toThrow("Error: Invalid event name.");
         });
 
         it("should throw an Error when an attempting to register an invalid handler", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.addEventListener("itemadded", "string").toThrow("Invalid handler."));
+            expect(() => users.addEventListener("itemadded", "string").toThrow("Error: Invalid handler."));
         });
 
         it("should throw an Error when an attempting to unregister an invalid event name", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Invalid event name.");
+            expect(() => users.removeEventListener("invalidevent", handlerMock)).toThrow("Error: Invalid event name.");
         });
 
         it("should throw an Error when an attempting to unregister an invalid handler", () => {
             const users = new ObservableArray(itemsMock).addEventListener("itemadded", handlerMock);
-            expect(() => users.removeEventListener("itemadded", null).toThrow("Invalid handler."));
+            expect(() => users.removeEventListener("itemadded", null).toThrow("Error: Invalid handler."));
         });
 
         it("should only persist values of type Array when using the `value` accessor", () => {
@@ -238,7 +252,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("the `length` accessor setter should throw an Error when provided non-whole numbers", () => {
             const users = new ObservableArray(itemsMock);
-            expect(() => users.length = 1.5).toThrow("Invalid array length.");
+            expect(() => users.length = 1.5).toThrow("Error: Invalid array length.");
         });
     });
 });

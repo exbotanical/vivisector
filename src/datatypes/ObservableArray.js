@@ -1,4 +1,4 @@
-const { defineAddEventListener, defineRemoveEventListener } = require("../utils/ubiquitous-props.js");
+const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = require("../utils/ubiquitous-props.js");
 
 /**
  * @override
@@ -21,53 +21,42 @@ function ObservableArray(items) {
             itemset: [],
             mutated: []
         };
-
+    // internal value store
     let _array = [];
 
     // helper for configuring index accessors
-    function defineIndexProperty(index) {
+    const defineIndexProperty = (index) => {
         if (!(index in _self)) {
             Object.defineProperty(_self, index, {
                 configurable: true, // type of descriptor may be changed / deleted from corresponding obj
                 enumerable: true, // enumerate to `true` so as to expose item indices
-                get: function() {
-                    return _array[index];
-                },
-                set: function(inboundItem) {
+                get: () => _array[index],
+                set: (inboundItem) => {
                     // set actual item to provided index
                     _array[index] = inboundItem;
                     raiseEvent({
                         type: "itemset",
                         index: index,
                         item: inboundItem
-                    });
+                    }, _self, _handlers);
                 }
             });
         }
-    }
-
-    // helper for event executions
-    function raiseEvent(event) {
-        _handlers[event.type].forEach((handler) => {
-            handler.call(_self, event);
-        });
-    }
+    };
 
     // define accessor for actual array value
     Object.defineProperty(_self, "value", {
         configurable: false,
         enumerable: false,
-        get: function() {
-            return _array;
-        },
-        set: function(inboundItems) {
+        get: () => _array,
+        set: (inboundItems) => {
             if (inboundItems instanceof Array) {
                 _array = inboundItems;
                 raiseEvent({
                     type: "mutated",
                     index: "all",
                     item: inboundItems
-                });
+                }, _self, _handlers);
             }
         },
     });
@@ -79,7 +68,7 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function(value) {
+        value: (value) => {
             const indices = [];
             _array.forEach((item, index) => {
                 if (item === value) {
@@ -90,52 +79,49 @@ function ObservableArray(items) {
         }
     });
 
-
     // define props for event-binding
     defineAddEventListener(_self, _handlers);
     defineRemoveEventListener(_self, _handlers);
     
-
-    // override push method
+    // override `push` method
     Object.defineProperty(_self, "push", {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function(...args) {
+        value: (...args) => {
             let index;
-            // for each provided element, push into Array copy `_array`
-            for (let i = 0, argsLen = args.length; i < argsLen; i++) {
+            // for each provided element, push into copy `_array`
+            args.forEach(item => {
+                // persist index at which item will be added
                 index = _array.length;
-                _array.push(args[i]);
+                _array.push(item);
                 // define index accessor for each element
                 defineIndexProperty(index);
-                // raise event for added element
                 raiseEvent({
                     type: "itemadded",
-                    index: index,
-                    item: args[i]
-                });
-            }
-            return _array.length;
+                    index,
+                    item,
+                }, _self, _handlers);
+            });
+        return _array.length;
         }
     });
 
-    // override pop method
+    // override `pop` method
     Object.defineProperty(_self, "pop", {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function() {
-            if (_array.length > -1) {
+        value: () => {
+            if (_array.length > 0) {
                 const index = _array.length - 1,
                     item = _array.pop();
                 delete _self[index];
-
                 raiseEvent({
                     type: "itemremoved",
                     index,
                     item
-                });
+                }, _self, _handlers);
                 return item;
             }
         }
@@ -146,26 +132,30 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function(...args) {
+        value: (...args) => {
             // NOTE this is one of those rare instances where we *need* `var`, lest the next loop's `i` be undefined due to
             // scoping behaviors of `let`
-            for (var i = 0, argsLen = args.length; i < argsLen; i++) {
-                _array.splice(i, 0, args[i]);
+            args.forEach((item, index) => {
+                // add arg to beginning of core val
+                _array.splice(index, 0, item);
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
                     type: "itemadded",
-                    index: i,
-                    item: args[i]
-                });
-            }
-            for (; i < _array.length; i++) {
-                // raise event *for each* index change (i.e. all of them) ? currently, yes
-                raiseEvent({
-                    type: "itemset",
-                    index: i,
-                    item: _array[i]
-                });
-            }
+                    index,
+                    item,
+                }, _self, _handlers);
+            });
+
+            _array.forEach((item, index) => {
+                if (index >= args.length) {
+                    raiseEvent({
+                        type: "itemset",
+                        index,
+                        item,
+                    }, _self, _handlers);
+                }
+            });
+            
             return _array.length;
         }
     });
@@ -175,18 +165,18 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function() {
+        value: () => {
             // only actionable if Array contains elements
-            if (_array.length > -1) {
+            if (_array.length > 0) {
                 const item = _array.shift();
                 // NOTE imperative; `shift` will not persist this change;
-                // changes will, however, be reflected in _array.length
+                // we simulate this behavior by deleting value at index `_array.length`
                 delete _self[_array.length];
                 raiseEvent({
                     type: "itemremoved",
                     index: 0,
                     item
-                });
+                }, _self, _handlers);
                 return item;
             }
         }
@@ -197,42 +187,43 @@ function ObservableArray(items) {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: function(...args) {
-            let index = args[0];
-            let numElements = args[1];
+        value: (...args) => {
+            // removed items store
             const removed = [];
-            let item,
-                // optionally hoist position of item as `pos`
-                pos;
+            let [index, numToRemove, ...itemsToAdd] = args,
+                // explicitly hoist to outer context
+                item;
 
             // calculate index qua splice parameters
             // we need `==` so as to coerce possible `undefined` to null during eval
+            // this is also where we simulate `splice's` capacity to accept negative indices and walk recessively from core val length
             index = index == null ? 0 : index < 0 ? _array.length + index : index;
 
             // calculate number of elements qua splice parameters
-            numElements = numElements == null ? _array.length - index : numElements > 0 ? numElements : 0;
+            numToRemove = numToRemove == null ? _array.length - index : numToRemove > 0 ? numToRemove : 0;
 
-            while (numElements--) {
+            while (numToRemove--) {
                 item = _array.splice(index, 1)[0];
                 removed.push(item);
                 delete _self[_array.length];
                 raiseEvent({
                     type: "itemremoved",
+                    // index begins at first removal; increment by ea. removed item
                     index: index + removed.length - 1,
                     item
-                });
+                }, _self, _handlers);
             }
-            for (let i = 2, argsLen = args.length; i < argsLen; i++) {
-                _array.splice(index, 0, args[i]);
+            itemsToAdd.forEach(item => {
+                _array.splice(index, 0, item);
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
                     type: "itemadded",
-                    index: index,
-                    item: args[i]
-                });
+                    index,
+                    item,
+                }, _self, _handlers);
+                // explicitly increment index on ea. iteration
                 index++;
-            }
-
+            });
             return removed;
         }
     });
@@ -241,23 +232,29 @@ function ObservableArray(items) {
     Object.defineProperty(_self, "length", {
         configurable: false,
         enumerable: false,
-        get: function() {
-            return _array.length;
-        },
-        set: function(value) {
-            const ephemeralLength = Number(value);
+        get: () => _array.length,
+        set: (value) => {
+            // coerce input to Number
+            const symbolicLength = Number(value);
+            // est core val length
             const length = _array.length;
-            // must be whole number
-            if (ephemeralLength % 1 === 0 && ephemeralLength >= 0) {
-                if (ephemeralLength < length) {
-                    _self.splice(ephemeralLength);
-                } else if (ephemeralLength > length) {
-                    Reflect.apply(_self.push, _self, new Array(ephemeralLength - length));
+            // user-specified length must be whole number
+            if (symbolicLength % 1 === 0 && symbolicLength >= 0) {
+                // if len provided less than that of current arr value, we truncate the core val w/`splice`
+                if (symbolicLength < length) {
+                    _self.splice(symbolicLength);
+                } 
+                // user is extending core val; push new generated Array of specified len sans core len
+                else if (symbolicLength > length) {
+                    Reflect.apply(_self.push, _self, new Array(symbolicLength - length));
                 }
-            } else {
-                throw new RangeError("Invalid array length.");
+            } 
+            // catch edge cases
+            else {
+                throw new RangeError("Error: Invalid array length.");
             }
-            _array.length = ephemeralLength;
+            // finally, we extend actual core
+            _array.length = symbolicLength;
         }
     });
 

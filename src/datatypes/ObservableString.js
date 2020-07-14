@@ -1,4 +1,4 @@
-const { defineAddEventListener, defineRemoveEventListener } = require("../utils/ubiquitous-props.js");
+const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = require("../utils/ubiquitous-props.js");
 
 /**
  * @override 
@@ -25,13 +25,6 @@ function ObservableString(value) {
         */
         _self[0] = String(value);
     }
-    
-    // helper for event executions
-    function raiseEvent(event) {
-        _handlers[event.type].forEach((handler) => {
-            handler.call(_self, event);
-        });
-    }
 
     function mutateCoreValue(coreObject, coreValue) {
         // persist pre-mutated value (note, not the String Object but the value therein)
@@ -55,13 +48,16 @@ function ObservableString(value) {
         },
         set: function(arg) {
             if (typeof arg === "string") {
-
                 /* 
                     By using `Object.assign`, we can create, in-line, a new Object consisting of a key/value pair to denote our desired event type.
                     `assign` will 'merge' the in-line Object with that returned from `mutateCoreValue`. 
                     Given `raiseEvent` accepts as input an Object, we can pass this expression directly; it will resolve to the necessary values.
                 */
-                raiseEvent(Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)));
+                raiseEvent(
+                    Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)),
+                    _self,
+                    _handlers
+                );
 
             }
         }
@@ -75,9 +71,8 @@ function ObservableString(value) {
         value: function(arg) {
             // type-check and validations go here
             if (!(typeof arg === "string")) {
-                throw new Error("Invalid type");
+                throw new Error("Error: Invalid type.");
             }
-            
             /* 
                 _self.value = stringInput; 
                 
@@ -86,7 +81,11 @@ function ObservableString(value) {
                 granularity of control as possible. As such, we do *not* use the `value` accessor here, instead opting to raise
                 the `mutated` event in a discrete context.
             */
-           raiseEvent(Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)));
+           raiseEvent(
+               Object.assign({ type: "mutated" }, mutateCoreValue(_self, arg)),
+               _self,
+               _handlers
+            );
           
             // return `_self` to allow method to be chainable; see other like-comments
             return _self;
