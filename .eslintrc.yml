@@ -59,6 +59,7 @@ rules:
     prefer-arrow-callback: 2
     prefer-const: 
         - 2 
+        - destructuring: all
     prefer-rest-params: 2
     rest-spread-spacing: 2
     semi: 2

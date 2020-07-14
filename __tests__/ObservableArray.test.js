@@ -32,7 +32,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
         it("`push` adds an item to the internal Array", () => {
             const users = new ObservableArray();
-            users.push(itemsMock[0]);
+            expect(users.push(itemsMock[0])).toBe(users.length);
             expect(users).toEqual( { "0":  itemsMock[0] });
             expect(users.length).toEqual(1);
             expect(users[0]).toEqual(itemsMock[0]);
@@ -60,6 +60,16 @@ describe("evaluation of ObservableArray datatype", () => {
             expect(users.shift()).toEqual("Alice");
             // ensure persistence
             expect(users[0]).toEqual(itemsMock[1]);
+        });
+
+        it("`splice` coerces null index to 0", () => {
+            const users = new ObservableArray(itemsMock);
+            expect(users.splice(null,1)).toEqual([itemsMock[0]]);
+        });
+
+        it("`splice` accepts negative index accessors", () => {
+            const users = new ObservableArray(itemsMock);
+            expect(users.splice(-1,1)).toEqual([itemsMock[1]]);
         });
 
         it("the `length` accessor setter acts upon the internal Array", () => {
@@ -97,7 +107,7 @@ describe("evaluation of ObservableArray datatype", () => {
 
             expect(callbackFiredCount).toBe(1);
             // unshift will fire "itemset" for each index changed i.e. the length of the Array
-            users.unshift("Alexei");
+            expect(users.unshift("Alexei")).toBe(itemsMock.length + 1);
             // num fired is num of items in Arr minus 1; sans minus 1 given `callbackFiredCount` will be set to 1 at this point
             expect(callbackFiredCount).toEqual(users.length);
         });
@@ -128,6 +138,10 @@ describe("evaluation of ObservableArray datatype", () => {
             let callbackFiredCount = 0;
             const users = new ObservableArray(itemsMock);
 
+            // ensure arr of len <= 0 does not fire
+            const usersTwo = new ObservableArray().addEventListener("itemremoved", () => callbackFiredCount++);
+            expect(usersTwo.shift()).toBeUndefined();
+            expect(usersTwo.pop()).toBeUndefined();
             expect(callbackFiredCount).toEqual(0);
 
             // register event handler
