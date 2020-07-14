@@ -62,12 +62,20 @@ Because Arrays *are* Objects, you certainly can instantiate an `ObservableObject
 *an Array-like Object*
 
 **Unique Methods and Props**
-   - **findIndexAll** Returns an Array of all indices that contain a match to given argument.
+   - **findIndexAll** Returns an Array of all indices that contain a match to given argument. Does not evaluate nested items.
 
    ```
    const users = Vx("Array", ["hello", "world", "world", "hello", "world"]);
    console.log(users.findIndexAll("hello"));
    // [0, 3]
+   ```
+
+   - **findIndexAllDeep** Returns an Array of all indices that contain a match to given argument. Walks entire Array tree and evaluates nested items.
+
+   ```
+   const users = Vx("Array", ["hello",["hello"], "world", ["world", "hello"], ["world", ["world",["hello"]]]]);
+   console.log(users.findIndexAllDeep("hello"));
+   // [ [ 0 ], [ 1, 0 ], [ 3, 1 ], [ 4, 1, 1, 0 ] ]
    ```
 
 **Event Types**
@@ -132,18 +140,20 @@ Because Arrays *are* Objects, you certainly can instantiate an `ObservableObject
     - **prop** The name or Symbol of the property being accessed
     - **target** The target object
     - **value** The specific value being accessed
+
   - **itemset** An Object property value has been set. Callbacks will receive an Object consisting of
     - **type** String "itemset", denoting the event-type that was triggered
     - **prop** The name or Symbol of the property being set
     - **target** The target object
     - **value** The new value that has been set on `prop`
+
   - **itemdeleted** An Object property value has been deleted. Callbacks will receive an Object consisting of
     - **type** String "itemdeleted", denoting the event-type that was triggered
     - **prop** The name or Symbol of the property being deleted
     - **target** The stringified target object
     - **value** A Boolean value indicating deletion success
 
-### Vivisector Ubiquitous Methods and Props
+### Ubiquitous Methods and Props
   - **value** A non-enumerable accessor for getting and/or setting the core value of a given *Observable*
 
   ```
