@@ -105,7 +105,7 @@ function ObservableArray(items) {
     });
     // Note: we could later add something like `JSON.stringify(_array[i]).indexOf(value) > -1` to eval whether or not 
     // the value exists and we should continue recursing the tree
-    
+
     // define props for event-binding
     defineAddEventListener(_self, _handlers);
     defineRemoveEventListener(_self, _handlers);

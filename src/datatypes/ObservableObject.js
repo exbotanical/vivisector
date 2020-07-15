@@ -111,35 +111,3 @@ function ObservableObject(obj) {
 };
 
 module.exports = ObservableObject;
-
-// const mockHandler = args => {
-//     let [targetObject, targetProp, givenValue, receiverObject ] = args,
-//         _operationType;
-
-//     if (args.length === 2) {
-//         _operationType = "DEL";
-
-//     }
-//     else if (args.length === 3) {
-//         _operationType = "GET";
-//     }
-//     else if (args.length === 4) {
-//         _operationType = "SET"
-//     }
-//     console.log(_operationType, givenValue, "on prop", targetProp, "of object", targetObject);
-// }
-
-
-
-
-
-
-// const setNIntervals = (fn, delay, rounds) => {
-//     if (!rounds) {
-//         return;
-//     }
-//     setTimeout(() => {
-//         fn();
-//         setNIntervals(fn, delay, rounds - 1);
-//     }, delay);
-// };
