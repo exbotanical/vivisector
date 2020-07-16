@@ -2,7 +2,6 @@ const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = requir
 
 /**
  * @override
- * @readonly
  * @summary Factory for instantiating observable Array-like objects.
  * @description Copies array into Array-like object and hijacks specific instance's base prototype,
  *     thus creating an observable of type Array. Provides custom handlers for

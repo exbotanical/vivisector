@@ -55,144 +55,252 @@ Have a look at these usage guides for a full overview:
 Because Arrays *are* Objects, you certainly can instantiate an `ObservableObject` with Array data. However, you might find some of the Array-specific properties of the decoupled `ObservableArray` useful in certain instances.
 
 ## <a name="docs"></a> Documentation
+ - [Types](#types) 
+    - [Arrays](#arr)
+    - [Objects](#obj)
+    - [Strings](#str)
+ - [Ubiquitous Properties](#all)
 
-### Vivisector Types
 
-#### ObservableArray (*extends Array*)
+### <a name="types"></a> Vivisector Types
+<hr>
+
+#### <a name="arr"></a> <u>ObservableArray (*extends Array*)</u>
 *an Array-like Object*
 
-**Unique Methods and Props**
-   - **findIndexAll** Returns an Array of all indices that contain a match to given argument. Does not evaluate nested items.
+**Example:**
+```
+const albums = Vx("Array", ["Tago Mago", "Monster Movie", "Ege Bamyasi"]);
+```
 
-   ```
-   const users = Vx("Array", ["hello", "world", "world", "hello", "world"]);
-   console.log(users.findIndexAll("hello"));
-   // [0, 3]
-   ```
+#### Unique Methods and Props
 
-   - **findIndexAllDeep** Returns an Array of all indices that contain a match to given argument. Walks entire Array tree and evaluates nested items.
+#### findIndexAll 
+Returns an Array of all indices that contain a match to given argument. Does not evaluate nested items.
 
-   ```
-   const users = Vx("Array", ["hello",["hello"], "world", ["world", "hello"], ["world", ["world",["hello"]]]]);
-   console.log(users.findIndexAllDeep("hello"));
-   // [ [ 0 ], [ 1, 0 ], [ 3, 1 ], [ 4, 1, 1, 0 ] ]
-   ```
+**Example:**
+```
+const users = Vx("Array", ["hello", "world", "world", "hello", "world"]);
+console.log(users.findIndexAll("hello"));
+// [0, 3]
+```
 
-**Event Types**
-  - **itemadded** A new item has been added to the Array. Callbacks will receive an Object consisting of 
-    - **type** String "itemadded", denoting the event-type that was triggered
-    - **item** the new item, now added to the Array, 
-    - **index** the index at which the item was added
+#### findIndexAllDeep 
+Returns an Array of all indices that contain a match to given argument. Walks entire Array tree and evaluates nested items.
 
-    **Fires on:** *push, unshift, splice*
+**Example:**
+```
+const users = Vx("Array", ["hello",["hello"], "world", ["world", "hello"], ["world", ["world",["hello"]]]]);
+console.log(users.findIndexAllDeep("hello"));
+// [ [ 0 ], [ 1, 0 ], [ 3, 1 ], [ 4, 1, 1, 0 ] ]
+```
 
-  - **itemset** An item in the Array has moved. Callbacks will receive an Object consisting of 
-    - **type** String "itemset", denoting the event-type that was triggered
-    - **item** the item set in the Array
-    - **index** the index to which the item was allocated
+#### Event Types
 
-    **Fires on:** *unshift, using index accessors to set Array items*
+#### itemadded
+A new item has been added to the Array. Callbacks will receive an Object consisting of: 
+| Property | Value |
+| --- | --- |
+| **type** | String "itemadded", denoting the event-type that was triggered |
+| **item** | the new item, now added to the Array |
+| **index** | the index at which the item was added |
+**Fires on:** *push, unshift, splice*
 
-    **Note:** Shuffling the Array or using methods like `unshift` will fire `itemset` for *each* index change
+#### itemset
+An item in the Array has moved. Callbacks will receive an Object consisting of:
+| Property | Value |
+| --- | --- |
+| **type** | String "itemset", denoting the event-type that was triggered |
+| **item** | the item set in the Array |
+| **index** | the index to which the item was allocated |
+**Fires on:** *unshift, using index accessors to set Array items*
+<br>
+**Note:** Shuffling the Array or using methods like `unshift` will fire `itemset` for *each* index change
 
-  - **itemremoved** An item has been removed from the Array. Callbacks will receive an Object consisting of 
-    - **type** String "itemremoved", denoting the event-type that was triggered
-    - **item** the item removed from the Array, 
-    - **index** the index at which the item was removed
+#### itemremoved
+An item has been removed from the Array. Callbacks will receive an Object consisting of:
+| Property | Value |
+| --- | --- |
+| **type** | String "itemremoved", denoting the event-type that was triggered |
+| **item** | the item removed from the Array |
+| **index** | the index at which the item was removed |
+**Fires on:** *pop, shift, splice*
 
-    **Fires on:** *pop, shift, splice*
+#### mutated 
+The Array value has been reassigned. Callbacks will receive an Object consisting of :
+| Property | Value |
+| --- | --- |
+| **type** | String "mutated", denoting the event-type that was triggered |
+| **item** | the new Array value |
+| **index** | String "all", denoting all indices will have been affected |
+**Fires on:** *Using the value accessor to mutate the Array value*
+<hr>
 
-  - **mutated** The Array value has been reassigned. Callbacks will receive an Object consisting of 
-    - **type** String "mutated", denoting the event-type that was triggered
-    - **item** the new Array value, 
-    - **index** "all", String - all indices will have been affected
-
-    **Fires on:** *Using the value accessor to mutate the Array value*
-
-#### ObservableString (*extends String*)
-*a mutable, String-like Object*
-
-**Unique Methods and Props**
-  - **reassign** Mutates String value, chainable (returns `this`).
-
-  ```
-  let str = Vx("String", "Hello, world");
-  str.reassign("Hello, moon").addEventListener(...
-
-  console.log(str);
-  // Hello, moon
-  ```
-
-  - **length** Returns String value length; non-configurable. 
-
-**Event Types**
-  - **mutated** The String value has been reassigned. Callbacks will receive an Object consisting of 
-    - **type** String "mutated", denoting the event-type that was triggered
-    - **value** the previous String value, 
-    - **mutant** the reassigned String value
-
-#### ObservableObject (*extends Proxy*)
+#### <a name="obj"></a> <u>ObservableObject (*extends Proxy*)</u>
 *an extended Object Proxy*
 
-**Event Types**
-  - **itemget** An Object property value has been accessed. Callbacks will receive an Object consisting of
-    - **type** String "itemget", denoting the event-type that was triggered
-    - **prop** The name or Symbol of the property being accessed
-    - **target** The target object
-    - **value** The specific value being accessed
+**Example:**
+```
+const target = {
+    name: "La Monte Young",
+    genre: "Minimalism"
+};
 
-  - **itemset** An Object property value has been set. Callbacks will receive an Object consisting of
-    - **type** String "itemset", denoting the event-type that was triggered
-    - **prop** The name or Symbol of the property being set
-    - **target** The target object
-    - **value** The new value that has been set on `prop`
+const music = Vx("Object", target);
+```
 
-  - **itemdeleted** An Object property value has been deleted. Callbacks will receive an Object consisting of
-    - **type** String "itemdeleted", denoting the event-type that was triggered
-    - **prop** The name or Symbol of the property being deleted
-    - **target** The stringified target object
-    - **value** A Boolean value indicating deletion success
+#### Event Types
 
-### Ubiquitous Methods and Props
-  - **value** A non-enumerable accessor for getting and/or setting the core value of a given *Observable*
+#### itemget
+An Object property value has been accessed. Callbacks will receive an Object consisting of:
+| Property | Value |
+| --- | --- |
+| **type** | String "itemget", denoting the event-type that was triggered |
+| **prop** | The name or Symbol of the property being accessed |
+| **target** | The target object |
+| **value** | The specific value being accessed |
 
+#### itemset
+An Object property value has been set. Callbacks will receive an Object consisting of:
+| Property | Value |
+| --- | --- |
+| **type** | String "itemset", denoting the event-type that was triggered |
+| **prop** | The name or Symbol of the property being set |
+| **target** | The target object |
+| **value** | The new value that has been set on `prop` |
+
+#### itemdeleted 
+An Object property value has been deleted. Callbacks will receive an Object consisting of:
+| Property | Value |
+| --- | --- |
+| **type** | String "itemdeleted", denoting the event-type that was triggered |
+| **prop** | The name or Symbol of the property being deleted |
+| **target** | The stringified target object |
+| **value** | A Boolean value indicating deletion success |
+<hr>
+
+#### <a name="str"></a>  <u>ObservableString (*extends String*)</u>
+*a mutable, String-like Object*
+
+**Example:**
+```
+const hash = Vx("String", "UmVhZE1vcmVZdWtpb01pc2hpbWEK");
+```
+
+#### Unique Methods and Props
+
+#### reassign 
+Mutates String value, chainable (returns `this`).
+
+**Example:**
+```
+const str = Vx("String", "Hello, world");
+str.reassign("Hello, moon").addEventListener(...
+
+console.log(str);
+// Hello, moon
+```
+
+#### length
+Returns String value length; non-configurable. 
+
+#### Event Types
+
+#### mutated  
+The String value has been reassigned. Callbacks will receive an Object consisting of: 
+| Property | Value |
+| --- | --- |
+| **type** | String "mutated", denoting the event-type that was triggered |
+| **value** | the previous String value |
+| **mutant** | the reassigned String value |
+
+<hr>
+
+#### <a name="all"></a> <u>Ubiquitous Methods and Props</u>
+
+#### value
+A non-enumerable accessor for getting and/or setting the core value of a given *Observable*
+
+**Example:**
   ```
    const users = Vx("Array", ["Alice", "Bob"]);
+
    console.log(users.value);
    // ["Alice", "Bob"]
-   users.value = ["Alexei", "Quinn"]
+
+   users.value = ["Alexei", "Quinn"];
+
    console.log(users.value);
    // ["Alexei", "Quinn"]
    ```
 
-   *Get/Set on types `String`, `Array`*
-   *Get on types `Object`*
+ **Note**: *Get/Set on types `String`, `Array`*; *Get on types `Object`*
     
-  - **identifier** A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
-  - **type** The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*
-  - **addEventListener** Bind a callback to fire whenever a given event-type has been triggered.
+#### identifier 
+A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
 
-  ```
-  const logMsg = function(event) {
-            // every time an item is added to the array, fire this callback
-            console.log(`Added ${event.item} at index ${event.index}.`);
-        });
-  let users = Vx("Array", ["Alice","Bob"]).addEventListener("itemadded", logMsg);
+#### type 
+The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*
 
-  users.push("Charlie");
-  // "Added Charlie at index 2."
-  ```
+#### addEventListener 
+Bind a callback to fire whenever a given event-type has been triggered. 
+<br>
+See also: [debounce](#debounce) option.
 
-  - **removeEventListener** Remove an existing callback from the respective event-type to which it has been registered.
+**Example:**
+```
+const logMsg = function(event) {
+    // every time an item is added to the array, fire this callback
+    console.log(`Added ${event.item} at index ${event.index}.`);
+});
 
-  ```
-  const logMsg = function(event) {
-            // every time an item is added to the array, fire this callback
-            console.log(`Added ${event.item} at index ${event.index}.`);
-        });
-  let users = Vx("Array", ["Alice","Bob"]).addEventListener("itemadded", logMsg).removeEventListener("itemadded", logMsg);
+const users = Vx("Array", ["Alice","Bob"]).addEventListener("itemadded", logMsg);
 
+users.push("Charlie");
+// "Added Charlie at index 2."
+```
 
-  users.push("Charlie");
-  // no log - handler was removed ^
-  ```
+#### removeEventListener 
+Remove an existing callback from the respective event-type to which it has been registered. 
+<br>
+See also: [debounce](#debounce) option.
+
+**Example:**
+```
+const logMsg = function(event) {
+    console.log(`Added ${event.item} at index ${event.index}.`); 
+});
+
+const users = Vx("Array", ["Alice","Bob"])
+    .addEventListener("itemadded", logMsg)
+    .removeEventListener("itemadded", logMsg);
+
+users.push("Charlie");
+// no log - handler was removed ^
+```
+
+#### <a name="debounce"></a> debounce (option)
+Optionally enforce a debounce on a given event-listener; handler calls will be throttled for a duration of *n* milliseconds.
+
+To provide the Vx constructor a debounce directive, one need only specify a third and optional argument when calling `addEventListener` - a Number denoting milliseconds to which the debounce timeout will be set.
+
+To unregister a debounced handler via `removeEventListener`, simply pass the handler name as usual.
+
+**Example:**
+```
+const logMsg = function(event) {
+    console.log(`Added ${event.item} at index ${event.index}.`); 
+});
+
+const users = Vx("Array", ["Alice","Bob"]).addEventListener("itemadded", logMsg, 2000);
+
+users.push("Charlie");
+// two seconds later..."Added Charlie at index 2."
+
+// Vx will find and remove the debounced `logMsg`; no debounce directive needed here
+users.removeEventListener("itemadded", logMsg);
+
+users.push("RMS");
+// no log - debounced handler was removed ^
+```
+
