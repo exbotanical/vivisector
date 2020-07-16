@@ -8,6 +8,7 @@ const itemsMock = [
     "Bob"
 ];
 
+const nestedItemsMock = ["hello",["hello"], "world", ["world", "hello"], ["world", ["world",["hello"]]]];
 const handlerMock = () => "fired";
 
 /* Assertions */
@@ -89,6 +90,13 @@ describe("evaluation of ObservableArray datatype", () => {
             const matchedIndices = users.findIndexAll("Alice");
             expect(matchedIndices).toEqual([0]);
         });
+
+        it("`findIndexAllDeep` should return all indices - no matter how nested - matching a given value", () => {
+            const users = new ObservableArray(nestedItemsMock);
+            const matchedIndices = users.findIndexAllDeep("hello");
+            expect(matchedIndices).toEqual([ [ 0 ], [ 1, 0 ], [ 3, 1 ], [ 4, 1, 1, 0 ] ]);
+        });
+
     });
 
     describe("evaluation of ObservableArray event methods", () => {

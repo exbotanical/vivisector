@@ -1,5 +1,12 @@
 const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = require("../utils/ubiquitous-props.js");
 
+/**
+ * @param {Object} obj Object whose value will be copied and proxied. 
+ * @summary Factory for instantiating proxied, observable Objects.
+ * @description Copies Object and proxifies; configures necessary traps and broadcasts events upon the access thereof.
+ *     Recurses the target Object so as to enforce traps on nested props/accessors.
+ * @augments Proxy
+ */
 function ObservableObject(obj) {
     /* Configuration Artifacts */
     const _symbols = {
@@ -11,7 +18,7 @@ function ObservableObject(obj) {
             itemdeleted: [],
             itemset: []
         },
-        // non-enumerable prop store - mitigate get/set events from being called thereon
+        // non-enumerable prop store - mitigate get|set events from being called thereon
         _internals = [
             "addEventListener",
             "removeEventListener",
@@ -19,12 +26,20 @@ function ObservableObject(obj) {
             "type"
         ];
 
+    /**
+     * @param {String} prop The property presently being accessed.
+     * @summary Intercepts attempts to set|delete non-configurable properties.
+     * @throws {Error} Raises exception if property `prop` is present in `_internals`.
+     */
     const enforceConfigurableProps = (prop) => {
         if (_internals.includes(prop)) {
             throw new Error(`Error: Property '${prop}' is non-configurable.`);
         }
     };
    
+    /**
+     * @summary Root Proxy handler; injects event broadcasts into get|set|delete traps.
+     */
     const _rootHandler = {
         get(target, prop, recv) {
             // type-check mechanism for testing
@@ -68,6 +83,8 @@ function ObservableObject(obj) {
         },
         deleteProperty(target, prop) {
             enforceConfigurableProps(prop);
+            // `toString` returns a default value when argument is type Object, ergo, we use `JSON.stringify` here
+            // see: https://es5.github.io/#x9.8
             const ephemeralTarget = JSON.stringify(target, null, 0);
             const value = Reflect.deleteProperty(target, prop);
             raiseEvent({
@@ -90,7 +107,9 @@ function ObservableObject(obj) {
     // if we pass `obj` directly, the Proxy will modify the original target
     const _self = new Proxy(JSON.parse(JSON.stringify(obj)), _rootHandler);
 
-    // define accessor for by-value designations
+    /**
+     * @summary Defines accessor for core Object value, decoupled from original target ref.
+     */
     Object.defineProperty(_self, "value", {
         configurable: false,
         enumerable: false,
@@ -111,35 +130,3 @@ function ObservableObject(obj) {
 };
 
 module.exports = ObservableObject;
-
-// const mockHandler = args => {
-//     let [targetObject, targetProp, givenValue, receiverObject ] = args,
-//         _operationType;
-
-//     if (args.length === 2) {
-//         _operationType = "DEL";
-
-//     }
-//     else if (args.length === 3) {
-//         _operationType = "GET";
-//     }
-//     else if (args.length === 4) {
-//         _operationType = "SET"
-//     }
-//     console.log(_operationType, givenValue, "on prop", targetProp, "of object", targetObject);
-// }
-
-
-
-
-
-
-// const setNIntervals = (fn, delay, rounds) => {
-//     if (!rounds) {
-//         return;
-//     }
-//     setTimeout(() => {
-//         fn();
-//         setNIntervals(fn, delay, rounds - 1);
-//     }, delay);
-// };

@@ -147,16 +147,16 @@ describe("evaluation of ObservableObject datatype", () => {
     describe("evaluation of custom pre-factory ObservableObject accessors", () => {
 
         it("the `value` accessor should be decoupled from reference", () => {
-            const users = new ObservableObject(itemsMock);
+            const users = new ObservableObject(nestedItemsMock);
             const copy = users.value;
-            copy[itemsMock[0]] = "";
-            expect(users.value).toEqual(itemsMock);
+            copy.passwords = "";
+            expect(users.value).toEqual(nestedItemsMock);
         });
 
         it("the `value` prop setter should be inactive", () => {
-            const users = new ObservableObject(itemsMock);
+            const users = new ObservableObject(nestedItemsMock);
             expect(users.value = "").toBe("");
-            expect(users.value).toEqual(itemsMock);
+            expect(users.value).toEqual(nestedItemsMock);
         });
 
     });

@@ -2,7 +2,6 @@ const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = requir
 
 /**
  * @override
- * @readonly
  * @summary Factory for instantiating observable Array-like objects.
  * @description Copies array into Array-like object and hijacks specific instance's base prototype,
  *     thus creating an observable of type Array. Provides custom handlers for
@@ -13,7 +12,7 @@ const { defineAddEventListener, defineRemoveEventListener, raiseEvent } = requir
  */
 function ObservableArray(items) {
 
-    // assign outermost local execution context vars for easier reference
+    // `this` is used throughout as a mutable constructor
     const _self = this,
         _handlers = {
             itemadded: [],
@@ -78,6 +77,33 @@ function ObservableArray(items) {
             return indices;
         }
     });
+
+    // given a value, returns an Array of indices which match said value, no matter how nested
+    Object.defineProperty(_self, "findIndexAllDeep", {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: (value) => {
+            const indices = [];
+            // path will be an Array with the current level therein
+            this.some(function walk(path) {
+                // will keep 'matching' indices until it hits the actual value; creates multi-dimensional Array
+                return function (item, i) {
+                    // while item is a match, continue pushing corresponding indices into Array `indices`
+                    if (item === value) {
+                        indices.push(path.concat(i));  
+                    };
+                    // else, ensure `item` is an Array (indicating another level to walk)
+                    // recurse and call `walk`; `some` implicitly passes `this` aka `item` as the first argument
+                    return Array.isArray(item) && item.some(walk(path.concat(i)));
+                };
+            }([])); /* we initialize as an IIFE and pass an empty Array as our default param*/
+            // return multi-dimensional Array mapping of matched indices
+            return indices;
+        }
+    });
+    // Note: we could later add something like `JSON.stringify(_array[i]).indexOf(value) > -1` to eval whether or not 
+    // the value exists and we should continue recursing the tree
 
     // define props for event-binding
     defineAddEventListener(_self, _handlers);
@@ -203,8 +229,10 @@ function ObservableArray(items) {
             numToRemove = numToRemove == null ? _array.length - index : numToRemove > 0 ? numToRemove : 0;
 
             while (numToRemove--) {
+                // we specify the 0th index to coerce to val as opposed to an array with val therein
                 item = _array.splice(index, 1)[0];
                 removed.push(item);
+                // reflect changes in constructor arr
                 delete _self[_array.length];
                 raiseEvent({
                     type: "itemremoved",
@@ -214,7 +242,9 @@ function ObservableArray(items) {
                 }, _self, _handlers);
             }
             itemsToAdd.forEach(item => {
+                // no need to update _self as `splice` interceptor will do this for us
                 _array.splice(index, 0, item);
+                
                 defineIndexProperty(_array.length - 1);
                 raiseEvent({
                     type: "itemadded",
