@@ -105,6 +105,7 @@ A new item has been added to the Array. Callbacks will receive an Object consist
 | **type** | String "itemadded", denoting the event-type that was triggered |
 | **item** | the new item, now added to the Array |
 | **index** | the index at which the item was added |
+
 **Fires on:** *push, unshift, splice*
 
 #### itemset
@@ -114,6 +115,7 @@ An item in the Array has moved. Callbacks will receive an Object consisting of:
 | **type** | String "itemset", denoting the event-type that was triggered |
 | **item** | the item set in the Array |
 | **index** | the index to which the item was allocated |
+
 **Fires on:** *unshift, using index accessors to set Array items*
 <br>
 **Note:** Shuffling the Array or using methods like `unshift` will fire `itemset` for *each* index change
@@ -125,6 +127,7 @@ An item has been removed from the Array. Callbacks will receive an Object consis
 | **type** | String "itemremoved", denoting the event-type that was triggered |
 | **item** | the item removed from the Array |
 | **index** | the index at which the item was removed |
+
 **Fires on:** *pop, shift, splice*
 
 #### mutated 
@@ -134,6 +137,7 @@ The Array value has been reassigned. Callbacks will receive an Object consisting
 | **type** | String "mutated", denoting the event-type that was triggered |
 | **item** | the new Array value |
 | **index** | String "all", denoting all indices will have been affected |
+
 **Fires on:** *Using the value accessor to mutate the Array value*
 <hr>
 

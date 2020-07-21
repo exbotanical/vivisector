@@ -2,6 +2,9 @@ const ObservableArray = require("./datatypes/ObservableArray.js");
 const ObservableString = require("./datatypes/ObservableString.js");
 const ObservableObject = require("./datatypes/ObservableObject.js");
 
+
+// this codebase is commented liberally for development purposes; see the official build for transpiled lib
+
 /**
  * @summary A factory / wrapper for exporting the Vivisector.js `Observables` and their associated properties.
  * @description Exposes various JavaScript datatypes and primitives and extends them with both event-driven 
@@ -25,7 +28,7 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
     /* Method Injection Library */
 
     // meta-prototype for storing methods accessible to all `Observable` instances
-    // place methods which you wish to expose on Vx instances here and uncomment reassignments below (ln. 133-135)
+    // place methods which you wish to expose on Vx instances here and uncomment reassignments below (`global` wrapper util)
     Vx.prototype = {
         // any methods added here will be exposed to *all* `Observables`
         // we can actually import other modules or libs here; in doing so, we need to further tighten the security 
@@ -49,16 +52,12 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
         // transient Object for assembling prototype and defaults injection
         let _intermediateObject;
 
-        // selected type: Array
         if (datatype === "Array") {
-            // point to the execution context of the newly generated `Observable`
             _intermediateObject = new ObservableArray(data);
         }
-        // selected type: String
         else if (datatype === "String") {
             _intermediateObject = new ObservableString(data);
         }
-        // selected type: String
         else if (datatype === "Object") {
             _intermediateObject = new ObservableObject(data);
         }
@@ -80,14 +79,13 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
             /* 
                 Destructure id and enforce unique filter
                 
-                What's happening here is we are evaluating a ternary expression wrapped inside of an IIFE. 
+                Here, we are evaluating a ternary expression wrapped inside of an IIFE. 
                 This IIFE accepts as input the `options` object and destructures the id inline. We are explicitly
                 mapping the prop `uniqueIdentifier` and destructuring it away from the resolved IIFE.
             */
 
             const { uniqueIdentifier } = (({ id }) => ({ uniqueIdentifier: _observableKeys.includes(id.toString()) ? undefined : id, /* prop2, prop3... */ }))(options);
             
-
             // if id is found in keys array of `_observables`, the instantiation should be terminated as the id is a duplicate
             if (!uniqueIdentifier) {
                 throw new Error(`Error: Identifier ${options.id} is currently in use.`);
@@ -104,9 +102,9 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
         // we can do this later at any point within this scope; leave until we need to do something with the type
         // _type = datatype;
 
-        // Here, we are creating a new Object of all ubiquitous props for which `defineProperty` will be called. Then,
-        // we destructure the key/value pairs from the Array produced by `Object.entries` and call `forEach` thereon
-        // Ea. key will become the prop name; each value (that which is preceded by an underscore), the prop value
+        // Create a new Object of all ubiquitous props for which `defineProperty` will be called. Then,
+        // destructure the key/value pairs from the Array produced by `Object.entries` and call `forEach` thereon
+        // Ea. key will be collated as a computed property with its accompanying value
         Object.entries({ identifier: _identifier, type: _type }).forEach(([key, value]) => 
             // use `defineProperty` for greater control granularity; set prop to non-enumerable
             Object.defineProperty(_intermediateObject, key, {

@@ -46,7 +46,7 @@ function ObservableArray(items) {
     };
 
     /**
-     * @summary Dynamically accessor for actual array value (core val).
+     * @summary Defines accessor for actual array value (core val).
      */
     Object.defineProperty(_self, "value", {
         configurable: false,
