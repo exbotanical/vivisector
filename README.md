@@ -1,6 +1,6 @@
 ![Vivisector Logo](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/vx.png)
 
-# Vivisector.js | Create observable JavaScript datatypes
+# Vivisector.js | Create event-driven datatypes
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
 [![npm version](https://badge.fury.io/js/vivisector.svg)](https://badge.fury.io/js/vivisector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -19,6 +19,7 @@
 
 ### <a name="feat"></a> Features
   - custom *Observable* datatypes for Array, Object/Array, and String data
+  - all datatypes are pure functions
   - instantly link/unlink actions to a variable's state
   - bind unlimited callbacks to specific types of state-mutation events *e.g. `itemadded`, `itemremoved`*
   - custom, chainable methods maintain stable execution context *i.e. method-chaining without the need to explicitly pipe `this`*
@@ -217,6 +218,9 @@ The String value has been reassigned. Callbacks will receive an Object consistin
 <hr>
 
 #### <a name="all"></a> <u>Ubiquitous Methods and Props</u>
+
+#### Functional Purity
+The `Vx` handler copies by value, not by reference. Observables do not modify the original Objects passed to them upon instantiation.
 
 #### value
 A non-enumerable accessor for getting and/or setting the core value of a given *Observable*

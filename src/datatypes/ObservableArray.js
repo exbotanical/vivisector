@@ -23,7 +23,9 @@ function ObservableArray(items) {
     // internal value store
     let _array = [];
 
-    // helper for configuring index accessors
+    /**
+     * @summary Dynamically defines index accessors.
+     */
     const defineIndexProperty = (index) => {
         if (!(index in _self)) {
             Object.defineProperty(_self, index, {
@@ -43,7 +45,9 @@ function ObservableArray(items) {
         }
     };
 
-    // define accessor for actual array value
+    /**
+     * @summary Dynamically accessor for actual array value (core val).
+     */
     Object.defineProperty(_self, "value", {
         configurable: false,
         enumerable: false,
@@ -62,7 +66,11 @@ function ObservableArray(items) {
 
     /* Custom Methods */
 
-    // given a value, returns an Array of indices which match said value
+    /**
+     * @param {Any} value The value to be matched against core arr items. 
+     * @summary Returns an Array of all indices that contain a match to given argument. Does not evaluate nested items.
+     * @returns {Array} A multi-dimensional array of matched indices.
+     */
     Object.defineProperty(_self, "findIndexAll", {
         configurable: false,
         enumerable: false,
@@ -78,7 +86,11 @@ function ObservableArray(items) {
         }
     });
 
-    // given a value, returns an Array of indices which match said value, no matter how nested
+    /**
+     * @param {Any} value The value to be matched against core arr items. 
+     * @summary Returns an Array of all indices that contain a match to given argument. Walks entire Array tree and evaluates nested items.
+     * @returns {Array} A multi-dimensional array of matched indices.
+     */
     Object.defineProperty(_self, "findIndexAllDeep", {
         configurable: false,
         enumerable: false,
@@ -109,7 +121,10 @@ function ObservableArray(items) {
     defineAddEventListener(_self, _handlers);
     defineRemoveEventListener(_self, _handlers);
     
-    // override `push` method
+    /**
+     * @summary Defines event-bound `push` method.
+     * @override `Array.prototype.push`
+     */
     Object.defineProperty(_self, "push", {
         configurable: false,
         enumerable: false,
@@ -133,7 +148,10 @@ function ObservableArray(items) {
         }
     });
 
-    // override `pop` method
+    /**
+     * @summary Defines event-bound `pop` method.
+     * @override `Array.prototype.pop`
+     */
     Object.defineProperty(_self, "pop", {
         configurable: false,
         enumerable: false,
@@ -153,7 +171,10 @@ function ObservableArray(items) {
         }
     });
 
-    // override unshift method
+    /**
+     * @summary Defines event-bound `unshift` method.
+     * @override `Array.prototype.unshift`
+     */
     Object.defineProperty(_self, "unshift", {
         configurable: false,
         enumerable: false,
@@ -186,7 +207,10 @@ function ObservableArray(items) {
         }
     });
 
-    // override shift method
+    /**
+     * @summary Defines event-bound `shift` method.
+     * @override `Array.prototype.shift`
+     */
     Object.defineProperty(_self, "shift", {
         configurable: false,
         enumerable: false,
@@ -208,7 +232,10 @@ function ObservableArray(items) {
         }
     });
 
-    // override splice method
+    /**
+     * @summary Defines event-bound `splice` method.
+     * @override `Array.prototype.splice`
+     */
     Object.defineProperty(_self, "splice", {
         configurable: false,
         enumerable: false,
@@ -258,7 +285,10 @@ function ObservableArray(items) {
         }
     });
 
-    // override `length` method
+    /**
+     * @summary Defines event-bound `length` method.
+     * @override `Array.prototype.length`
+     */
     Object.defineProperty(_self, "length", {
         configurable: false,
         enumerable: false,
@@ -288,7 +318,10 @@ function ObservableArray(items) {
         }
     });
 
-    // process prototype for self instance to ensure we extend Array methods
+    /**
+     * @summary Process prototype for instance to ensure we extend undeclared Array methods.
+     * @override `Array.prototype`
+     */
     Object.getOwnPropertyNames(Array.prototype).forEach((name) => {
         // ensure prop isn't already allocated so as to avoid collisions
         if (!(name in _self)) {

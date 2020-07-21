@@ -117,7 +117,6 @@ function ObservableString(value) {
      * @override
      * @summary Define event-bound `split` method.
      */
-    // TODO process events
     Object.defineProperty(_self, "split", {
         configurable: false,
         enumerable: false,

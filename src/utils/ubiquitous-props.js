@@ -1,3 +1,8 @@
+/**
+ * @param {Function} fn The callback to be executed after the timeout is lifted.
+ * @param {Number} ms A number denoting milliseconds until timeout is lifted.
+ * @summary Debounces a function call by `ms` milliseconds.
+ */
 const debounce = (fn, ms) => {
     let timeout;
     return (args) => {
@@ -6,6 +11,12 @@ const debounce = (fn, ms) => {
     };
 };
 
+/**
+ * @param {Function} fn The function to be granted a computed name property.
+ * @param {String} name The value of prop `name`.
+ * @summary Accepts as input a function and assigns to it a computed name property of value `name`.
+ * @returns {Function} The passed function, now accompanied by a computed name property.
+ */
 const computeNamedFunction = (fn, name) => {
     Object.defineProperty(fn, "name", {
         value: name,
@@ -14,6 +25,11 @@ const computeNamedFunction = (fn, name) => {
     return fn;
 };
 
+/**
+ * @param {Object} context The Object instance on which to define prop `addEventListener`.
+ * @param {Object} handlers The provided instance's handlers store.
+ * @summary Defines `addEventListener` property.
+ */
 const defineAddEventListener = (context, handlers) => {
     // override addEventListener method of given array
     Object.defineProperty(context, "addEventListener", {
@@ -44,6 +60,11 @@ const defineAddEventListener = (context, handlers) => {
     });
 };
 
+/**
+ * @param {Object} context The Object instance on which to define prop `removeEventListener`.
+ * @param {Object} handlers The provided instance's handlers store.
+ * @summary Defines `removeEventListener` property.
+ */
 const defineRemoveEventListener = (context, handlers) => {
     // override removeEventListener method of given array
     Object.defineProperty(context, "removeEventListener", {
@@ -77,7 +98,12 @@ const defineRemoveEventListener = (context, handlers) => {
     });
 };
 
- // helper for event executions
+/**
+ * @param {Object} event An Object containing event-contingent data.
+ * @param {Object} context The `this` value on which to call each instance.
+ * @param {Object} handlers The provided instance's handlers store.
+ * @summary Systematically calls each handler of a given event type.
+ */
  const raiseEvent = (event, context, handlers) => {
     handlers[event.type].forEach((handler) => {
         handler.call(context, event);
