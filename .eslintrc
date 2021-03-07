@@ -1,0 +1,31 @@
+{
+  "env": {
+    "node": true,
+    "es6": true,
+    "commonjs": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "impliedStrict": true,
+      "modules": true
+    }
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "comma-dangle": "error",
+    "semi": "error",
+    "space-before-function-paren": "error"
+  },
+  "ignorePatterns": [
+    "repl.js",
+    "**/*__tests__"
+  ],
+  "reportUnusedDisableDirectives": true
+}

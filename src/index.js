@@ -1,6 +1,7 @@
-const ObservableArray = require("./datatypes/ObservableArray.js");
-const ObservableString = require("./datatypes/ObservableString.js");
-const ObservableObject = require("./datatypes/ObservableObject.js");
+/* eslint-disable no-unused-vars */
+const ObservableArray = require('./datatypes/ObservableArray.js');
+const ObservableString = require('./datatypes/ObservableString.js');
+const ObservableObject = require('./datatypes/ObservableObject.js');
 
 
 // this codebase is commented liberally for development purposes; see the official build for transpiled lib
@@ -16,7 +17,7 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
 (function (global) {  
     // mitigate need to use `new` keyword by returning a discrete function constructor 
     // to generate the object   
-    const Vx = function(datatype, data, options) {
+    const Vx = function (datatype, data, options) {
         return new Vx.init(datatype, data, options);
     };
 
@@ -44,7 +45,7 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
 
     // the actual method which is executed
     // this is mostly config for prospective macro-object use and ubiquitous methods
-    Vx.init = function(datatype, data, options) {
+    Vx.init = function (datatype, data, options) {
         // this assignment will point to the execution context of the newly generated `Observable`
         // remaining vars are hoisted
         const _self = this,
@@ -52,13 +53,13 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
         // transient Object for assembling prototype and defaults injection
         let _intermediateObject;
 
-        if (datatype === "Array") {
+        if (datatype === 'Array') {
             _intermediateObject = new ObservableArray(data);
         }
-        else if (datatype === "String") {
+        else if (datatype === 'String') {
             _intermediateObject = new ObservableString(data);
         }
-        else if (datatype === "Object") {
+        else if (datatype === 'Object') {
             _intermediateObject = new ObservableObject(data);
         }
         // unsupported / unprovided type
@@ -84,7 +85,7 @@ const ObservableObject = require("./datatypes/ObservableObject.js");
                 mapping the prop `uniqueIdentifier` and destructuring it away from the resolved IIFE.
             */
 
-            const { uniqueIdentifier } = (({ id }) => ({ uniqueIdentifier: _observableKeys.includes(id.toString()) ? undefined : id, /* prop2, prop3... */ }))(options);
+            const { uniqueIdentifier } = (({ id }) => ({ uniqueIdentifier: _observableKeys.includes(id.toString()) ? undefined : id /* prop2, prop3... */ }))(options);
             
             // if id is found in keys array of `_observables`, the instantiation should be terminated as the id is a duplicate
             if (!uniqueIdentifier) {

@@ -1,45 +1,45 @@
-const { defineAddEventListener, defineRemoveEventListener, debounce, computeNamedFunction } = require("../src/utils/ubiquitous-props.js");
-const Vx = require("../src/index.js");
+const { defineAddEventListener, defineRemoveEventListener, debounce, computeNamedFunction } = require('../src/utils/ubiquitous-props.js');
+const Vx = require('../src/index.js');
 
 // bypass Jest-specific behaviors incurred by way of higher-order functions
 /* Mocks */
 
 const mockObject = {
-    0: "item"
+    0: 'item'
 };
-const mockHandler = () => "fired";
+const mockHandler = () => 'fired';
 
 const mockHandlers = {
     mockevent: [
         mockHandler,
-        "mockHandler"
+        'mockHandler'
     ]
 };
 
 const itemsMock = [
-    "Alice",
-    "Bob"
+    'Alice',
+    'Bob'
 ];
 
 /* Assertions */
 
-describe("enforce coverage on higher-order functions", () => {
+describe('enforce coverage on higher-order functions', () => {
 
-    describe("evaluation of event handler registry system", () => {
+    describe('evaluation of event handler registry system', () => {
 
-        it("should throw an exception when provided an invalid handler", () => {
+        it('should throw an exception when provided an invalid handler', () => {
 
             defineAddEventListener(mockObject, mockHandlers);
             defineRemoveEventListener(mockObject, mockHandlers);
-            expect(() => mockObject.addEventListener("mockevent", "mockHandler")).toThrow("Error: Invalid handler.");
-            expect(() => mockObject.removeEventListener("mockevent", "mockHandler")).toThrow("Error: Invalid handler.");
+            expect(() => mockObject.addEventListener('mockevent', 'mockHandler')).toThrow('Error: Invalid handler.');
+            expect(() => mockObject.removeEventListener('mockevent', 'mockHandler')).toThrow('Error: Invalid handler.');
 
         });
 
-        it("debounced handlers should properly incur delay", () => {
+        it('debounced handlers should properly incur delay', () => {
             let callbackFiredCount = 0;
             const mockEventHandler = () => callbackFiredCount++;
-            const arr = Vx("Array", itemsMock).addEventListener("itemadded", mockEventHandler, 2000);
+            const arr = Vx('Array', itemsMock).addEventListener('itemadded', mockEventHandler, 2000);
             arr.push(1);
             expect(callbackFiredCount).toBe(0);
             setTimeout(() => {
@@ -47,12 +47,12 @@ describe("enforce coverage on higher-order functions", () => {
             }, 2000);
         });
 
-        it("a debounced handler should retain its user-provided name as a computed property", () => {
+        it('a debounced handler should retain its user-provided name as a computed property', () => {
             let callbackFiredCount = 0;
             const mockEventHandler = () => callbackFiredCount++;
-            const arr = Vx("Array", itemsMock)
-                .addEventListener("itemadded", mockEventHandler, 2000)
-                .removeEventListener("itemadded", mockEventHandler);
+            const arr = Vx('Array', itemsMock)
+                .addEventListener('itemadded', mockEventHandler, 2000)
+                .removeEventListener('itemadded', mockEventHandler);
 
             arr.push(1);
             expect(callbackFiredCount).toBe(0);
@@ -62,9 +62,9 @@ describe("enforce coverage on higher-order functions", () => {
         });
     });
 
-    describe("evaluation of internal method `debounce`", () => {
+    describe('evaluation of internal method `debounce`', () => {
 
-        it("should adhere to given timeout", () => {
+        it('should adhere to given timeout', () => {
             let callbackFiredCount = 0;
             const mockEventHandler = () => callbackFiredCount++;
             expect(callbackFiredCount).toBe(0);
@@ -76,7 +76,7 @@ describe("enforce coverage on higher-order functions", () => {
 
         });
 
-        it("programmatically cancels in-progress calls until the timeout has been reached", () => {
+        it('programmatically cancels in-progress calls until the timeout has been reached', () => {
             jest.useFakeTimers();
             const spy = jest.fn();
             const doWork = debounce(spy, 100);
@@ -90,11 +90,11 @@ describe("enforce coverage on higher-order functions", () => {
 
     });
 
-    describe("evaluation of internal method `computeNamedFunction`", () => {
+    describe('evaluation of internal method `computeNamedFunction`', () => {
 
-        it("should dynamically assign a given name to a given function", () => {
+        it('should dynamically assign a given name to a given function', () => {
             let callbackFiredCount = 0;
-            const dynamicName = "_func";
+            const dynamicName = '_func';
             const func = () => callbackFiredCount++;
             computeNamedFunction(func,dynamicName);
             expect(func.name).toBe(dynamicName);
