@@ -1,4 +1,4 @@
-const ObservableArray = require('../src/datatypes/ObservableArray.js');
+import ObservableArray from '../lib/datatypes/ObservableArray.js';
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
 /* Mocks */

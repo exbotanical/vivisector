@@ -2,16 +2,17 @@
   "name": "vivisector",
   "version": "0.0.0-development",
   "description": "node.js library for creating observable datatypes",
-  "main": "./lib/index.js",
+  "main": "dist/vivisector.cjs.js",
+  "browser": "dist/vivisector.umd.js",
+  "module": "dist/vivisector.es.js",
   "files": [
-    "lib/",
-    "CONTRIBUTING.md"
+    "dist/"
   ],
   "jest": {
     "coverageDirectory": "./coverage",
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "lib/**/*.js"
     ],
     "coverageThreshold": {
       "global": {
@@ -41,13 +42,14 @@
   },
   "scripts": {
     "coverage": "jest --coverage && rimraf ./coverage",
-    "lint": "eslint ./",
-    "test": "jest && rimraf ./coverage",
-    "testmon": "jest --watch _tests_.*",
+    "lint": "eslint 'lib/**/*.js' --no-fix",
+    "lint:fix": "eslint 'lib/**/*.js' --fix",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest && rimraf ./coverage",
+    "testmon": "NODE_OPTIONS='--experimental-vm-modules' jest --watch _tests_.*",
     "prebuild": "rimraf ./lib",
-    "build": "babel ./src -d ./lib",
+    "build": "babel ./lib -d ./lib",
     "clean": "rimraf ./coverage && rimraf ./lib",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "coveralls": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "prerelease": "npm pack && tar -xvzf *.tgz && rimraf package *.tgz",
     "semantic-release": "semantic-release"
   },

@@ -1,5 +1,11 @@
-const { defineAddEventListener, defineRemoveEventListener, debounce, computeNamedFunction } = require('../src/utils/ubiquitous-props.js');
-const Vx = require('../src/index.js');
+import Vx from '../lib';
+
+import { 
+  defineAddEventListener, 
+  defineRemoveEventListener, 
+  debounce, 
+  computeNamedFunction 
+} from '../lib/utils';
 
 // bypass Jest-specific behaviors incurred by way of higher-order functions
 /* Mocks */

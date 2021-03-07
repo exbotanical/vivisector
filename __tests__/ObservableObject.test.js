@@ -1,4 +1,4 @@
-const ObservableObject = require('../src/datatypes/ObservableObject.js');
+import ObservableObject from '../lib/datatypes/ObservableObject.js';
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
 /* Mocks */

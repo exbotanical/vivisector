@@ -1,4 +1,4 @@
-const ObservableString = require('../src/datatypes/ObservableString.js');
+import ObservableString from '../lib/datatypes/ObservableString.js';
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
 /* Mocks */

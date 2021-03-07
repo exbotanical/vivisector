@@ -1,4 +1,4 @@
-const Vx = require('../src/index.js');
+import Vx from '../lib';
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
 /* Mocks */
