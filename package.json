@@ -6,9 +6,8 @@
   "browser": "dist/vivisector.umd.js",
   "module": "dist/vivisector.es.js",
   "exports": {
-    ".": "dist/vivisector.cjs.js",
-    "./esm": "dist/vivisector.es.js",
-    "./browser": "dist/vivisector.umd.min.js"
+    "require": "dist/vivisector.cjs.js",
+    "import": "dist/vivisector.es.js"
   },
   "engines": {
     "node": ">= 10"

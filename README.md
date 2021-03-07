@@ -13,7 +13,7 @@
  - [Documentation](#docs)
 
 ## <a name="intro"></a> Introduction
-*Vivisector.js* is a light-weight Nodejs library that exposes custom event-driven datatypes. *Vivisector's* *Observable* types broadcast unique events correlated to specific types of mutations and accessors. As such, one can bind methods to variables and render them event-bound. 
+*Vivisector.js* is a light-weight JavaScript library that exposes custom event-driven datatypes. *Vivisector's* *Observable* types broadcast unique events correlated to specific types of mutations and accessors. As such, one can bind methods to variables and render them event-bound. 
 
 *Vivisector* is flexible, compact, and straightforward; it affords you fine-grained control by allowing you to decide when and what happens when a variable changes.
 
@@ -32,7 +32,7 @@
 
 Import *Vivisector's* caller alias `Vx`:
 ```
-const Vx = require("vivisector");
+const Vx = require("vivisector"); // assuming cjs - Vivisector supports esm, too
 ```
 
 Create a new *Observable* - in this example, of type `Array` - and register a handler to fire when any *new elements* are added:
@@ -245,7 +245,7 @@ A non-enumerable accessor for getting and/or setting the core value of a given *
  **Note**: *Get/Set on types `String`, `Array`*; *Get on types `Object`*
     
 #### identifier 
-A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs runtime's `global`, or 'module context'. Currently a paused feature.
+A unique identifier assigned to all *Observables*. Namespace confined to the Nodejs (or your target runtime) runtime's `global`, or 'module context'. Currently a paused feature.
 
 #### type 
 The type identifier of a given *Observable*, *e.g. "Array", "Object", "String"*
