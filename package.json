@@ -2,12 +2,12 @@
   "name": "vivisector",
   "version": "0.0.0-development",
   "description": "node.js library for creating observable datatypes",
-  "main": "dist/vivisector.cjs.js",
-  "browser": "dist/vivisector.umd.js",
-  "module": "dist/vivisector.es.js",
+  "main": "./dist/vivisector.cjs.js",
+  "browser": "./dist/vivisector.umd.js",
+  "module": "./dist/vivisector.es.js",
   "exports": {
-    "require": "dist/vivisector.cjs.js",
-    "import": "dist/vivisector.es.js"
+    "require": "./dist/vivisector.cjs.js",
+    "import": "./dist/vivisector.es.js"
   },
   "engines": {
     "node": ">= 10"
