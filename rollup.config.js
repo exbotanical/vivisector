@@ -1,6 +1,8 @@
 import { babel } from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 
+import babelrc from './build/babel.config'; // must import, as base babelrc is needed by jest
+
 import pkg from './package.json';
 
 export default [
@@ -38,7 +40,9 @@ export default [
     },
     plugins: [
       babel({
-        exclude: 'node_modules/**'
+        exclude: 'node_modules/**',
+        babelrc: false,
+        ...babelrc
       })
     ]
   },
@@ -52,7 +56,9 @@ export default [
     },
     plugins: [
       babel({
-        exclude: 'node_modules/**'
+        exclude: 'node_modules/**',
+        babelrc: false,
+        ...babelrc
       }),
       terser()
     ]
@@ -66,7 +72,9 @@ export default [
     },
     plugins: [
       babel({
-        exclude: 'node_modules/**'
+        exclude: 'node_modules/**',
+        babelrc: false,
+        ...babelrc
       })
     ]
   }
