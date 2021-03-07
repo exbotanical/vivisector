@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import Vx from '../lib';
 
 import { 
@@ -5,7 +6,7 @@ import {
   defineRemoveEventListener, 
   debounce, 
   computeNamedFunction 
-} from '../lib/utils';
+} from '../lib/utils.js';
 
 // bypass Jest-specific behaviors incurred by way of higher-order functions
 /* Mocks */

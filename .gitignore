@@ -4,4 +4,4 @@ node_modules
 *.DS_STORE
 repl.js
 coverage
-lib
+dist

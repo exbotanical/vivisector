@@ -1,4 +1,4 @@
-import ObservableArray from '../lib/datatypes/ObservableArray.js';
+import ObservableArray from '../lib/core/Array.observable';
 // should not have identifier, should not have type - these props are enumerably added in module entrypoint
 
 /* Mocks */
