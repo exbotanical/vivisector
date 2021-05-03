@@ -1,7 +1,9 @@
 ![Vivisector Logo](/documentation/vx.png)
 
-# Vivisector.js | Create event-driven datatypes
-[![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
+# Vivisector | Reactive JavaScript programming: observables and event-driven datatypes made simple
+
+[![Build Status](https://travis-ci.com/MatthewZito/vivisector.svg?branch=master)](https://travis-ci.com/MatthewZito/vivisector)
+[![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector?branch=master)
 [![npm version](https://badge.fury.io/js/vivisector.svg)](https://badge.fury.io/js/vivisector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
