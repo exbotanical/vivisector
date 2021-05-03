@@ -1,7 +1,4 @@
 import ObservableObject from '../lib/core/Object.observable';
-// should not have identifier, should not have type - these props are enumerably added in module entrypoint
-
-/* Mocks */
 
 const itemsMock = {
   1: 'Alice',
@@ -19,7 +16,6 @@ const nestedItemsMock = {
   }
 };
 
-const handlerMock = () => 'fired';
 const isProxy = Symbol.for('_isProxy');
 const typesPool = ['string', {}, 1, [''], undefined, null];
 
@@ -31,6 +27,7 @@ describe('evaluation of ObservableObject datatype', () => {
 
     it(`should create a Proxy of the given Object `, () => {
       const users = new ObservableObject(itemsMock);
+      // TODO
       expect(users[isProxy]).toBe(true);
       expect(users).toEqual( { '0':  itemsMock[0], '1':  itemsMock[1] } );
       expect(users.length).toEqual(itemsMock.length);
@@ -49,67 +46,64 @@ describe('evaluation of ObservableObject datatype', () => {
   describe('evaluation of ObservableObject event methods', () => {
 
     it('should register and fire handlers on `itemset` events', () => {
-      let callbackFiredCount = 0;
+      const mock = jest.fn();
+
       const users = new ObservableObject(itemsMock);
 
-      // establish baseline
-      expect(callbackFiredCount).toEqual(0);
-      const mockCounter = () => callbackFiredCount++;
-      // register event handler
-      users.addEventListener('itemset', mockCounter);
-      // trigger event handler
+      expect(mock).toHaveBeenCalledTimes(0);
+
+      users.addEventListener('itemset', mock);
+
       users[0] = 'new item';
-      expect(callbackFiredCount).toBe(1);
-      
+      expect(mock).toHaveBeenCalledTimes(1);
     });
 
     it('should register and fire handlers on `itemdeleted` events', () => {
-      let callbackFiredCount = 0;
+      const mock = jest.fn();
+
       const users = new ObservableObject(nestedItemsMock);
 
-      expect(callbackFiredCount).toEqual(0);
-      const mockCounter = () => callbackFiredCount++;
-      // register event handler
-      users.addEventListener('itemdeleted', () => callbackFiredCount++);
+      expect(mock).toHaveBeenCalledTimes(0);
+
+      users.addEventListener('itemdeleted', mock);
       // null, raises `itemget` and should not be counted
       expect(users.users).toEqual(nestedItemsMock.users);
       // trigger event handler - delete should return true
       expect(delete users.users[0]).toEqual(true);
-      expect(callbackFiredCount).toEqual(1);
+      expect(mock).toHaveBeenCalledTimes(1);
 
       expect(users.users[0]).toBeUndefined();
     });
 
     it('should register and fire handlers on `itemget` events', () => {
-      let callbackFiredCount = 0;
+      const mock = jest.fn();
       const users = new ObservableObject(nestedItemsMock);
 
-      expect(callbackFiredCount).toEqual(0);
+      expect(mock).toHaveBeenCalledTimes(0);
 
       // register event handler
-      users.addEventListener('itemget', () => callbackFiredCount++);
+      users.addEventListener('itemget', mock);
       expect(users.users[1]).toBe('Alice');
-      expect(callbackFiredCount).toEqual(1);
-
+      expect(mock).toHaveBeenCalledTimes(1);
       // will fire twice - a current limitation/side-effect of how we're using Proxies plus behaviors
       // of Jest's `expect` call. 
       // Note, executing `toBe` would call the `get` trap again, resulting in a final count of 5
       expect(users.users).toEqual(nestedItemsMock.users);
-      expect(callbackFiredCount).toEqual(5);
-
+      expect(mock).toHaveBeenCalledTimes(5);
     });
 
 
     it('event methods should be chainable; `this` should be returned', () => {
+      const mock = jest.fn();
       // will throw err if misconfigured
       const users = new ObservableObject(itemsMock)
-        .addEventListener('itemset',  handlerMock)
-        .addEventListener('itemdeleted',  handlerMock);
+        .addEventListener('itemset',  mock)
+        .addEventListener('itemdeleted',  mock);
       
       // `addEventListener` should return `this`
-      expect(users.addEventListener('itemset', handlerMock)).toEqual(itemsMock);
+      expect(users.addEventListener('itemset', mock)).toEqual(itemsMock);
       // `removeEventListener` should return `this`
-      expect(users.removeEventListener('itemset', handlerMock)).toEqual(itemsMock);
+      expect(users.removeEventListener('itemset', mock)).toEqual(itemsMock);
     });
   });
 
@@ -117,7 +111,7 @@ describe('evaluation of ObservableObject datatype', () => {
 
     it('should throw an Error when an attempting to register an invalid event name', () => {
       const users = new ObservableObject(itemsMock);
-      expect(() => users.addEventListener('invalidevent',  handlerMock)).toThrow('Error: Invalid event name.');
+      expect(() => users.addEventListener('invalidevent',  () => {})).toThrow('Error: Invalid event name.');
     });
 
     it('should throw an Error when an attempting to register an invalid handler', () => {
@@ -127,11 +121,11 @@ describe('evaluation of ObservableObject datatype', () => {
 
     it('should throw an Error when an attempting to unregister an invalid event name', () => {
       const users = new ObservableObject(itemsMock);
-      expect(() => users.removeEventListener('invalidevent', handlerMock)).toThrow('Error: Invalid event name.');
+      expect(() => users.removeEventListener('invalidevent', () => {})).toThrow('Error: Invalid event name.');
     });
 
     it('should throw an Error when an attempting to unregister an invalid handler', () => {
-      const users = new ObservableObject(itemsMock).addEventListener('itemset', handlerMock);
+      const users = new ObservableObject(itemsMock).addEventListener('itemset', () => {});
       expect(() => users.removeEventListener('itemadded', null).toThrow('Error: Invalid handler.'));
     });
 

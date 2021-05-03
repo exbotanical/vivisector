@@ -1,8 +1,3 @@
-import Vx from '../lib';
-// should not have identifier, should not have type - these props are enumerably added in module entrypoint
-
-/* Mocks */
-
 const stringMock = 'hello, world ';
 
 const itemsMock = [
@@ -15,7 +10,7 @@ const objItemsMock = {
   0: 'Bob'
 };
 
-const mockInternals = ['type', 'identifier', 'addEventListener', 'removeEventListener'];
+const mockInternals = ['addEventListener', 'removeEventListener'];
 
 /* Assertions */
 describe('evaluation of Vivisector entrypoint', () => {
@@ -23,7 +18,7 @@ describe('evaluation of Vivisector entrypoint', () => {
   describe('evaluation of variable instantiation', () => {
 
     it('should instantiate an Observable of type `Array`', () => {
-        const users = Vx('Array', itemsMock);
+        const users = vivisect(itemsMock);
         expect(users).toEqual( { '0':  itemsMock[0], '1':  itemsMock[1] } );
         expect(users.length).toEqual(itemsMock.length);
         expect(users[0]).toEqual(itemsMock[0]);
@@ -32,12 +27,12 @@ describe('evaluation of Vivisector entrypoint', () => {
     });
 
     it('should instantiate an Observable of type `String`', () => {
-      const user = Vx('String', stringMock);
+      const user = vivisect(stringMock);
       expect(user).toEqual({ '0': stringMock });
     });
 
     it('should instantiate an Observable of type `Object`', () => {
-      const users = Vx('Object', objItemsMock);
+      const users = vivisect(objItemsMock);
       expect(users).toEqual( { '0':  objItemsMock[0], '1':  objItemsMock[1] } );
       expect(users[0]).toEqual(objItemsMock[0]);
       expect(users[1]).toEqual(objItemsMock[1]);
@@ -48,85 +43,53 @@ describe('evaluation of Vivisector entrypoint', () => {
 
   describe('evaluation of custom accessors', () => {
 
-    it('`value`, `type`, and `identifier` props are extant on Observable of type `Array`', () => {
-      const users = Vx('Array', itemsMock);
+    it('`value` props is extant on Observable of type `Array`', () => {
+      const users = vivisect(itemsMock);
       expect(users.value).toEqual(itemsMock);
 
       // eval noop assertion: non-configurable props should have negligible consequence 
       mockInternals.forEach(i => {
-        expect(() => users[i] = '').toThrow(`Cannot assign to read only property '${i}' of object '#<ObservableArray>'`);
+        expect(() => users[i] = '').toThrow();
       });
-      expect(users.type).toEqual('Array');
-      expect(users.identifier).toBe(3);
       
     });
 
-    it('`value`, `type`, and `identifier` props are extant on Observable of type `String`', () => {
-      const user = Vx('String', stringMock);
+    it('`value` props is extant on Observable of type `String`', () => {
+      const user = vivisect(stringMock);
       expect(user.value).toEqual(stringMock);
 
       // eval noop assertion: non-configurable props should have negligible consequence 
       mockInternals.forEach(i => {
-        expect(() => user[i] = '').toThrow(`Cannot assign to read only property '${i}' of object '#<ObservableString>'`);
+        expect(() => user[i] = '').toThrow();
       });
-      expect(user.type).toEqual('String');
-      expect(user.identifier).toBe(4);
-    });
-
-    it('`type`, and `identifier` props are extant on Observable of type `Object`', () => {
-      const user = Vx('Object', itemsMock);
-
-      // eval noop assertion: non-configurable props should have negligible consequence 
-      mockInternals.forEach(i => {
-        expect(() => user[i] = '').toThrow(`Error: Property '${i}' is non-configurable.`);
-      });
-      // expect(() => user.identifier = 1).toThrow('Error: Property 'identifier' is non-configurable.');
-      expect(user.type).toEqual('Object');
-      expect(user.identifier).toBe(5);
-    });
-
-    it('should register eligible `identifier`', () => {
-      const validOptions = { id: 9 };
-      const user = Vx('String', stringMock, validOptions);
-      expect(user.identifier).toBe(9);
     });
 
     it('non-enumerable props on Observable of type `Object` should not trigger traps/events', () => {
-      let callbackFiredCount = 0;
-      const mockCounter = () => callbackFiredCount++;
-      const obj = Vx('Object', objItemsMock)
-        .addEventListener('itemget', mockCounter)
-        .addEventListener('itemset', mockCounter)
-        .addEventListener('itemdeleted', mockCounter);
-      // test assertion: second `addEventListener` should not fire `itemget`
-      expect(callbackFiredCount).toEqual(0);
-      
-      expect(obj.identifier).toBe(7);
-      expect(obj.type).toBe('Object');
+      const mock = jest.fn();
 
-      // test assertion: `removeEventListener` should not fire `itemget`
-      obj.removeEventListener('itemset', mockCounter);
-      expect(callbackFiredCount).toEqual(0);
+      const obj = vivisect(objItemsMock)
+        .addEventListener('itemget', mock)
+        .addEventListener('itemset', mock)
+        .addEventListener('itemdeleted', mock);
+        
+      expect(mock).toHaveBeenCalledTimes(0);
+
+      obj.removeEventListener('itemset', mock);
+
+      expect(mock).toHaveBeenCalledTimes(0);
 
       // eval noop assertion: non-configurable props should have negligible consequence 
       mockInternals.forEach(i => {
-        expect(() => delete obj[i]).toThrow(`Error: Property '${i}' is non-configurable.`);
+        expect(() => delete obj[i]).toThrow();
       });
-      expect(obj.identifier).toBe(7);
     });
   });
 
   describe('evaluation of expected entrypoint exceptions and type-checking', () => {
 
     it('should throw an Error if provided an ineligible datatype', () => {
-      const invalidType = 'List';
-      expect(() => Vx(invalidType, itemsMock)).toThrow(`Error: datatype ${invalidType} is not a supported option.`);
-    });
-
-    it('should throw an Error if provided an ineligible identifier', () => {
-      const invalidOptions = { id: 1 };
-      expect( () => Vx( 'String', stringMock, invalidOptions) ).toThrow(`Error: Identifier ${invalidOptions.id} is currently in use.`);
+      const invalidType = 99;
+      expect(() => vivisect(invalidType)).toThrow();
     });
   });
-
 });

@@ -1,11 +1,8 @@
 import ObservableString from '../lib/core/String.observable';
-// should not have identifier, should not have type - these props are enumerably added in module entrypoint
-
-/* Mocks */
 
 const stringMock = 'hello, world ';
-const handlerMock = () => 'fired';
-const invalidTypesPool = [{}, 1, handlerMock, [''], undefined, null];
+
+const invalidTypesPool = [{}, 1, () => {}, [''], undefined, null];
 
 /* Assertions */
 describe('evaluation of ObservableString datatype', () => {
@@ -77,61 +74,66 @@ describe('evaluation of ObservableString datatype', () => {
       
   describe('evaluation of ObservableString event methods', () => {
     it('should register and fire handlers on `mutated` events', () => {
-      let callbackFiredCount = 0;
+      const mock = jest.fn();
+
       const user = new ObservableString(stringMock);
 
       user.value = 'a new string';
-      // establish baseline
-      expect(callbackFiredCount).toEqual(0);
 
-      // register event handler
-      user.addEventListener('mutated', () => callbackFiredCount++);
+      expect(mock).toHaveBeenCalledTimes(0);
+
+      user.addEventListener('mutated', mock);
 
       // using `reassign`
       user.reassign('another string');
-      expect(callbackFiredCount).toEqual(1);
+
+      expect(mock).toHaveBeenCalledTimes(1);
 
       // using `value` accessor
       user.value = 'yet another string';
-      expect(callbackFiredCount).toEqual(2);
 
+      expect(mock).toHaveBeenCalledTimes(2);
     });
 
     it('should successfully unregister named event handlers', () => {
-      let callbackFiredCount = 0;
-      const cb = () => callbackFiredCount++;
+      const mock = jest.fn();
 
       const user = new ObservableString(stringMock)
-        .addEventListener('mutated', cb);
+        .addEventListener('mutated', mock);
+
+      expect(mock).toHaveBeenCalledTimes(0);
 
       // trigger event handler via `value` prop/accessor
       user.value = 'new value';
-      expect(callbackFiredCount).toEqual(1);
+      expect(mock).toHaveBeenCalledTimes(1);
 
       // this should not affect anything
-      user.removeEventListener('mutated', handlerMock);
+      user.removeEventListener('mutated', () => {});
       user.value = 'another value';
-      expect(callbackFiredCount).toEqual(2);
+
+      expect(mock).toHaveBeenCalledTimes(2);
 
       // this should remove the afore-registered `mutated` handler
-      user.removeEventListener('mutated', cb);
+      user.removeEventListener('mutated', mock);
       user.value = '';
-      expect(callbackFiredCount).toEqual(2);
+
+      expect(mock).toHaveBeenCalledTimes(2);
       
     });
 
     it('event methods should be chainable; `this` should be returned', () => {
-      let callbackFiredCount = 0;
-      const cb = () => callbackFiredCount++;
+      const mock = jest.fn();
+
       // will throw err if misconfigured
-      const user = new ObservableString(stringMock).reassign('test string').addEventListener('mutated', cb);
+      const user = new ObservableString(stringMock).reassign('test string').addEventListener('mutated', mock);
       user.reassign(stringMock);
 
-      expect(callbackFiredCount).toEqual(1);
+      expect(mock).toHaveBeenCalledTimes(1);
+
       expect(user.value).toEqual(stringMock);
+
       // `addEventListener` should return `this`
-      expect(user.addEventListener('mutated', handlerMock)).toEqual({ '0':  stringMock });
-      
+      expect(user.addEventListener('mutated', () => {})).toEqual({ '0':  stringMock });
     });
   });
 
@@ -147,7 +149,7 @@ describe('evaluation of ObservableString datatype', () => {
 
     it('should throw an Error when an attempting to register an invalid event name', () => {
       const user = new ObservableString(stringMock);
-      expect(() => user.addEventListener('invalidevent', handlerMock)).toThrow('Error: Invalid event name.');
+      expect(() => user.addEventListener('invalidevent', () => {})).toThrow('Error: Invalid event name.');
     });
 
     it('should throw an Error when an attempting to register an invalid handler', () => {
@@ -157,29 +159,26 @@ describe('evaluation of ObservableString datatype', () => {
 
     it('should throw an Error when an attempting to unregister an invalid event name', () => {
       const user = new ObservableString(stringMock);
-      expect(() => user.removeEventListener('invalidevent', handlerMock)).toThrow('Error: Invalid event name.');
+      expect(() => user.removeEventListener('invalidevent', () => {})).toThrow('Error: Invalid event name.');
     });
 
     it('should throw an Error when an attempting to unregister an invalid handler', () => {
-      const user = new ObservableString(stringMock).addEventListener('mutated', handlerMock);
+      const user = new ObservableString(stringMock).addEventListener('mutated', () => {});
       expect(() => user.removeEventListener('mutated', null).toThrow('Error: Invalid handler.'));
     });
       
     it('should only persist values of type String when using the `value` accessor', () => {
-      let callbackFiredCount = 0;
-      const cb = () => callbackFiredCount++;
-      const typesPool = ['', {}, 1, callbackFiredCount, [''], undefined, null];
+      const mock = jest.fn();
 
-      // cb count will only be updated if mutation is persistent; ergo, this is our control variable
-      const user = new ObservableString(stringMock).addEventListener('mutated', cb);
-      expect(callbackFiredCount).toEqual(0);
+      const typesPool = ['', {}, 1, mock, [''], undefined, null];
+
+      // called count will only be updated if mutation is persistent; ergo, this is our control variable
+      const user = new ObservableString(stringMock).addEventListener('mutated', mock);
+      expect(mock).toHaveBeenCalledTimes(0);
 
       // apply all - the handler should only fire once given there is only 1 String in the `typesPool`
       typesPool.forEach(value => user.value = value);
-      expect(callbackFiredCount).toEqual(1);
-
+      expect(mock).toHaveBeenCalledTimes(1);
     });
-    
   });
-
 });
