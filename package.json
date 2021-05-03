@@ -1,7 +1,7 @@
 {
   "name": "vivisector",
   "version": "0.0.0-development",
-  "description": "node.js library for creating observable datatypes",
+  "description": "reactive JavaScript programming in a box",
   "main": "./dist/vivisector.cjs.js",
   "browser": "./dist/vivisector.umd.js",
   "module": "./dist/vivisector.es.js",
@@ -41,8 +41,8 @@
   },
   "lint-staged": {
     "lib/**/*.js": [
-      "npm run lint",
-      "npm run test"
+      "yarn run lint",
+      "yarn run test"
     ]
   },
   "husky": {
@@ -79,7 +79,8 @@
     "observables",
     "event-driven",
     "event-bound objects",
-    "micro-library"
+    "micro-library",
+    "reactive programming"
   ],
   "author": "Matthew T Zito",
   "license": "MIT",
@@ -99,7 +100,7 @@
     "coveralls": "^3.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.21.0",
-    "husky": "^4.3.8",
+    "husky": "4.3.8",
     "jest": "^26.6.3",
     "js-heuristics": "1.1.0",
     "lint-staged": "10.5.4",
