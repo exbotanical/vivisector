@@ -1,4 +1,4 @@
-![Vivisector Logo](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/`vivisect`.png)
+![Vivisector Logo](/documentation/vx.png)
 
 # Vivisector.js | Create event-driven datatypes
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector-js/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector-js?branch=master)
@@ -55,8 +55,8 @@ users.push("Charlie");
 
 Have a look at these usage guides for a full overview:
 
-- [See Usage Guide for arrays](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-array.md)
-- [See Usage Guide for strings](https://github.com/MatthewZito/vivisector-js/blob/master/documentation/usage-observable-string.md)
+- [See Usage Guide for arrays](/documentation/usage-observable-array.md)
+- [See Usage Guide for strings](/documentation/usage-observable-string.md)
 
 ## <a name="docs"></a> Documentation
 

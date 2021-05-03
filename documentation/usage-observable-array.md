@@ -63,7 +63,7 @@ Let's instantiate yet another array:
 
 ```js
 let y = vivisect([]).addEventListener("itemadded", function (syntheticEvent) {
-    console.log(`y: Added ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
+  console.log(`y: Added ${syntheticEvent.item} at index ${syntheticEvent.index}.`);
 });
 
 y.push(8);
