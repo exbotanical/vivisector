@@ -1,4 +1,6 @@
 import { babel } from '@rollup/plugin-babel';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 
 import babelrc from './build/babel.config'; // must import, as base babelrc is needed by jest
@@ -15,6 +17,8 @@ export default [
       exports: 'named'
     },
     plugins: [
+      nodeResolve(),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
         babelrc: false, // override browserslistrc
@@ -40,6 +44,8 @@ export default [
       name: 'vivisector'
     },
     plugins: [
+      nodeResolve({ browser: true }),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
         babelrc: false,
@@ -56,6 +62,8 @@ export default [
       name: 'vivisector'
     },
     plugins: [
+      nodeResolve({ browser: true }),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
         babelrc: false,
@@ -72,6 +80,8 @@ export default [
       format: 'es'
     },
     plugins: [
+      nodeResolve(),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
         babelrc: false,
