@@ -11,7 +11,8 @@ export default [
     input: 'lib/index.js',
     output: {
       file: pkg.main,
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named'
     },
     plugins: [
       babel({
@@ -36,7 +37,7 @@ export default [
     output: {
       file: pkg.browser,
       format: 'umd',
-      name: 'Vx'
+      name: 'vivisector'
     },
     plugins: [
       babel({
@@ -52,7 +53,7 @@ export default [
     output: {
       file: pkg.browser.replace(/\.js$/, '.min.js'),
       format: 'umd',
-      name: 'Vx'
+      name: 'vivisector'
     },
     plugins: [
       babel({
