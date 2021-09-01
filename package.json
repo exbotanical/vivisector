@@ -15,32 +15,8 @@
   "files": [
     "dist/"
   ],
-  "jest": {
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    },
-    "setupFilesAfterEnv": [
-      "<rootDir>/__tests__/setup.js"
-    ],
-    "testRegex": ".test.js$",
-    "coverageDirectory": "./coverage",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "lib/**/*.js"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 90,
-        "functions": 90,
-        "lines": 90,
-        "statements": 90
-      }
-    },
-    "errorOnDeprecated": true,
-    "verbose": true
-  },
   "lint-staged": {
-    "lib/**/*.js": [
+    "src/**/*.ts": [
       "yarn run lint",
       "yarn run test"
     ]
@@ -58,14 +34,14 @@
   },
   "scripts": {
     "coverage": "jest --coverage && rimraf ./coverage",
-    "lint": "eslint \"lib/**/*.js\" --no-fix",
-    "lint:fix": "eslint \"lib/**/*.js\" --fix",
-    "test": "NODE_OPTIONS='--experimental-vm-modules' jest && rimraf ./coverage",
-    "testmon": "NODE_OPTIONS='--experimental-vm-modules' jest --watch _tests_.*",
+    "lint": "eslint \"src/**/*.ts\" --no-fix",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
+    "test": "jest && rimraf ./coverage",
+    "test:watch": "jest --watch",
     "prebuild": "rimraf ./dist",
     "build": "rollup -c",
     "clean": "rimraf ./coverage && rimraf ./dist",
-    "coveralls": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "prerelease": "npm pack && tar -xvzf *.tgz && rimraf package *.tgz",
     "semantic-release": "semantic-release"
   },
@@ -89,26 +65,32 @@
   },
   "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
   "devDependencies": {
-    "@babel/cli": "^7.13.0",
+    "@babel/cli": "7.14.8",
+    "@babel/core": "7.15.0",
     "@babel/preset-env": "7.13.9",
     "@commitlint/cli": "^12.0.1",
     "@commitlint/config-conventional": "^12.0.1",
     "@rollup/plugin-babel": "5.3.0",
     "@rollup/plugin-commonjs": "18.0.0",
     "@rollup/plugin-node-resolve": "11.2.1",
+    "@types/jest": "27.0.1",
+    "@typescript-eslint/eslint-plugin": "4.30.0",
+    "@typescript-eslint/parser": "4.30.0",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "26.6.3",
+    "babel-jest": "27.1.0",
     "coveralls": "^3.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.21.0",
     "husky": "4.3.8",
-    "jest": "^26.6.3",
+    "jest": "27.1.0",
+    "jest-extended": "0.11.5",
     "js-heuristics": "1.1.0",
     "lint-staged": "10.5.4",
     "rimraf": "^3.0.2",
     "rollup": "2.40.0",
     "rollup-plugin-terser": "7.0.2",
-    "semantic-release": "^17.4.1"
+    "semantic-release": "^17.4.1",
+    "ts-jest": "27.0.5"
   },
   "config": {
     "commitizen": {

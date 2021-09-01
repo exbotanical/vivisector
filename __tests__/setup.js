@@ -1,9 +1,8 @@
-import { vivisect } from '../lib';
+import { vivisect } from '../src';
 
 beforeAll(() => {
   global.vivisect = vivisect;
 });
-
 
 beforeEach(() => {
   jest.useFakeTimers();

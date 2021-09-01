@@ -6,22 +6,26 @@
     "browser": true
   },
   "parserOptions": {
-    "parser": "babel-eslint",
-    "ecmaVersion": 2020,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "impliedStrict": true,
-      "modules": true
-    }
+    "parser": "@typescript-eslint/parser",
+    "ecmaVersion": 2021,
+    "plugins": [
+      "@typescript-eslint"
+    ]
   },
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "no-console": "warn",
     "comma-dangle": "error",
     "semi": "error",
-    "space-before-function-paren": "error"
+    "space-before-function-paren": "error",
+    
+    "no-console": "warn",
+
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-this-alias": "off"
   },
   "ignorePatterns": [
     "repl.js",
