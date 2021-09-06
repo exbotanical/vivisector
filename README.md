@@ -11,3 +11,5 @@
 - don't mutate state in callbacks
 - batched operations are individual events e.g. push(1,2,3) is three 'add' events
 - nested objects become their own proxies
+
+BREAKING CHANGE:
