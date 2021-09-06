@@ -14,10 +14,10 @@ module.exports = {
   coverageDirectory: './coverage',
   collectCoverage: true,
   collectCoverageFrom: [
-    'src/**/*.ts'
+    'lib/**/*.ts'
   ],
 	coveragePathIgnorePatterns: [
-		"src/utils/exceptions.ts"
+		"lib/utils/exceptions.ts"
 	],
   coverageThreshold: {
     global: {

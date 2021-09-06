@@ -1,11 +1,10 @@
-export default {
-  'presets': [
+module.exports = {
+  presets: [
     [
-      '@babel/env',
+      '@babel/preset-env',
       {
-        'modules': false // rollup conf will handle this
+        'modules': false
       }
     ]
-  ],
-  'comments': false
+  ]
 };

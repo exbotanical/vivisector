@@ -42,7 +42,7 @@ export function shallowCopy (base: VxState): VxState {
  * @param {string} name The name of the property
  * @param {Function} value The value of the function property
  */
-export function defineNonConfigurableProp (context: VxState, name: string, value: Function /* TODO fixme */): void {
+export function defineNonConfigurableProp (context: VxState, name: string, value: Function): void {
   Object.defineProperty(context, name, {
     configurable: false,
     enumerable: false,

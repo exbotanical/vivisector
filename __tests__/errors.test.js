@@ -1,4 +1,4 @@
-import { VxError } from '../src/utils/exceptions';
+import { VxError } from '../lib/utils/exceptions';
 
 describe('evaluation of error handling', () => {
 	it('throws an error when provided a non-function event handler', () => {

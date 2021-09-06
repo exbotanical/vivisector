@@ -1,4 +1,4 @@
-import { vivisect } from '../src';
+import { vivisect } from '../lib';
 
 beforeAll(() => {
   global.vivisect = vivisect;
