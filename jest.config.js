@@ -16,6 +16,9 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.ts'
   ],
+	coveragePathIgnorePatterns: [
+		"src/utils/exceptions.ts"
+	],
   coverageThreshold: {
     global: {
       branches: 90,

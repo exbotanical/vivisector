@@ -68,7 +68,7 @@ export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState>
     },
 
     set: (target, prop, value) => {
-      if (!this.isConfigurableProp(prop as string)) {
+      if (!this.isConfigurableProp(prop)) {
         return false;
       }
 
@@ -97,7 +97,7 @@ export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState>
     },
 
     deleteProperty: (target, prop) => {
-      if (!this.isConfigurableProp(prop as string)) {
+      if (!this.isConfigurableProp(prop)) {
         return false;
       }
 

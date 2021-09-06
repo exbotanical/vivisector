@@ -39,16 +39,11 @@ export abstract class BaseObservable {
 
   /**
    * @summary Evaluates whether the given property is marked as non-configurable
-   * @param {string} prop The property presently being accessed
+   * @param {string|symbol} prop The property presently being accessed
    * @returns {boolean}
    */
-  protected isConfigurableProp (prop: string): boolean {
-    if (this.internals.includes(prop as VX_LISTENER_INTERNALS)) { // TODO forreal?
-      // TODO throw
-      return false;
-    }
-
-    return true;
+  protected isConfigurableProp (prop: string|symbol): boolean {
+    return !this.internals.includes(prop);
   }
 
   /**

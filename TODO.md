@@ -1,6 +1,6 @@
 # TODOs
 
-- [ ] cleanup core source code
-- [ ] remove string specificity
-- [ ] return proxy revocation handler in lieu of value accessor
-- [ ] remove mutation accessors
+- [x] cleanup core source code
+- [x] remove string specificity
+- [x] return proxy revocation handler in lieu of value accessor
+- [x] remove mutation accessors

@@ -61,7 +61,7 @@ export function defineNonConfigurableProp (context: VxState, name: string, value
 export function isArrayProto (target: VxState, prop: string|symbol): boolean {
   return Array.isArray(target)
     && Object.getOwnPropertyNames(Array.prototype)
-      .includes(prop as string);
+      .includes(prop);
 }
 
 /**
