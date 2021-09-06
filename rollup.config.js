@@ -1,12 +1,11 @@
 import path from 'path';
+import pkg from './package.json';
 
 import { babel } from '@rollup/plugin-babel';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
-
-import pkg from './package.json';
 
 const resolve = fp => path.resolve(__dirname, fp);
 
@@ -14,58 +13,56 @@ const inputFileName = 'lib/index.ts';
 const moduleName = pkg.name.replace(/^@.*\//, '');
 const author = pkg.author;
 const banner = `
-  /**
-   * @license
-   * author: ${author}
-   * ${moduleName}.js v${pkg.version}
-   * Released under the ${pkg.license} license.
-   */
+/**
+ * @license
+ * author: ${author}
+ * ${moduleName} v${pkg.version}
+ * Released under the ${pkg.license} license.
+ */
 `;
 
+const external = [
+	...Object.keys(pkg.dependencies || {}),
+	...Object.keys(pkg.devDependencies || {}),
+];
+
+const pluginsBase = [
+	typescript(),
+	nodeResolve({
+		jsnext: true,
+		browser: true,
+	}),
+	commonjs({
+		extensions: ['.js', '.ts'],
+	}),
+	babel({
+		babelHelpers: 'bundled',
+		configFile: resolve('.babelrc')
+	})
+];
+
+/* Main Config */
 export default [
+
+	/* CommonJS */
   {
-    /* CommonJS */
-    input: inputFileName,
+		input: inputFileName,
     output: {
       file: pkg.main,
       format: 'cjs',
       exports: 'named',
 			banner
     },
-		external: [
-			...Object.keys(pkg.dependencies || {}),
-			...Object.keys(pkg.devDependencies || {}),
-		],
+		external,
     plugins: [
-			typescript(),
-			nodeResolve({
-				jsnext: true,
-				browser: true,
-			}),
-      commonjs({
-        extensions: ['.js', '.ts'],
-      }),
-
-      babel({
-				babelHelpers: 'bundled',
-        exclude: 'node_modules/**',
-        babelrc: false,
-        presets: [
-          [
-            '@babel/env',
-            {
-              modules: false,
-              useBuiltIns: 'usage',
-              targets: 'maintained node versions'
-            }
-          ]
-        ]
-      })
+			...pluginsBase
     ]
   },
+
+
+	/* UMD */
   {
-    /* UMD */
-    input: inputFileName,
+		input: inputFileName,
     output: {
       file: pkg.browser,
       format: 'umd',
@@ -73,22 +70,13 @@ export default [
 			banner
     },
     plugins: [
-			typescript(),
-      nodeResolve({
-				jsnext: true,
-				browser: true,
-			}),
-      commonjs({
-        extensions: ['.js', '.ts'],
-      }),
-			babel({
-				babelHelpers: 'bundled',
-				configFile: resolve('build/babel.config')
-			})
+			...pluginsBase
     ]
   },
+
+
+	/* Minified UMD */
   {
-    /* Minified UMD */
     input: inputFileName,
     output: {
       file: pkg.browser.replace(/\.js$/, '.min.js'),
@@ -97,23 +85,14 @@ export default [
 			banner
     },
     plugins: [
-			typescript(),
-      nodeResolve({
-				jsnext: true,
-				browser: true,
-			}),
-      commonjs({
-        extensions: ['.js', '.ts'],
-      }),
-			babel({
-				babelHelpers: 'bundled',
-				configFile: resolve('build/babel.config')
-			}),
+			...pluginsBase,
       terser()
     ]
   },
+
+
+	/* ESM */
   {
-    /* ESM */
     input: inputFileName,
     output: {
       file: pkg.module,
@@ -121,23 +100,9 @@ export default [
 			exports: 'named',
 			banner
     },
-		external: [
-			...Object.keys(pkg.dependencies || {}),
-			...Object.keys(pkg.devDependencies || {}),
-		],
+		external,
     plugins: [
-			typescript(),
-			nodeResolve({
-				jsnext: true,
-				browser: true,
-			}),
-      commonjs({
-        extensions: ['.js', '.ts'],
-      }),
-			babel({
-				babelHelpers: 'bundled',
-				configFile: resolve('build/babel.config')
-			})
+			...pluginsBase
     ]
   }
 ];

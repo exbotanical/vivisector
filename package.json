@@ -1,7 +1,7 @@
 {
   "name": "vivisector",
   "version": "0.0.0-development",
-  "description": "reactive JavaScript programming in a box",
+  "description": "add event listeners to js objects",
   "main": "./dist/vivisector.cjs.js",
   "browser": "./dist/vivisector.umd.js",
   "module": "./dist/vivisector.es.js",
@@ -50,13 +50,11 @@
     "url": "https://github.com/MatthewZito/vivisector-js.git"
   },
   "keywords": [
-    "observable datatypes",
-    "custom datatypes",
+    "observable",
     "observables",
     "event-driven",
-    "event-bound objects",
-    "micro-library",
-    "reactive programming"
+    "reactive programming",
+    "events"
   ],
   "author": "Matthew T Zito (goldmund)",
   "license": "MIT",
