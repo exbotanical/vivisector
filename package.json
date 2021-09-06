@@ -5,6 +5,7 @@
   "main": "./dist/vivisector.cjs.js",
   "browser": "./dist/vivisector.umd.js",
   "module": "./dist/vivisector.es.js",
+  "types": "dist/vivisector.d.ts",
   "exports": {
     "require": "./dist/vivisector.cjs.js",
     "import": "./dist/vivisector.es.js"
@@ -17,8 +18,8 @@
   ],
   "lint-staged": {
     "lib/**/*.ts": [
-      "yarn run lint",
-      "yarn run test"
+      "npm run lint",
+      "npm run test"
     ]
   },
   "husky": {
@@ -33,17 +34,18 @@
     ]
   },
   "scripts": {
-    "coverage": "jest --coverage && rimraf ./coverage",
+    "coverage": "jest --coverage && npm run clean",
     "lint": "eslint \"lib/**/*.ts\" --no-fix",
     "lint:fix": "eslint \"lib/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prebuild": "rimraf ./dist",
-    "build": "rollup -c",
-    "clean": "rimraf ./coverage && rimraf ./dist",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rimraf ./coverage",
+    "prebuild": "npm run clean",
+    "build": "npm run types && rollup -c",
+    "clean": "rimraf coverage dist .build",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && npm run clean",
     "prerelease": "npm pack && tar -xvzf *.tgz && rimraf package *.tgz",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "types": "tsc"
   },
   "repository": {
     "type": "git",
@@ -87,6 +89,7 @@
     "lint-staged": "10.5.4",
     "rimraf": "^3.0.2",
     "rollup": "2.40.0",
+    "rollup-plugin-dts": "4.0.0",
     "rollup-plugin-terser": "7.0.2",
     "semantic-release": "^17.4.1",
     "ts-jest": "27.0.5",

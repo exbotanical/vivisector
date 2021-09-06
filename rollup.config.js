@@ -6,6 +6,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 
 const resolve = fp => path.resolve(__dirname, fp);
 
@@ -43,7 +44,6 @@ const pluginsBase = [
 
 /* Main Config */
 export default [
-
 	/* CommonJS */
   {
 		input: inputFileName,
@@ -104,5 +104,17 @@ export default [
     plugins: [
 			...pluginsBase
     ]
-  }
+  },
+
+	/* Types Declarations */
+	{
+		input: './.build/index.d.ts',
+		output: {
+			file: 'dist/vivisector.d.ts',
+			format: 'es'
+		},
+		plugins: [
+			dts()
+		]
+	},
 ];

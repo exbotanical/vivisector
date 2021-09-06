@@ -3,18 +3,17 @@
     "lib/**/*.ts"
   ],
   "compilerOptions": {                
+    "declaration": true,
+    "declarationDir": ".build",
+    "emitDeclarationOnly": true,
     "module": "ESNext",                     
     "lib": ["ESNext"],                            
     "strict": true,    
-
     "esModuleInterop": true,        
-
-    "baseUrl": "lib",
-    "paths": {
-      "@/*": ["."]
-    },
     "moduleResolution": "node",                   
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true
   }
 }
