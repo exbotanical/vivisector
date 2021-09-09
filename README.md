@@ -1,4 +1,4 @@
-![Vivisector Logo](/documentation/vx.png)
+![Vivisector Logo](/docs/vx.png)
 
 # Vivisector | Compact observables
 
