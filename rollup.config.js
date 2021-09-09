@@ -24,7 +24,6 @@ const banner = `
 
 const external = [
 	...Object.keys(pkg.dependencies || {}),
-	...Object.keys(pkg.devDependencies || {}),
 ];
 
 const pluginsBase = [
@@ -116,5 +115,5 @@ export default [
 		plugins: [
 			dts()
 		]
-	},
+	}
 ];
