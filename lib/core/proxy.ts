@@ -1,5 +1,5 @@
-import { BaseObservable } from './BaseObservable';
-import { VxState, VX_EVENT_TYPES } from '../types/base.types';
+import { BaseObservableFactory } from './BaseObservableFactory';
+import { VxState, VX_EVENT_TYPE } from '../types';
 import {
   isArrayProto,
   isArrayPropOutOfBounds,
@@ -15,7 +15,7 @@ const batchedMethods = [
  * @summary Construct a base proxy handler with an implicit context
  * @returns {ProxyHandler<VxState>} Base proxy handler
  */
-export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState> {
+export function RootHandlerFactory (this: BaseObservableFactory): ProxyHandler<VxState> {
   const rootHandler: ProxyHandler<VxState> = {
     get: (target, prop: keyof VxState, recv) => {
       // trap certain array prototype methods and take control of the events we raise for them
@@ -40,7 +40,7 @@ export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState>
               ogMethod.apply(target, [arg]);
 
               this.raiseEvent({
-                type: VX_EVENT_TYPES.ADD,
+                type: VX_EVENT_TYPE.ADD,
                 prevState,
                 nextState: target
               }, this);
@@ -81,13 +81,13 @@ export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState>
 
       if (!(prop in prevState) || isArrayPropOutOfBounds(prevState, prop)) {
         this.raiseEvent({
-          type: VX_EVENT_TYPES.ADD,
+          type: VX_EVENT_TYPE.ADD,
           prevState,
           nextState: target
         }, this);
       } else {
         this.raiseEvent({
-          type: VX_EVENT_TYPES.SET,
+          type: VX_EVENT_TYPE.SET,
           prevState,
           nextState: target
         }, this);
@@ -108,7 +108,7 @@ export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState>
         target.splice(Number(prop), 1);
 
 				this.raiseEvent({
-					type: VX_EVENT_TYPES.DEL,
+					type: VX_EVENT_TYPE.DEL,
 					prevState,
 					nextState: target
 				}, this);
@@ -119,7 +119,7 @@ export function RootHandlerFactory (this: BaseObservable): ProxyHandler<VxState>
         ret = Reflect.deleteProperty(target, prop);
 
 				this.raiseEvent({
-					type: VX_EVENT_TYPES.DEL,
+					type: VX_EVENT_TYPE.DEL,
 					prevState,
 					nextState: target
 				}, this);

@@ -1,7 +1,7 @@
 import {
 	SourceReference,
 	VxExceptionArguments
-} from '../types/base.types';
+} from '../types';
 
 /**
  * @summary Base implementation model for extended errors

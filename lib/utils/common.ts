@@ -1,4 +1,4 @@
-import { VxState } from '../types/base.types';
+import { VxState } from '../types';
 
 const unboundedSlice = Array.prototype.slice;
 const slice = Function.prototype.call.bind(unboundedSlice);

@@ -1,5 +1,5 @@
-import { BaseObservable } from '../core/BaseObservable';
-import { VxEventHandler } from '../types/base.types';
+import { BaseObservableFactory } from '../core/BaseObservableFactory';
+import { VxEventHandler } from '../types';
 import { VxException } from './exceptions';
 
 /**
@@ -7,7 +7,7 @@ import { VxException } from './exceptions';
  * @param {string} eventName
  * @param {Function} handler
  */
-export function validateEventHandler (this: BaseObservable, eventName: string, handler: VxEventHandler): never|void {
+export function validateEventHandler (this: BaseObservableFactory, eventName: string, handler: VxEventHandler): never|void {
 	if (!(eventName in this.handlers)) {
 		throw VxException.create(new VxException({
 			reason: `An unknown event name '${eventName}' was provided; there are no subscribable events matching this identifier`

@@ -1,13 +1,20 @@
-import { VxEventedObject, VxState } from './types/base.types';
-import { ProxiedObservable } from './core/ProxiedObservable';
+import { VxEventedObject, VxState } from './types';
+import { ProxiedObservableFactory } from './core/ProxiedObservableFactory';
 
 // such that we can use `Array.prototype.includes` with types that
 // may not be that of the array's elements
+
+// TODO restrict namespace
 declare global {
 	interface Array<T> {
 		includes<U extends (T extends U ? unknown : never)>(el: U, idx?: number): boolean;
 	}
 }
 
-export const vivisect = (initialState: VxState): VxEventedObject => new ProxiedObservable()
-  .create(initialState);
+interface Vivisector {
+	(initialState: VxState): VxEventedObject
+}
+
+export const vivisect: Vivisector =
+	(initialState) => new ProxiedObservableFactory()
+		.create(initialState);

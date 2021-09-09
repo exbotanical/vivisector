@@ -1,12 +1,12 @@
 import {
-  VX_EVENT_TYPES,
+  VX_EVENT_TYPE,
   VX_LISTENER_INTERNALS,
   VxState,
   VxEvent,
   VxEventHandler,
   VxEventHandlerStore,
   VxEventedObject
-} from '../types/base.types';
+} from '../types';
 
 import {
 	defineNonConfigurableProp,
@@ -15,9 +15,9 @@ import {
 
 /**
  * Implements base state and shared functionality for a Vivisector observable
- * @class BaseObservable
+ * @class BaseObservableFactory
  */
-export abstract class BaseObservable {
+export abstract class BaseObservableFactory {
   protected handlers: VxEventHandlerStore;
   protected internals: VX_LISTENER_INTERNALS[];
 
@@ -27,9 +27,9 @@ export abstract class BaseObservable {
 		 * @property {VxEventHandlerStore}
 		 */
     this.handlers = {
-      [VX_EVENT_TYPES.ADD]: [],
-      [VX_EVENT_TYPES.DEL]: [],
-      [VX_EVENT_TYPES.SET]: []
+      [VX_EVENT_TYPE.ADD]: [],
+      [VX_EVENT_TYPE.DEL]: [],
+      [VX_EVENT_TYPE.SET]: []
     };
 
     this.internals = [
@@ -51,7 +51,7 @@ export abstract class BaseObservable {
    * @param {object} event An object containing data about the event
    * @param {object} context The `this` value on which to call each instance
    */
-  protected raiseEvent (event: VxEvent<VxState>, context: BaseObservable): void {
+  protected raiseEvent (event: VxEvent<VxState>, context: BaseObservableFactory): void {
     this.handlers[event.type]
       .forEach(handler => {
         handler.call(context, event);
@@ -67,13 +67,14 @@ export abstract class BaseObservable {
     defineNonConfigurableProp(
       context,
       VX_LISTENER_INTERNALS.ADD,
-      (eventName: VX_EVENT_TYPES, handler: VxEventHandler): T => {
+      (eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {
 				validateEventHandler.call(this,
 					eventName,
 					handler
 				);
 
-        this.handlers[eventName].push(handler);
+        this.handlers[eventName]
+					.push(handler);
 
         return context;
       }
@@ -82,7 +83,7 @@ export abstract class BaseObservable {
     defineNonConfigurableProp(
       context,
       VX_LISTENER_INTERNALS.REM,
-      (eventName: VX_EVENT_TYPES, handler: VxEventHandler): T => {
+      (eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {
 				validateEventHandler.call(this,
 					eventName,
 					handler

@@ -14,6 +14,7 @@ install:
   - npm install
 script:
   - npm run lint
+  - npm run test
   - npm run coveralls
   - npm run build
 after_success:
