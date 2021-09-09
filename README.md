@@ -24,7 +24,7 @@
 
 For those moments when RXjs is overkill...
 
-*Vivisector* is a compact JavaScript library designed to support hassle-free reactive programming. *Vivisector*  allows you to tether actions to specific types of mutation events, rendering state datatypes event-bound.
+*Vivisector* is a compact JavaScript library designed to support hassle-free reactive programming. *Vivisector* allows you to tether actions to specific types of mutation events, rendering your application's state event-bound.
 
 Here's what that looks like:
 
@@ -48,7 +48,7 @@ const state = vivisect({
 state.email = '...'; // `sendWelcomeEmail` invoked
 ```
 
-*Vivisector* is flexible, compact, and straight-forward; it affords you fine-grained control by allowing you to decide when and what happens when a variable changes.
+*Vivisector* is flexible, compact, and straight-forward; it affords you fine-grained control by allowing you to decide when and what happens when state changes.
 
 ### <a name="feat"></a> Features
 
