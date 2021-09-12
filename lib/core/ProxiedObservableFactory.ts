@@ -3,6 +3,10 @@ import { shallowCopy } from '../utils';
 import { BaseObservableFactory } from './BaseObservableFactory';
 import { RootHandlerFactory } from './proxy';
 
+function done () {
+
+}
+
 export class ProxiedObservableFactory extends BaseObservableFactory {
   /**
    * @summary Root Proxy handler; injects event broadcasts into get|set|delete traps
@@ -37,7 +41,8 @@ export class ProxiedObservableFactory extends BaseObservableFactory {
 							type: VX_EVENT_TYPE.DEL,
 							prevState,
 							nextState: this
-						}, observableCtx);
+						}, observableCtx,
+							done);
 
 						return item;
 					}

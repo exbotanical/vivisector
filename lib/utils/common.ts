@@ -1,17 +1,23 @@
 import { VxState } from '../types';
 
+interface VxPropertyDescriptor {
+	[x: string]: PropertyDescriptor;
+}
+
+type VxStateDescriptors = object & VxPropertyDescriptor;
+
 const unboundedSlice = Array.prototype.slice;
 const slice = Function.prototype.call.bind(unboundedSlice);
 
 /**
  * @summary Shallow copy an object or array
  */
-export function shallowCopy (base: VxState): VxState {
+export function shallowCopy <T extends VxState>(base: T): T {
   if (Array.isArray(base)) {
     return slice(base);
-  }
+	}
 
-  const descriptors = Object.getOwnPropertyDescriptors(base);
+	const descriptors: VxStateDescriptors = Object.getOwnPropertyDescriptors(base);
 
   const keys = Reflect.ownKeys(descriptors);
 

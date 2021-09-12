@@ -5,7 +5,8 @@ import {
   VxEvent,
   VxEventHandler,
   VxEventHandlerStore,
-  VxEventedObject
+  VxEventedObject,
+	DoneFunction
 } from '../types';
 
 import {
@@ -51,10 +52,10 @@ export abstract class BaseObservableFactory {
    * @param {object} event An object containing data about the event
    * @param {object} context The `this` value on which to call each instance
    */
-  protected raiseEvent (event: VxEvent<VxState>, context: BaseObservableFactory): void {
+	protected raiseEvent (event: VxEvent<VxState>, context: BaseObservableFactory, done: DoneFunction): void {
     this.handlers[event.type]
       .forEach(handler => {
-        handler.call(context, event);
+				handler.call(context, event, done);
       });
   }
 

@@ -5,6 +5,7 @@ import {
   isArrayPropOutOfBounds,
   shallowCopy
 } from '../utils';
+import { DoneFunctionBuilder } from './done';
 
 const batchedMethods = [
   'shift',
@@ -31,19 +32,21 @@ export function RootHandlerFactory (this: BaseObservableFactory): ProxyHandler<V
         const ogMethod = target[prop];
 
 				return (...args: any[]) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+					const nextState = shallowCopy(target);
           let prevState = shallowCopy(target);
 
           if (args.length) {
             // raise the event for each argument
             for (const arg of args.reverse()) {
 
-              ogMethod.apply(target, [arg]);
+							ogMethod.apply(nextState, [arg]);
 
               this.raiseEvent({
                 type: VX_EVENT_TYPE.ADD,
                 prevState,
-                nextState: target
-              }, this);
+                nextState,
+              }, this,
+							DoneFunctionBuilder(() => ogMethod.apply(target, [arg])));
 
               prevState = shallowCopy(target);
             }
@@ -76,21 +79,23 @@ export function RootHandlerFactory (this: BaseObservableFactory): ProxyHandler<V
         return Reflect.set(target, prop, value);
       }
 
-      const prevState = shallowCopy(target);
-      const ret = Reflect.set(target, prop, value);
+			const [prevState, nextState] = [shallowCopy(target), shallowCopy(target)];
+			let ret = Reflect.set(nextState, prop, value);
 
       if (!(prop in prevState) || isArrayPropOutOfBounds(prevState, prop)) {
         this.raiseEvent({
           type: VX_EVENT_TYPE.ADD,
           prevState,
-          nextState: target
-        }, this);
+          nextState,
+				}, this,
+				DoneFunctionBuilder(() => Reflect.set(target, prop, value)));
       } else {
         this.raiseEvent({
           type: VX_EVENT_TYPE.SET,
           prevState,
-          nextState: target
-        }, this);
+          nextState,
+				}, this,
+				DoneFunctionBuilder(() => Reflect.set(target, prop, value)));
       }
 
       return ret;
@@ -101,28 +106,31 @@ export function RootHandlerFactory (this: BaseObservableFactory): ProxyHandler<V
         return false;
       }
 
-      const prevState = shallowCopy(target);
+			const [prevState, nextState] = [shallowCopy(target), shallowCopy(target)];
+
       let ret = true;
 
-      if (Array.isArray(target)) {
-        target.splice(Number(prop), 1);
+      if (Array.isArray(nextState)) {
+				nextState.splice(Number(prop), 1);
 
 				this.raiseEvent({
 					type: VX_EVENT_TYPE.DEL,
 					prevState,
-					nextState: target
-				}, this);
-
+					nextState,
+				}, this,
+				// @ts-ignore
+				DoneFunctionBuilder(() => target.splice(Number(prop), 1)));
 
 				return ret;
       } else if (prop in prevState) {
-        ret = Reflect.deleteProperty(target, prop);
+        /*ret = */Reflect.deleteProperty(nextState, prop);
 
 				this.raiseEvent({
 					type: VX_EVENT_TYPE.DEL,
 					prevState,
-					nextState: target
-				}, this);
+					nextState,
+				}, this,
+					DoneFunctionBuilder(() => Reflect.deleteProperty(target, prop)));
 
 				return ret;
       }
