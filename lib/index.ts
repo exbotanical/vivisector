@@ -12,7 +12,7 @@ declare global {
 }
 
 interface Vivisector {
-	(initialState: VxState): VxEventedObject
+	(initialState: VxState): VxEventedObject;
 }
 
 export const vivisect: Vivisector =

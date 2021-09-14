@@ -1,20 +1,29 @@
 language: node_js
+
 node_js:
-  - "node"
+  - node
+
 branches:
   only:
     - master
+
 cache:
+  npm: false
   directories:
-    - node_modules
+    - ~/.pnpm-store
+
 before_install:
-  - npm update
+  - curl -f https://get.pnpm.io/v6.14.js | node - add --global pnpm@6
+  - pnpm config set store-dir ~/.pnpm-store
+
 install:
-  - npm install
+  - pnpm install
+
 script:
-  - npm run lint
-  - npm run test
-  - npm run coveralls
-  - npm run build
+  - pnpm lint
+  - pnpm test
+  - pnpm coveralls
+  - pnpm build
+  
 after_success:
-  - npm run semantic-release
+  - pnpm semantic-release

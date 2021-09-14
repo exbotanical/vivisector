@@ -1,9 +1,13 @@
-import { DoneFunction } from '../types';
+import { DoneFunction, DoneBuilder } from '../types';
 
-export const DoneFunctionBuilder = (ret: Function) =>{
+const DoneFunctionBuilder: DoneBuilder = (ret) => {
 	const done: DoneFunction = (commit) => {
 		if (commit) return ret();
-	}
+	};
 
 	return done;
+};
+
+export {
+	DoneFunctionBuilder
 };

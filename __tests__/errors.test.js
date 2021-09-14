@@ -1,3 +1,4 @@
+/* global vivisect:false */
 import { VxError } from '../lib/utils/exceptions';
 
 describe('evaluation of error handling', () => {

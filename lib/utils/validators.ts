@@ -12,7 +12,6 @@ export function validateEventHandler (this: BaseObservableFactory, eventName: st
 		throw VxException.create(new VxException({
 			reason: `An unknown event name '${eventName}' was provided; there are no subscribable events matching this identifier`
 		}));
-
 	} else if (typeof handler !== 'function') {
 		throw VxException.create(new VxException({
 			reason: 'The provided event handler must be a function'

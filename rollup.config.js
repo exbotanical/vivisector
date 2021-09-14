@@ -1,5 +1,4 @@
 import path from 'path';
-import pkg from './package.json';
 
 import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
@@ -7,8 +6,9 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import dts from 'rollup-plugin-dts';
+import pkg from './package.json';
 
-const resolve = fp => path.resolve(__dirname, fp);
+const resolve = (fp) => path.resolve(__dirname, fp);
 
 const inputFileName = 'lib/index.ts';
 const moduleName = pkg.name.replace(/^@.*\//, '');
@@ -23,17 +23,17 @@ const banner = `
 `;
 
 const external = [
-	...Object.keys(pkg.dependencies || {}),
+	...Object.keys(pkg.dependencies || {})
 ];
 
 const pluginsBase = [
 	typescript(),
 	nodeResolve({
 		jsnext: true,
-		browser: true,
+		browser: true
 	}),
 	commonjs({
-		extensions: ['.js', '.ts'],
+		extensions: ['.js', '.ts']
 	}),
 	babel({
 		babelHelpers: 'bundled',
@@ -44,66 +44,63 @@ const pluginsBase = [
 /* Main Config */
 export default [
 	/* CommonJS */
-  {
+	{
 		input: inputFileName,
-    output: {
-      file: pkg.main,
-      format: 'cjs',
-      exports: 'named',
-			banner
-    },
-		external,
-    plugins: [
-			...pluginsBase
-    ]
-  },
-
-
-	/* UMD */
-  {
-		input: inputFileName,
-    output: {
-      file: pkg.browser,
-      format: 'umd',
-      name: 'vivisector',
-			banner
-    },
-    plugins: [
-			...pluginsBase
-    ]
-  },
-
-
-	/* Minified UMD */
-  {
-    input: inputFileName,
-    output: {
-      file: pkg.browser.replace(/\.js$/, '.min.js'),
-      format: 'umd',
-      name: 'vivisector',
-			banner
-    },
-    plugins: [
-			...pluginsBase,
-      terser()
-    ]
-  },
-
-
-	/* ESM */
-  {
-    input: inputFileName,
-    output: {
-      file: pkg.module,
-      format: 'es',
+		output: {
+			file: pkg.main,
+			format: 'cjs',
 			exports: 'named',
 			banner
-    },
+		},
 		external,
-    plugins: [
+		plugins: [
 			...pluginsBase
-    ]
-  },
+		]
+	},
+
+	/* UMD */
+	{
+		input: inputFileName,
+		output: {
+			file: pkg.browser,
+			format: 'umd',
+			name: 'vivisector',
+			banner
+		},
+		plugins: [
+			...pluginsBase
+		]
+	},
+
+	/* Minified UMD */
+	{
+		input: inputFileName,
+		output: {
+			file: pkg.browser.replace(/\.js$/, '.min.js'),
+			format: 'umd',
+			name: 'vivisector',
+			banner
+		},
+		plugins: [
+			...pluginsBase,
+			terser()
+		]
+	},
+
+	/* ESM */
+	{
+		input: inputFileName,
+		output: {
+			file: pkg.module,
+			format: 'es',
+			exports: 'named',
+			banner
+		},
+		external,
+		plugins: [
+			...pluginsBase
+		]
+	},
 
 	/* Types Declarations */
 	{

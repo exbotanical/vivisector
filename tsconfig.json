@@ -2,15 +2,15 @@
   "include": [
     "lib/**/*.ts"
   ],
-  "compilerOptions": {                
+  "compilerOptions": {
     "declaration": true,
     "declarationDir": ".build",
     "emitDeclarationOnly": true,
-    "module": "ESNext",                     
-    "lib": ["ESNext"],                            
-    "strict": true,    
-    "esModuleInterop": true,        
-    "moduleResolution": "node",                   
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
