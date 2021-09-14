@@ -6,7 +6,8 @@ import {
   VxEventHandler,
   VxEventHandlerStore,
   VxEventedObject,
-	DoneFunction
+	DoneFunction,
+	VxAddEventListenerOpts
 } from '../types';
 
 import {
@@ -19,7 +20,7 @@ import {
  * @class BaseObservableFactory
  */
 export abstract class BaseObservableFactory {
-  protected handlers: VxEventHandlerStore;
+  protected handlerStore: VxEventHandlerStore;
   protected internals: VX_LISTENER_INTERNALS[];
 
   protected constructor () {
@@ -27,10 +28,10 @@ export abstract class BaseObservableFactory {
 		 * Event-correlated handlers; below are defaults
 		 * @property {VxEventHandlerStore}
 		 */
-    this.handlers = {
-      [VX_EVENT_TYPE.ADD]: [],
-      [VX_EVENT_TYPE.DEL]: [],
-      [VX_EVENT_TYPE.SET]: []
+    this.handlerStore = {
+      [VX_EVENT_TYPE.ADD]: new Set(),
+      [VX_EVENT_TYPE.DEL]: new Set(),
+      [VX_EVENT_TYPE.SET]: new Set()
     };
 
     this.internals = [
@@ -53,29 +54,39 @@ export abstract class BaseObservableFactory {
    * @param {object} context The `this` value on which to call each instance
    */
 	protected raiseEvent (event: VxEvent<VxState>, context: BaseObservableFactory, done: DoneFunction): void {
-    this.handlers[event.type]
-      .forEach(handler => {
-				handler.call(context, event, done);
-      });
-  }
+
+    this.handlerStore[event.type]
+			.forEach(({ handler, alwaysCommit }) => {
+				let finalDoneFunction = done;
+
+				if (alwaysCommit) {
+					done(true);
+					finalDoneFunction = () => {};
+				}
+
+				done(true);
+
+				handler.call(context, event, finalDoneFunction);
+			});
+	}
 
   /**
    * @summary Programmatically define `addEventListener`, `removeEventListener` on the proxied object
    * @param context The context (i.e. `this` instance) of the target object on which the
    * aforementioned listeners will be defined
    */
-  protected defineListeners <T extends VxState> (context: T): VxEventedObject {
+	protected defineListeners<T extends VxState & Partial<VxEventedObject>> (context: T): VxEventedObject {
     defineNonConfigurableProp(
       context,
       VX_LISTENER_INTERNALS.ADD,
-      (eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {
+			(eventName: VX_EVENT_TYPE, handler: VxEventHandler, { alwaysCommit = false }: VxAddEventListenerOpts = {}): T => {
 				validateEventHandler.call(this,
 					eventName,
 					handler
 				);
 
-        this.handlers[eventName]
-					.push(handler);
+        this.handlerStore[eventName]
+					.add({ handler, alwaysCommit });
 
         return context;
       }
@@ -90,15 +101,13 @@ export abstract class BaseObservableFactory {
 					handler
 				);
 
-        const handlerSet = this.handlers[eventName];
+				const handlers = this.handlerStore[eventName];
 
-        let handlerSetLen = handlerSet.length;
-
-        while (--handlerSetLen >= 0) {
-          if (handlerSet[handlerSetLen] === handler) {
-            handlerSet.splice(handlerSetLen, 1);
-          }
-        }
+				handlers.forEach(ref => {
+					if (handler === ref.handler) {
+						handlers.delete(ref);
+					}
+				});
 
         return context;
       }
