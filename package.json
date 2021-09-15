@@ -1,39 +1,7 @@
 {
   "name": "vivisector",
   "version": "0.0.0-development",
-  "description": "add event listeners to js objects",
-  "main": "./dist/vivisector.cjs.js",
-  "browser": "./dist/vivisector.umd.js",
-  "module": "./dist/vivisector.es.js",
-  "types": "dist/vivisector.d.ts",
-  "exports": {
-    "require": "./dist/vivisector.cjs.js",
-    "import": "./dist/vivisector.es.js"
-  },
-  "engines": {
-    "node": ">= 10"
-  },
-  "files": [
-    "dist/"
-  ],
-  "scripts": {
-    "coverage": "jest --coverage && npm run clean",
-    "lint": "eslint \"lib/**/*.ts\" --no-fix",
-    "lint:fix": "eslint \"lib/**/*.ts\" --fix",
-    "test": "jest --bail --passWithNoTests __tests__",
-    "test:watch": "jest --watch",
-    "prebuild": "npm run clean",
-    "build": "npm run types && rollup -c",
-    "clean": "rimraf coverage dist .build",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && npm run clean",
-    "prerelease": "npm pack && tar -xvzf *.tgz && rimraf package *.tgz",
-    "semantic-release": "semantic-release",
-    "types": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MatthewZito/vivisector-js.git"
-  },
+  "description": "reactive state management",
   "keywords": [
     "observable",
     "observables",
@@ -41,30 +9,66 @@
     "reactive programming",
     "events"
   ],
-  "author": "Matthew T Zito (goldmund)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MatthewZito/vivisector-js.git"
+  },
+  "author": "Matthew T Zito (goldmund)",
+  "files": [
+    "dist/"
+  ],
+  "exports": {
+    "require": "./dist/vivisector.cjs.js",
+    "import": "./dist/vivisector.es.js"
+  },
+  "main": "./dist/vivisector.cjs.js",
+  "browser": "./dist/vivisector.umd.js",
+  "module": "./dist/vivisector.es.js",
+  "types": "dist/vivisector.d.ts",
+  "engines": {
+    "node": ">= 10"
+  },
+  "scripts": {
+    "coverage": "jest --coverage && pnpm clean",
+    "lint": "eslint --ext .js,.ts,.json --no-fix .",
+    "test": "jest --bail --passWithNoTests __tests__",
+    "test:watch": "jest --watch",
+    "prebuild": "pnpm clean",
+    "build": "pnpm types && rollup -c",
+    "clean": "rimraf coverage dist .build",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && pnpm clean",
+    "prerelease": "npm pack && tar -xvzf *.tgz && rimraf package *.tgz",
+    "semantic-release": "semantic-release",
+    "types": "tsc"
+  },
   "bugs": {
     "url": "https://github.com/MatthewZito/vivisector-js/issues"
   },
   "homepage": "https://github.com/MatthewZito/vivisector-js#readme",
+  "lint-staged": {
+    "lib/**/*.ts": [
+      "pnpm lint",
+      "pnpm test"
+    ]
+  },
   "devDependencies": {
     "@babel/cli": "7.15.4",
     "@babel/core": "7.15.5",
     "@babel/preset-env": "7.15.4",
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
+    "@magister_zito/eslint-config-typescript": "0.0.4",
     "@rollup/plugin-babel": "5.3.0",
     "@rollup/plugin-commonjs": "20.0.0",
     "@rollup/plugin-node-resolve": "13.0.4",
     "@rollup/plugin-typescript": "8.2.5",
     "@types/jest": "27.0.1",
-    "@typescript-eslint/eslint-plugin": "4.31.0",
-    "@typescript-eslint/parser": "4.31.0",
-    "babel-eslint": "^10.1.0",
     "babel-jest": "27.1.0",
     "coveralls": "^3.1.1",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.32.0",
+    "eslint": "7.32.0",
+    "eslint-plugin-jest": "24.4.0",
     "husky": "7.0.2",
     "jest": "27.1.0",
     "jest-extended": "0.11.5",
@@ -82,12 +86,6 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "lint-staged": {
-    "lib/**/*.ts": [
-      "npm run lint",
-      "npm run test"
-    ]
   },
   "commitlint": {
     "extends": [

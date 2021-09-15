@@ -1,198 +1,204 @@
+/* global vivisect:false */
 import { forEachKeyValue } from './util';
 
 describe('evaluation of state management, tracking', () => {
-  const callbacks = {
-    add: jest.fn(),
-    del: jest.fn(),
-    set: jest.fn()
-  };
+	const callbacks = {
+		add: jest.fn(),
+		set: jest.fn(),
+		del: jest.fn(),
+		batched: jest.fn()
+	};
 
-  const iterator = forEachKeyValue(callbacks);
+	const iterator = forEachKeyValue(callbacks);
 
-  it('should track array `prevState`, `nextState` as expected', () => {
-    const initialState = [1, 2, 3];
-    const observable = vivisect(initialState);
+	it('should track array `prevState`, `nextState` as expected', () => {
+		const initialState = [1, 2, 3];
+		const observable = vivisect(initialState);
 
-    iterator((key, value) => {
-      observable.addEventListener(key, value);
-    });
+		iterator((key, value) => {
+			observable.addEventListener(key, value, { alwaysCommit: true });
+		});
 
-    // sanity check
-    iterator((key, value) => {
-      expect(value).toHaveBeenCalledTimes(0);
-    });
+		// sanity check
+		iterator((key, value) => {
+			expect(value).toHaveBeenCalledTimes(0);
+		});
 
-    observable.push(9);
+		observable.push(9);
 
-    expect(callbacks.add).toHaveBeenNthCalledWith(1, {
-      prevState: initialState,
-      nextState: [...initialState, 9],
-      type: 'add'
-    });
+		expect(callbacks.add).toHaveBeenNthCalledWith(1, {
+			prevState: initialState,
+			nextState: [...initialState, 9],
+			type: 'add'
+		}, expect.any(Function));
 
-    observable.pop();
+		observable.pop();
 
-    expect(callbacks.del).toHaveBeenNthCalledWith(1, {
-      prevState: [...initialState, 9],
-      nextState: initialState,
-      type: 'del'
-    });
+		expect(callbacks.del).toHaveBeenNthCalledWith(1, {
+			prevState: [...initialState, 9],
+			nextState: initialState,
+			type: 'del'
+		}, expect.any(Function));
 
-    observable.splice(2);
+		observable.splice(2);
 
-    expect(callbacks.del).toHaveBeenNthCalledWith(2, {
-      prevState: initialState,
-      nextState: [1, 2],
-      type: 'del'
-    });
+		expect(callbacks.del).toHaveBeenNthCalledWith(2, {
+			prevState: initialState,
+			nextState: [1, 2],
+			type: 'del'
+		}, expect.any(Function));
 
-    observable.splice(1);
+		observable.splice(1);
 
-    expect(callbacks.del).toHaveBeenNthCalledWith(3, {
-      prevState: [1, 2],
-      nextState: [1],
-      type: 'del'
-    });
+		expect(callbacks.del).toHaveBeenNthCalledWith(3, {
+			prevState: [1, 2],
+			nextState: [1],
+			type: 'del'
+		}, expect.any(Function));
 
-    observable.push(1, 2, 3);
+		observable.push(1, 2, 3);
 
-    expect(callbacks.add).toHaveBeenNthCalledWith(2, {
-      prevState: [1],
-      nextState: [1, ...initialState],
-      type: 'add'
-    });
+		expect(callbacks.batched).toHaveBeenNthCalledWith(1, {
+			prevState: [1],
+			nextState: [1, ...initialState],
+			type: 'batched'
+		}, expect.any(Function));
 
-    // we expect to have received an 'add' event for each element that was pushed
-    expect(callbacks.add.mock.calls[2][0].prevState).toEqual([1, 1]);
-    expect(callbacks.add.mock.calls[3][0].prevState).toEqual([1, 1, 2]);
+		observable.shift();
 
-    observable.shift();
+		expect(callbacks.batched).toHaveBeenNthCalledWith(2, {
+			prevState: [1, 1, 2, 3],
+			nextState: [1, 2, 3],
+			type: 'batched'
+		}, expect.any(Function));
 
-    expect(callbacks.del).toHaveBeenNthCalledWith(4, {
-      prevState: [1, 1, 2, 3],
-      nextState: [1, 2, 3],
-      type: 'del'
-    });
+		observable.unshift(0);
 
-    observable.unshift(0);
+		expect(callbacks.batched).toHaveBeenNthCalledWith(3, {
+			prevState: initialState,
+			nextState: [0, ...initialState],
+			type: 'batched'
+		}, expect.any(Function));
 
-    expect(callbacks.add).toHaveBeenNthCalledWith(5, {
-      prevState: initialState,
-      nextState: [0, ...initialState],
-      type: 'add'
-    });
+		observable[0] = 1;
 
-    observable[0] = 1;
+		expect(callbacks.set).toHaveBeenNthCalledWith(1, {
+			prevState: [0, ...initialState],
+			nextState: [1, ...initialState],
+			type: 'set'
+		}, expect.any(Function));
 
-    expect(callbacks.set).toHaveBeenNthCalledWith(1, {
-      prevState: [0, ...initialState],
-      nextState: [1, ...initialState],
-      type: 'set'
-    });
+		observable.unshift(1, 2, 3);
 
-    observable.unshift(1, 2, 3);
+		expect(callbacks.batched).toHaveBeenNthCalledWith(4, {
+			prevState: [1, ...initialState],
+			nextState: [1, 2, 3, 1, ...initialState],
+			type: 'batched'
+		}, expect.any(Function));
 
-    // again, we expect to have received an 'add' event for each element that was shifted onto the array
-    expect(callbacks.add.mock.calls[5][0].prevState).toEqual([1, ...initialState]);
-    expect(callbacks.add.mock.calls[6][0].prevState).toEqual([3, 1, ...initialState]);
-    expect(callbacks.add.mock.calls[7][0].prevState).toEqual([2, 3, 1, ...initialState]);
-    expect(callbacks.add.mock.calls[7][0].nextState).toEqual([1, 2, 3, 1, ...initialState]);
+		observable.reverse();
 
-    observable.reverse('args');
+		expect(callbacks.batched).toHaveBeenNthCalledWith(5, {
+			prevState: [1, 2, 3, 1, ...initialState],
+			nextState: [1, 2, 3, 1, ...initialState].reverse(),
+			type: 'batched'
+		}, expect.any(Function));
 
-    // once prior, then once for each element save for the center one
-    expect(callbacks.set.mock.calls.length).toBe(observable.length);
-  });
+		expect(callbacks.add.mock.calls.length).toBe(1);
+		expect(callbacks.set.mock.calls.length).toBe(1);
+		expect(callbacks.del.mock.calls.length).toBe(3);
+		expect(callbacks.batched.mock.calls.length).toBe(5);
+	});
 
-  it('should track object `prevState`, `nextState` as expected', () => {
-    const initialState = { a: 1, b: 2, c: 3 };
-    const observable = vivisect(initialState);
+	it('should track object `prevState`, `nextState` as expected', () => {
+		const initialState = { a: 1, b: 2, c: 3 };
+		const observable = vivisect(initialState);
 
-    iterator((key, value) => {
-      observable.addEventListener(key, value);
-    });
+		iterator((key, value) => {
+			observable.addEventListener(key, value, { alwaysCommit: true });
+		});
 
-    // sanity check
-    iterator((key, value) => {
-      expect(value).toHaveBeenCalledTimes(0);
-    });
+		// sanity check
+		iterator((key, value) => {
+			expect(value).toHaveBeenCalledTimes(0);
+		});
 
-    observable.a = 11;
+		observable.a = 11;
 
-    expect(callbacks.set).toHaveBeenNthCalledWith(1, {
-      type: 'set',
-      prevState: initialState,
-      nextState: { a: 11, b: 2, c: 3 }
-    });
+		expect(callbacks.set).toHaveBeenNthCalledWith(1, {
+			type: 'set',
+			prevState: initialState,
+			nextState: { a: 11, b: 2, c: 3 }
+		}, expect.any(Function));
 
-    observable.k = 99;
+		observable.k = 99;
 
-    expect(callbacks.add).toHaveBeenNthCalledWith(1, {
-      type: 'add',
-      prevState: { a: 11, b: 2, c: 3 },
-      nextState: { a: 11, b: 2, c: 3, k: 99 }
-    });
+		expect(callbacks.add).toHaveBeenNthCalledWith(1, {
+			type: 'add',
+			prevState: { a: 11, b: 2, c: 3 },
+			nextState: { a: 11, b: 2, c: 3, k: 99 }
+		}, expect.any(Function));
 
-    observable.k = {};
+		observable.k = {};
 
-    expect(callbacks.set).toHaveBeenNthCalledWith(2, {
-      type: 'set',
-      prevState: { a: 11, b: 2, c: 3, k: 99 },
-      nextState: { a: 11, b: 2, c: 3, k: {} }
-    });
+		expect(callbacks.set).toHaveBeenNthCalledWith(2, {
+			type: 'set',
+			prevState: { a: 11, b: 2, c: 3, k: 99 },
+			nextState: { a: 11, b: 2, c: 3, k: {} }
+		}, expect.any(Function));
 
-    observable.k.l = 77;
+		observable.k.l = 77;
 
-    // caveat - nested objects will emit their own state
-    expect(callbacks.add).toHaveBeenNthCalledWith(2, {
-      type: 'add',
-      prevState: {},
-      nextState: { l: 77 }
-    });
+		// caveat - nested objects will emit their own state
+		expect(callbacks.add).toHaveBeenNthCalledWith(2, {
+			type: 'add',
+			prevState: {},
+			nextState: { l: 77 }
+		}, expect.any(Function));
 
-    Object.assign(observable, { p: 110 });
+		Object.assign(observable, { p: 110 });
 
-    expect(callbacks.add).toHaveBeenNthCalledWith(3, {
-      type: 'add',
-      prevState: { a: 11, b: 2, c: 3, k: { l: 77 } },
-      nextState: { a: 11, b: 2, c: 3, k: { l: 77 }, p: 110  }
-    });
+		expect(callbacks.add).toHaveBeenNthCalledWith(3, {
+			type: 'add',
+			prevState: { a: 11, b: 2, c: 3, k: { l: 77 } },
+			nextState: { a: 11, b: 2, c: 3, k: { l: 77 }, p: 110 }
+		}, expect.any(Function));
 
-    delete observable.a;
+		delete observable.a;
 
-    expect(callbacks.del).toHaveBeenNthCalledWith(1, {
-      type: 'del',
-      prevState: { a: 11, b: 2, c: 3, k: { l: 77 }, p: 110 },
-      nextState: {  b: 2, c: 3, k: { l: 77 }, p: 110 }
-    });
+		expect(callbacks.del).toHaveBeenNthCalledWith(1, {
+			type: 'del',
+			prevState: { a: 11, b: 2, c: 3, k: { l: 77 }, p: 110 },
+			nextState: { b: 2, c: 3, k: { l: 77 }, p: 110 }
+		}, expect.any(Function));
 
-    delete observable.k.l;
+		delete observable.k.l;
 
-    // again, caveat
-    expect(callbacks.del).toHaveBeenNthCalledWith(2, {
-      type: 'del',
-      prevState: { l: 77 },
-      nextState:  {}
-    });
+		// again, caveat
+		expect(callbacks.del).toHaveBeenNthCalledWith(2, {
+			type: 'del',
+			prevState: { l: 77 },
+			nextState: {}
+		}, expect.any(Function));
 
-    observable.b = undefined;
+		observable.b = undefined;
 
-    expect(callbacks.set).toHaveBeenNthCalledWith(3, {
-      type: 'set',
-      prevState: { b: 2, c: 3, k: {}, p: 110 },
-      nextState: { b: undefined, c: 3, k: {}, p: 110 }
-    });
+		expect(callbacks.set).toHaveBeenNthCalledWith(3, {
+			type: 'set',
+			prevState: { b: 2, c: 3, k: {}, p: 110 },
+			nextState: { b: undefined, c: 3, k: {}, p: 110 }
+		}, expect.any(Function));
 
-    delete observable.p;
+		delete observable.p;
 
-    expect(callbacks.del).toHaveBeenNthCalledWith(3, {
-      type: 'del',
-      prevState: { b: undefined, c: 3, k: {}, p: 110 },
-      nextState: { b: undefined, c: 3, k: {} }
-    });
+		expect(callbacks.del).toHaveBeenNthCalledWith(3, {
+			type: 'del',
+			prevState: { b: undefined, c: 3, k: {}, p: 110 },
+			nextState: { b: undefined, c: 3, k: {} }
+		}, expect.any(Function));
 
-    expect(callbacks.del.mock.calls.length).toBe(3);
-    expect(callbacks.add.mock.calls.length).toBe(3);
-    expect(callbacks.set.mock.calls.length).toBe(3)
-  });
+		expect(callbacks.del.mock.calls.length).toBe(3);
+		expect(callbacks.add.mock.calls.length).toBe(3);
+		expect(callbacks.set.mock.calls.length).toBe(3);
+	});
 });

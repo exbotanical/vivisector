@@ -8,11 +8,10 @@ import { VxException } from './exceptions';
  * @param {Function} handler
  */
 export function validateEventHandler (this: BaseObservableFactory, eventName: string, handler: VxEventHandler): never|void {
-	if (!(eventName in this.handlers)) {
+	if (!(eventName in this.handlerStore)) {
 		throw VxException.create(new VxException({
 			reason: `An unknown event name '${eventName}' was provided; there are no subscribable events matching this identifier`
 		}));
-
 	} else if (typeof handler !== 'function') {
 		throw VxException.create(new VxException({
 			reason: 'The provided event handler must be a function'

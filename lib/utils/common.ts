@@ -1,39 +1,46 @@
 import { VxState } from '../types';
 
+interface VxPropertyDescriptor {
+	[x: string]: PropertyDescriptor;
+}
+
+type VxStateDescriptors = object & VxPropertyDescriptor;
+
 const unboundedSlice = Array.prototype.slice;
 const slice = Function.prototype.call.bind(unboundedSlice);
 
 /**
  * @summary Shallow copy an object or array
  */
-export function shallowCopy (base: VxState): VxState {
-  if (Array.isArray(base)) {
-    return slice(base);
-  }
+export function shallowCopy <T extends VxState> (base: T): T {
+	if (Array.isArray(base)) {
+		return slice(base);
+	}
 
-  const descriptors = Object.getOwnPropertyDescriptors(base);
+	const descriptors: VxStateDescriptors = Object.getOwnPropertyDescriptors(base);
 
-  const keys = Reflect.ownKeys(descriptors);
+	const keys = Reflect.ownKeys(descriptors);
 
-  for (let i = 0; i < keys.length; i++) {
-		const key: any = keys[i]; // eslint-disable-line @typescript-eslint/no-explicit-any
-    const desc = descriptors[key];
+	for (let i = 0; i < keys.length; i++) {
+		const key: any = keys[i];
+		const desc = descriptors[key];
 
-    if (!desc.writable) {
-      desc.writable = true;
-      desc.configurable = true;
-    }
+		if (!desc.writable) {
+			desc.writable = true;
+			desc.configurable = true;
+		}
 
-    if (desc.get || desc.set)
-      descriptors[key] = {
-        configurable: true,
-        writable: !!desc.set,
-        enumerable: desc.enumerable,
-        value: base[key as keyof VxState]
-      };
-  }
+		if (desc.get || desc.set) {
+			descriptors[key] = {
+				configurable: true,
+				writable: !!desc.set,
+				enumerable: desc.enumerable,
+				value: base[key as keyof VxState]
+			};
+		}
+	}
 
-  return Object.create(Object.getPrototypeOf(base), descriptors);
+	return Object.create(Object.getPrototypeOf(base), descriptors);
 }
 
 /**
@@ -43,12 +50,12 @@ export function shallowCopy (base: VxState): VxState {
  * @param {Function} value The value of the function property
  */
 export function defineNonConfigurableProp (context: VxState, name: string, value: Function): void {
-  Object.defineProperty(context, name, {
-    configurable: false,
-    enumerable: false,
-    writable: false,
-    value
-  });
+	Object.defineProperty(context, name, {
+		configurable: false,
+		enumerable: false,
+		writable: false,
+		value
+	});
 }
 
 /**
@@ -59,9 +66,9 @@ export function defineNonConfigurableProp (context: VxState, name: string, value
  * @returns {boolean}
  */
 export function isArrayProto (target: VxState, prop: string|symbol): boolean {
-  return Array.isArray(target)
-    && Object.getOwnPropertyNames(Array.prototype)
-      .includes(prop);
+	return Array.isArray(target) &&
+		Object.getOwnPropertyNames(Array.prototype)
+			.includes(prop);
 }
 
 /**
@@ -72,9 +79,9 @@ export function isArrayProto (target: VxState, prop: string|symbol): boolean {
  * @returns {boolean}
  */
 export function isArrayPropOutOfBounds (target: VxState, prop: string | symbol): boolean {
-  const maybeIdx = Number(prop);
+	const maybeIdx = Number(prop);
 
-  if (!Number.isNaN(maybeIdx)) return false;
+	if (!Number.isNaN(maybeIdx)) return false;
 
-  return Array.isArray(target) && (maybeIdx > (target.length - 1));
+	return Array.isArray(target) && (maybeIdx > (target.length - 1));
 }

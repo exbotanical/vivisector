@@ -1,11 +1,13 @@
 import {
-  VX_EVENT_TYPE,
-  VX_LISTENER_INTERNALS,
-  VxState,
-  VxEvent,
-  VxEventHandler,
-  VxEventHandlerStore,
-  VxEventedObject
+	VX_EVENT_TYPE,
+	VX_LISTENER_INTERNALS,
+	VxState,
+	VxEvent,
+	VxEventHandler,
+	VxEventHandlerStore,
+	VxEventedObject,
+	DoneFunction,
+	VxAddEventListenerOpts
 } from '../types';
 
 import {
@@ -18,91 +20,97 @@ import {
  * @class BaseObservableFactory
  */
 export abstract class BaseObservableFactory {
-  protected handlers: VxEventHandlerStore;
-  protected internals: VX_LISTENER_INTERNALS[];
+	protected handlerStore: VxEventHandlerStore;
+	protected internals: VX_LISTENER_INTERNALS[];
 
-  protected constructor () {
-    /**
+	protected constructor () {
+		/**
 		 * Event-correlated handlers; below are defaults
 		 * @property {VxEventHandlerStore}
 		 */
-    this.handlers = {
-      [VX_EVENT_TYPE.ADD]: [],
-      [VX_EVENT_TYPE.DEL]: [],
-      [VX_EVENT_TYPE.SET]: []
-    };
+		this.handlerStore = {
+			[VX_EVENT_TYPE.ADD]: new Set(),
+			[VX_EVENT_TYPE.DEL]: new Set(),
+			[VX_EVENT_TYPE.SET]: new Set(),
+			[VX_EVENT_TYPE.BATCHED]: new Set()
+		};
 
-    this.internals = [
-      ...Object.values(VX_LISTENER_INTERNALS)
-    ];
-  }
+		this.internals = [
+			...Object.values(VX_LISTENER_INTERNALS)
+		];
+	}
 
-  /**
-   * @summary Evaluates whether the given property is marked as non-configurable
-   * @param {string|symbol} prop The property presently being accessed
-   * @returns {boolean}
-   */
-  protected isConfigurableProp (prop: string|symbol): boolean {
-    return !this.internals.includes(prop);
-  }
+	/**
+	 * @summary Evaluates whether the given property is marked as non-configurable
+	 * @param {string|symbol} prop The property presently being accessed
+	 * @returns {boolean}
+	 */
+	protected isConfigurableProp (prop: string|symbol): boolean {
+		return !this.internals.includes(prop);
+	}
 
-  /**
-   * @summary Serially invokes each handler of the given event type
-   * @param {object} event An object containing data about the event
-   * @param {object} context The `this` value on which to call each instance
-   */
-  protected raiseEvent (event: VxEvent<VxState>, context: BaseObservableFactory): void {
-    this.handlers[event.type]
-      .forEach(handler => {
-        handler.call(context, event);
-      });
-  }
-
-  /**
-   * @summary Programmatically define `addEventListener`, `removeEventListener` on the proxied object
-   * @param context The context (i.e. `this` instance) of the target object on which the
-   * aforementioned listeners will be defined
-   */
-  protected defineListeners <T extends VxState> (context: T): VxEventedObject {
-    defineNonConfigurableProp(
-      context,
-      VX_LISTENER_INTERNALS.ADD,
-      (eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {
+	/**
+	 * @summary Programmatically define `addEventListener`, `removeEventListener` on the proxied object
+	 * @param context The context (i.e. `this` instance) of the target object on which the
+	 * aforementioned listeners will be defined
+	 */
+	protected defineListeners<T extends VxState> (context: T): VxEventedObject {
+		defineNonConfigurableProp(
+			context,
+			VX_LISTENER_INTERNALS.ADD,
+			(eventName: VX_EVENT_TYPE, handler: VxEventHandler, { alwaysCommit = false }: VxAddEventListenerOpts = {}): T => {
 				validateEventHandler.call(this,
 					eventName,
 					handler
 				);
 
-        this.handlers[eventName]
-					.push(handler);
+				this.handlerStore[eventName]
+					.add({ handler, alwaysCommit });
 
-        return context;
-      }
-    );
+				return context;
+			}
+		);
 
-    defineNonConfigurableProp(
-      context,
-      VX_LISTENER_INTERNALS.REM,
-      (eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {
+		defineNonConfigurableProp(
+			context,
+			VX_LISTENER_INTERNALS.REM,
+			(eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {
 				validateEventHandler.call(this,
 					eventName,
 					handler
 				);
 
-        const handlerSet = this.handlers[eventName];
+				const handlers = this.handlerStore[eventName];
 
-        let handlerSetLen = handlerSet.length;
+				handlers.forEach((ref) => {
+					if (handler === ref.handler) {
+						handlers.delete(ref);
+					}
+				});
 
-        while (--handlerSetLen >= 0) {
-          if (handlerSet[handlerSetLen] === handler) {
-            handlerSet.splice(handlerSetLen, 1);
-          }
-        }
+				return context;
+			}
+		);
 
-        return context;
-      }
-    );
+		return context as VxEventedObject;
+	}
 
-    return context as VxEventedObject;
-  }
+	/**
+	 * @summary Serially invokes each handler of the given event type
+	 * @param {object} event An object containing data about the event
+	 * @param {object} context The `this` value on which to call each instance
+	 */
+	public raiseEvent (event: VxEvent<VxState>, context: BaseObservableFactory, done: DoneFunction): void {
+		this.handlerStore[event.type]
+			.forEach(({ handler, alwaysCommit }) => {
+				let finalDoneFunction = done;
+
+				if (alwaysCommit) {
+					done(true);
+					finalDoneFunction = () => { };
+				}
+
+				handler.call(context, event, finalDoneFunction);
+			});
+	}
 }

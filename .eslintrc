@@ -1,35 +1,9 @@
 {
-  "env": {
-    "node": true,
-    "es6": true,
-    "commonjs": true,
-    "browser": true
-  },
-  "parserOptions": {
-    "parser": "@typescript-eslint/parser",
-    "ecmaVersion": 2021,
-    "plugins": [
-      "@typescript-eslint"
-    ]
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "rules": {
-    "comma-dangle": "error",
-    "semi": "error",
-    "space-before-function-paren": "error",
-    
-    "no-console": "warn",
-
-    "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-this-alias": "off"
-  },
-  "ignorePatterns": [
-    "repl.js",
-    "**/*__tests__"
-  ],
-  "reportUnusedDisableDirectives": true
+	"extends": "@magister_zito/typescript",
+	"plugins": [
+		"jest"
+	],
+	"env": {
+		"jest/globals": true
+	}
 }

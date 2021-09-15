@@ -1,13 +1,13 @@
 import { vivisect } from '../lib';
 
 beforeAll(() => {
-  global.vivisect = vivisect;
+	global.vivisect = vivisect;
 });
 
 beforeEach(() => {
-  jest.useFakeTimers();
+	jest.useFakeTimers();
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+	jest.clearAllMocks();
 });
