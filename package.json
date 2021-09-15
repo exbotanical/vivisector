@@ -1,7 +1,7 @@
 {
   "name": "vivisector",
   "version": "0.0.0-development",
-  "description": "add event listeners to js objects",
+  "description": "reactive state management",
   "keywords": [
     "observable",
     "observables",
