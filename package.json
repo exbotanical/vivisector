@@ -1,7 +1,7 @@
 {
   "name": "vivisector",
   "version": "0.0.0-development",
-  "description": "reactive state management",
+  "description": "subscribe to any object and commit or revert state mutations",
   "keywords": [
     "observable",
     "observables",

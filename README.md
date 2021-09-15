@@ -1,6 +1,6 @@
 ![Vivisector Logo](/docs/vx.png)
 
-# Vivisector | Compact observables
+# Vivisector | Subscribe to Any Object ✂️
 
 [![Build Status](https://travis-ci.com/MatthewZito/vivisector.svg?branch=master)](https://travis-ci.com/MatthewZito/vivisector)
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector?branch=master)
@@ -58,7 +58,7 @@ const state = vivisect({
 - ✨ available for ESM, UMD, and CommonJS build targets
 - 🚀 bind actions to a variable's state on the fly
 - 🔌 harness the power of reactive programming without the excess boilerplate
-- ✔️ declaratively cancel or commit state changes before they happen
+- ✔️ preview, then declaratively cancel or commit state changes
 
 ## <a name="install"></a> Installation
 
