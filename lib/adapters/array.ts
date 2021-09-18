@@ -64,7 +64,9 @@ export const eventedArrayPrototypeResolver: EventedArrayPrototypeResolver = func
 		}
 
 		if (prop == 'reverse') {
-			const done = DoneFunctionBuilder(() => target.reverse());
+			const done = DoneFunctionBuilder(
+				() => target.reverse()
+			);
 
 			nextState.reverse();
 
@@ -78,7 +80,9 @@ export const eventedArrayPrototypeResolver: EventedArrayPrototypeResolver = func
 		}
 
 		if (prop == 'push') {
-			const done = DoneFunctionBuilder(() => target.push(...args));
+			const done = DoneFunctionBuilder(
+				() => target.push(...args)
+			);
 
 			nextState.push(...args);
 

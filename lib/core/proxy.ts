@@ -64,25 +64,22 @@ export function RootHandlerFactory (this: BaseObservableFactory): ProxyHandler<V
 
 			const [prevState, nextState] = [shallowCopy(target), shallowCopy(target)];
 			const ret = Reflect.set(nextState, prop, value);
+			const done = DoneFunctionBuilder(
+				() => Reflect.set(target, prop, value)
+			);
 
 			if (!(prop in prevState) || isArrayPropOutOfBounds(prevState, prop)) {
 				this.raiseEvent({
 					type: VX_EVENT_TYPE.ADD,
 					prevState,
 					nextState
-				}, this,
-				DoneFunctionBuilder(
-					() => Reflect.set(target, prop, value))
-				);
+				}, this, done);
 			} else {
 				this.raiseEvent({
 					type: VX_EVENT_TYPE.SET,
 					prevState,
 					nextState
-				}, this,
-				DoneFunctionBuilder(
-					() => Reflect.set(target, prop, value))
-				);
+				}, this, done);
 			}
 
 			return ret;
@@ -98,14 +95,18 @@ export function RootHandlerFactory (this: BaseObservableFactory): ProxyHandler<V
 			const ret = true;
 
 			if (Array.isArray(nextState)) {
-				nextState.splice(Number(prop), 1);
+				const numericProp = Number(prop);
+
+				nextState.splice(numericProp, 1);
 
 				this.raiseEvent({
 					type: VX_EVENT_TYPE.DEL,
 					prevState,
 					nextState
 				}, this,
-				DoneFunctionBuilder(() => (target as any[]).splice(Number(prop), 1)));
+				DoneFunctionBuilder(
+					() => (target as any[]).splice(numericProp, 1))
+				);
 
 				return ret;
 			} else if (prop in prevState) {
