@@ -5,5 +5,12 @@
 	],
 	"env": {
 		"jest/globals": true
-	}
+	},
+	"ignorePatterns": [
+		"node_modules",
+		".build",
+		"caches",
+		"coverage",
+		"dist"
+	]
 }
