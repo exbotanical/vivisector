@@ -55,7 +55,7 @@ export abstract class BaseObservableFactory {
 	 * aforementioned listeners will be defined
 	 */
 	protected defineListeners<T extends VxState> (context: T): VxEventedObject {
-		defineNonConfigurableProp(
+		defineNonConfigurableProp.call(
 			context,
 			VX_LISTENER_INTERNALS.ADD,
 			(eventName: VX_EVENT_TYPE, handler: VxEventHandler, { alwaysCommit = false }: VxAddEventListenerOpts = {}): T => {
@@ -71,7 +71,7 @@ export abstract class BaseObservableFactory {
 			}
 		);
 
-		defineNonConfigurableProp(
+		defineNonConfigurableProp.call(
 			context,
 			VX_LISTENER_INTERNALS.REM,
 			(eventName: VX_EVENT_TYPE, handler: VxEventHandler): T => {

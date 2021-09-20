@@ -6,8 +6,8 @@ interface VxPropertyDescriptor {
 
 type VxStateDescriptors = object & VxPropertyDescriptor;
 
-const unboundedSlice = Array.prototype.slice;
-const slice = Function.prototype.call.bind(unboundedSlice);
+const unboundSlice = Array.prototype.slice;
+const slice = Function.prototype.call.bind(unboundSlice);
 
 /**
  * @summary Shallow copy an object or array
@@ -23,34 +23,36 @@ export function shallowCopy <T extends VxState> (base: T): T {
 
 	for (let i = 0; i < keys.length; i++) {
 		const key: any = keys[i];
-		const desc = descriptors[key];
+		const descriptor = descriptors[key];
 
-		if (!desc.writable) {
-			desc.writable = true;
-			desc.configurable = true;
+		if (!descriptor.writable) {
+			descriptor.writable = true;
+			descriptor.configurable = true;
 		}
 
-		if (desc.get || desc.set) {
+		if (descriptor.get || descriptor.set) {
 			descriptors[key] = {
 				configurable: true,
-				writable: !!desc.set,
-				enumerable: desc.enumerable,
+				writable: !!descriptor.set,
+				enumerable: descriptor.enumerable,
 				value: base[key as keyof VxState]
 			};
 		}
 	}
 
-	return Object.create(Object.getPrototypeOf(base), descriptors);
+	return Object.create(
+		Object.getPrototypeOf(base),
+		descriptors
+	);
 }
 
 /**
  * @summary Define a non-configurable function property `value` with name `name` on a given object `context`
- * @param {VxState} context The object on which the property will be defined
  * @param {string} name The name of the property
  * @param {Function} value The value of the function property
  */
-export function defineNonConfigurableProp (context: VxState, name: string, value: Function): void {
-	Object.defineProperty(context, name, {
+export function defineNonConfigurableProp (this: VxState, name: string, value: Function): void {
+	Object.defineProperty(this, name, {
 		configurable: false,
 		enumerable: false,
 		writable: false,
@@ -78,7 +80,7 @@ export function isArrayProto (target: VxState, prop: string|symbol): boolean {
  * @param {string|symbol} prop
  * @returns {boolean}
  */
-export function isArrayPropOutOfBounds (target: VxState, prop: string | symbol): boolean {
+export function isArrayPropOutOfBounds (target: VxState, prop: string|symbol): boolean {
 	const maybeIdx = Number(prop);
 
 	if (!Number.isNaN(maybeIdx)) return false;
