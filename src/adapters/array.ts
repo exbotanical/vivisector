@@ -1,4 +1,4 @@
-import { BaseObservableFactory } from '../core/BaseObservableFactory';
+import { BaseObservableFactory } from '../core/factory';
 import { DoneFunctionBuilder } from '../core/done';
 import { shallowCopy } from '../utils';
 

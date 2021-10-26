@@ -3,7 +3,7 @@ import { VxException } from './exceptions';
 import type { ISubscriptionEvent } from '../types';
 
 // must use >= v4.4 see https://github.com/microsoft/TypeScript/pull/44512
-interface IObject {
+export interface IObject {
 	[key: PropertyKey]: any;
 }
 

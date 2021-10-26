@@ -1,4 +1,4 @@
-import { ProxiedObservableFactory } from './core/ProxiedObservableFactory';
+import { ProxiedObservableFactory } from './core/factory';
 import { isObject, VxException } from './utils';
 
 import type { IVivisectorApi } from './types';
