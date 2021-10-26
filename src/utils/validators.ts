@@ -1,7 +1,6 @@
 import type { ISubscriptionEvent } from '../types';
 import { VxException } from './exceptions';
 
-
 // must use >= v4.4 see https://github.com/microsoft/TypeScript/pull/44512
 export interface IObject {
 	[key: PropertyKey]: any;
@@ -48,8 +47,6 @@ export function validateEventName(
 		);
 	}
 
-	// I cannot stress enough how much I disagree with the TS team on WHY this is necessary
-	// see https://github.com/microsoft/TypeScript/issues/26255
 	if (!validEvents.includes(eventName as any)) {
 		throw VxException.create(
 			new VxException({

@@ -4,7 +4,6 @@ import type { ISubject } from '../types';
 import { BaseObservableFactory } from './factory';
 import { DoneFunctionBuilder } from './done';
 
-
 const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
 
 /**
@@ -86,6 +85,8 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 
 			const ret = true;
 
+			// tested via public API
+			// istanbul ignore next
 			if (Array.isArray(nextState)) {
 				const numericProp = Number(prop);
 
@@ -115,7 +116,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 
 				return ret;
 			}
-
+			// istanbul ignore next
 			return ret;
 		}
 	};

@@ -67,13 +67,13 @@ export class VxException {
 
 		const { filename, lineno } = this.source;
 
-		return `at ${filename}, Ln ${lineno}`;
+		return ` at ${filename}, Ln ${lineno}`;
 	}
 
 	/**
 	 * @summary Serialize the exception metadata into a string
 	 */
 	serialize(): string {
-		return `${this.reason} ${this.serializeSource()}`;
+		return `${this.reason}${this.serializeSource()}`;
 	}
 }

@@ -44,11 +44,11 @@ export abstract class BaseObservableFactory {
 	 * @param prop The property presently being accessed
 	 */
 	protected isConfigurableProp(prop: PropertyKey): boolean {
-		if (typeof prop === 'string') {
-			return !this.internals.includes(prop);
-		}
-
-		return false;
+		// see -> https://github.com/microsoft/TypeScript/issues/26255
+		// btw, this is where TypeScript's bizarre `Array.prototype.includes` approach could screw us over
+		// if I followed TS' way, I may only pass a string to `includes`, which means if we receive a symbol, we'll return false
+		// which would propagate to the proxy and lead to a invariant violation
+		return !this.internals.includes(prop as any);
 	}
 
 	/**
@@ -78,11 +78,14 @@ export abstract class BaseObservableFactory {
 			context,
 			'unsubscribe',
 			(eventName, handler) => {
+				// both validators are tested via the public API
+				// istanbul ignore next
 				validateEventName(
 					eventName,
 					Object.keys(this.observers) as ISubscriptionEvent[]
 				);
 
+				// istanbul ignore next
 				validateEventHandler(handler);
 
 				const handlers = this.observers[eventName];
@@ -112,6 +115,8 @@ export abstract class BaseObservableFactory {
 		this.observers[event.type].forEach(({ handler, alwaysCommit }) => {
 			let finalDoneFunction = done;
 
+			// tested via public API
+			// istanbul ignore next
 			if (alwaysCommit) {
 				done(true);
 				finalDoneFunction = () => {};
