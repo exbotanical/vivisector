@@ -30,14 +30,12 @@
     "node": ">= 10"
   },
   "scripts": {
-    "coverage": "jest --coverage && pnpm clean",
     "lint": "eslint --ext .js,.ts,.json --no-fix .",
-    "test": "jest --bail --passWithNoTests __tests__",
+    "test": "jest --bail --coverage __tests__",
     "test:watch": "jest --watch",
     "prebuild": "pnpm clean",
     "build": "pnpm types && rollup -c",
     "clean": "rimraf coverage dist .build",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && pnpm clean",
     "prerelease": "npm pack && tar -xvzf *.tgz && rimraf package *.tgz",
     "semantic-release": "semantic-release",
     "types": "tsc"
