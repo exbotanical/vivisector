@@ -164,8 +164,6 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 **Fires on:** Additive array functions; adding new properties
 
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.ADD`
-
 **Note:** Operations such as `Array.prototype.push` are considered `batched` events if provided more than a single argument
 
 #### set
@@ -181,8 +179,6 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 **Fires on:** Setting existing properties; mutating indexed accessors
 
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.SET`
-
 #### del
 
 An element or property has been deleted.
@@ -195,8 +191,6 @@ Callbacks will receive a function, `done`, and an object consisting of:
 | **nextState** | the next state, i.e. the result of the add event that was captured |
 
 **Fires on:** methods such as `pop`; `delete` called on a property
-
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.DEL`
 
 #### batched
 
@@ -211,13 +205,11 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 **Fires on:** methods such as `shift`, `unshift`, `push` when called with multiple elements
 
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.BATCHED`
-
 ### <a name="methods"></a> Methods
 
 Methods bound to all `vivisected` objects:
 
-#### subscribe (eventName: VxEvent, handler: VxEventHandler, { alwaysCommit = false }: { alwaysCommit?: boolean }): VxEventedObject
+#### subscribe (eventName: ISubscriptionEvent, handler: ISubscriptionCallback, opts?: ISubscriptionOpts) => IVivisectorApi
 
 Bind the callback `handler` to fire whenever an event of `eventName` has been triggered.
 
@@ -243,7 +235,7 @@ languages.push('JavaScript');
 // "Added item such that ['C','Go'] becomes ['C','Go', 'JavaScript']"
 ```
 
-#### unsubscribe (eventName: VxEvent, handler: VxEventHandler): void
+#### unsubscribe (eventName: ISubscriptionEvent, handler: ISubscriptionCallback, opts?: ISubscriptionOpts) => IVivisectorApi
 
 Remove an existing callback from the respective event-type to which it has been registered.
 
