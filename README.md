@@ -36,7 +36,7 @@ const state = vivisect({
   lastName: '',
   email: ''
 })
-  .addEventListener('set', ({ prevState, nextState, done }) => {
+  .subscribe('set', ({ prevState, nextState, done }) => {
     if (!isValidEmail(nextState.email)) {
       emitErrorMessage();
       done(false);
@@ -117,7 +117,7 @@ const logAdditions = ({ type, prevState, nextState }) => {
 const users = vivisect(['Damo Suzuki', 'Soren Kierkegaard', 'Donald Knuth']);
 
 // every time an item is added to `users`, we want to invoke `logAdditions`
-users.addEventListener('add', logAdditions, { alwaysCommit: true });
+users.subscribe('add', logAdditions, { alwaysCommit: true });
 
 // let's bring someone fictional into the mix
 users.push('Elric of Melnibone');
@@ -135,16 +135,16 @@ The object's prototype is unaffected, save for the added event registrars (more 
 console.log(Object.values(albums)[0].findIndex(i => i.startsWith('T')));; // 0
 ```
 
-Event handlers are registered by calling `addEventListener`. This method will exist on every `vivisected` object:
+Event handlers are registered by calling `subscribe`. This method will exist on every `vivisected` object:
 
 ```js
-users.addEventListener(eventType, eventHandler, options);
+users.subscribe(eventType, eventHandler, options);
 ```
 
-And when we're done, we can remove the handler by passing a reference to it into the `removeEventListener` method:
+And when we're done, we can remove the handler by passing a reference to it into the `unsubscribe` method:
 
 ```js
-users.removeEventListener(eventType, eventHandlerRef);
+users.unsubscribe(eventType, eventHandlerRef);
 ```
 
 ### <a name="evtypes"></a> Event Types
@@ -217,7 +217,7 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 Methods bound to all `vivisected` objects:
 
-#### addEventListener (eventName: VX_EVENT_TYPE, handler: VxEventHandler, { alwaysCommit = false }: { alwaysCommit?: boolean }): VxEventedObject
+#### subscribe (eventName: VxEvent, handler: VxEventHandler, { alwaysCommit = false }: { alwaysCommit?: boolean }): VxEventedObject
 
 Bind the callback `handler` to fire whenever an event of `eventName` has been triggered.
 
@@ -237,13 +237,13 @@ const logMsg = function (event, done) {
   if (event.nextState.length) done(true);
 });
 
-const languages = vivisect(['C', 'Go']).addEventListener('add', logMsg);
+const languages = vivisect(['C', 'Go']).subscribe('add', logMsg);
 
 languages.push('JavaScript');
 // "Added item such that ['C','Go'] becomes ['C','Go', 'JavaScript']"
 ```
 
-#### removeEventListener (eventName: VX_EVENT_TYPE, handler: VxEventHandler): void
+#### unsubscribe (eventName: VxEvent, handler: VxEventHandler): void
 
 Remove an existing callback from the respective event-type to which it has been registered.
 
@@ -259,8 +259,8 @@ const logMsg = function (event) {
 });
 
 const queens = vivisect(['RuPaul', 'Alaska'])
-  .addEventListener('add', logMsg, { alwaysCommit: true })
-  .removeEventListener('add', logMsg);
+  .subscribe('add', logMsg, { alwaysCommit: true })
+  .unsubscribe('add', logMsg);
 
 queens.push('Bianca Del Rio');
 // no log - handler was removed ^

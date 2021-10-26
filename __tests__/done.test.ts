@@ -1,10 +1,16 @@
-/* global vivisect:false */
+import { vivisect } from '../src';
+
+import type { ISubscriptionCallback } from '../src/types';
+
 describe('evaluation of `done` state mutation committal', () => {
 	const commitKey = Symbol('commit');
 	const spy = jest.fn();
 
 	describe('evaluation of array mutations', () => {
-		const callback = ({ prevState, nextState }, done) => {
+		const callback: ISubscriptionCallback = (
+			{ prevState, nextState },
+			done
+		) => {
 			if (nextState.includes(commitKey)) done(true);
 			// we'll pass the `prevState` back so we can assert against it
 			spy(prevState);
@@ -12,10 +18,10 @@ describe('evaluation of `done` state mutation committal', () => {
 
 		it('cancels array mutations when `done` is not invoked', () => {
 			const observable = vivisect([1, 2, 3])
-				.addEventListener('add', callback)
-				.addEventListener('set', callback)
-				.addEventListener('del', callback)
-				.addEventListener('batched', callback);
+				.subscribe('add', callback)
+				.subscribe('set', callback)
+				.subscribe('del', callback)
+				.subscribe('batched', callback);
 
 			observable.push(1);
 
@@ -41,10 +47,10 @@ describe('evaluation of `done` state mutation committal', () => {
 
 		it('commits array mutations when `done` is invoked', () => {
 			const observable = vivisect([1, 2, 3])
-				.addEventListener('add', callback)
-				.addEventListener('set', callback)
-				.addEventListener('del', callback)
-				.addEventListener('batched', callback);
+				.subscribe('add', callback)
+				.subscribe('set', callback)
+				.subscribe('del', callback)
+				.subscribe('batched', callback);
 
 			observable.push(commitKey);
 
@@ -84,7 +90,10 @@ describe('evaluation of `done` state mutation committal', () => {
 	});
 
 	describe('evaluation of object mutation', () => {
-		const callback = ({ prevState, nextState }, done) => {
+		const callback: ISubscriptionCallback = (
+			{ prevState, nextState },
+			done
+		) => {
 			if (nextState[commitKey]) done(true);
 			// we'll pass the `prevState` back so we can assert against it
 			spy(prevState);
@@ -94,10 +103,10 @@ describe('evaluation of `done` state mutation committal', () => {
 			const initialState = { a: 1, b: 2, c: 3 };
 
 			const observable = vivisect(initialState)
-				.addEventListener('add', callback)
-				.addEventListener('set', callback)
-				.addEventListener('del', callback)
-				.addEventListener('batched', callback);
+				.subscribe('add', callback)
+				.subscribe('set', callback)
+				.subscribe('del', callback)
+				.subscribe('batched', callback);
 
 			observable.a = 11;
 
@@ -119,16 +128,19 @@ describe('evaluation of `done` state mutation committal', () => {
 			const initialState = { a: 1, b: 2, c: 3 };
 
 			const observable = vivisect(initialState)
-				.addEventListener('add', callback)
-				.addEventListener('set', callback)
-				.addEventListener('del', callback)
-				.addEventListener('batched', callback);
+				.subscribe('add', callback)
+				.subscribe('set', callback)
+				.subscribe('del', callback)
+				.subscribe('batched', callback);
 
 			observable[commitKey] = 'a';
 			expect(spy.mock.calls[0][0]).toEqual(initialState);
 
 			delete observable.b;
-			expect(spy.mock.calls[1][0]).toEqual({ ...initialState, [commitKey]: 'a' });
+			expect(spy.mock.calls[1][0]).toEqual({
+				...initialState,
+				[commitKey]: 'a'
+			});
 
 			observable.c = {};
 			expect(spy.mock.calls[2][0]).toEqual({ a: 1, c: 3, [commitKey]: 'a' });
@@ -137,28 +149,52 @@ describe('evaluation of `done` state mutation committal', () => {
 			expect(spy.mock.calls[3][0]).toEqual({ a: 1, c: {}, [commitKey]: 'a' });
 
 			observable.alice = 'pharoah';
-			expect(spy.mock.calls[4][0]).toEqual(
-				{ a: 1, c: {}, d: 99, [commitKey]: 'a' }
-			);
+			expect(spy.mock.calls[4][0]).toEqual({
+				a: 1,
+				c: {},
+				d: 99,
+				[commitKey]: 'a'
+			});
 
 			Object.assign(observable, { r: 1 });
-			expect(spy.mock.calls[5][0]).toEqual(
-				{ a: 1, c: {}, d: 99, alice: 'pharoah', [commitKey]: 'a' }
-			);
+			expect(spy.mock.calls[5][0]).toEqual({
+				a: 1,
+				c: {},
+				d: 99,
+				alice: 'pharoah',
+				[commitKey]: 'a'
+			});
 
 			observable.q = () => {};
-			expect(spy.mock.calls[6][0]).toEqual(
-				{ a: 1, c: {}, d: 99, alice: 'pharoah', [commitKey]: 'a', r: 1 }
-			);
+			expect(spy.mock.calls[6][0]).toEqual({
+				a: 1,
+				c: {},
+				d: 99,
+				alice: 'pharoah',
+				[commitKey]: 'a',
+				r: 1
+			});
 
 			Object.assign(observable, { a: 12 }, { q: 2 });
-			expect(spy.mock.calls[7][0]).toEqual(
-				{ a: 1, c: {}, d: 99, alice: 'pharoah', [commitKey]: 'a', r: 1, q: expect.any(Function) }
-			);
+			expect(spy.mock.calls[7][0]).toEqual({
+				a: 1,
+				c: {},
+				d: 99,
+				alice: 'pharoah',
+				[commitKey]: 'a',
+				r: 1,
+				q: expect.any(Function)
+			});
 
-			expect(spy.mock.calls[8][0]).toEqual(
-				{ a: 12, c: {}, d: 99, alice: 'pharoah', [commitKey]: 'a', r: 1, q: expect.any(Function) }
-			);
+			expect(spy.mock.calls[8][0]).toEqual({
+				a: 12,
+				c: {},
+				d: 99,
+				alice: 'pharoah',
+				[commitKey]: 'a',
+				r: 1,
+				q: expect.any(Function)
+			});
 
 			expect(spy.mock.calls.length).toBe(9);
 		});

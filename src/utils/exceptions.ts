@@ -1,13 +1,20 @@
-import {
-	SourceReference,
-	VxExceptionArguments
-} from '../types';
+interface ISourceReference {
+	filename: string;
+	lineno: number;
+}
+
+interface IExceptionArguments {
+	reason: string;
+	source?: ISourceReference;
+}
 
 /**
  * @summary Base implementation model for extended errors
+ *
+ * @internal
  */
 abstract class BaseVxError extends Error {
-	constructor (message: string) {
+	constructor(message: string) {
 		super(message);
 
 		/**
@@ -19,9 +26,11 @@ abstract class BaseVxError extends Error {
 
 /**
  * Base implementation for errors
+ *
+ * @internal
  */
 export class VxError extends BaseVxError {
-	constructor (message: string) {
+	constructor(message: string) {
 		super(message);
 
 		Object.setPrototypeOf(this, VxError.prototype);
@@ -30,30 +39,30 @@ export class VxError extends BaseVxError {
 
 /**
  * @summary Exception metadata builder
+ *
+ * @internal
  */
 export class VxException {
 	public reason: string;
-	public source?: SourceReference;
+	public source?: ISourceReference;
 
-	constructor ({ reason, source }: VxExceptionArguments) {
+	constructor({ reason, source }: IExceptionArguments) {
 		this.reason = reason;
 		this.source = source;
 	}
 
 	/**
 	 * @summary Build an error object with the given exception metadata instance
-	 * @param {VxException} instance
-	 * @returns {VxError}
+	 * @param instance
 	 */
-	static create (instance: VxException): VxError {
+	static create(instance: VxException): VxError {
 		return new VxError(instance.serialize());
 	}
 
 	/**
 	 * @summary Serialize the source metadata into a string
-	 * @returns {string}
 	 */
-	serializeSource (): string {
+	serializeSource(): string {
 		if (!this.source) return '';
 
 		const { filename, lineno } = this.source;
@@ -63,9 +72,8 @@ export class VxException {
 
 	/**
 	 * @summary Serialize the exception metadata into a string
-	 * @returns {string}
 	 */
-	serialize (): string {
+	serialize(): string {
 		return `${this.reason} ${this.serializeSource()}`;
 	}
 }

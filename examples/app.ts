@@ -1,8 +1,12 @@
 /* eslint-disable no-console */
-import { vivisect } from '../lib';
-import { VX_EVENT_TYPE, VxEventHandler } from '../lib/types';
+import { vivisect } from '..';
 
-const logger: VxEventHandler = ({ type, prevState, nextState }, done) => {
+import type { ISubscriptionCallback } from '../src/types';
+
+const logger: ISubscriptionCallback = (
+	{ type, prevState, nextState },
+	done
+) => {
 	console.log(`${type} fired; ${prevState} -> ${nextState}`);
 
 	// so long as the first el is not 99, we allow the mutation
@@ -10,26 +14,25 @@ const logger: VxEventHandler = ({ type, prevState, nextState }, done) => {
 	if (nextState[0] !== 99) done(true);
 };
 
-function routine (observable) {
+function routine(observable) {
 	observable.push(1);
 	observable[3] = 4;
 
 	console.log(observable.pop() === 4);
 }
 
-(function main () {
+(function main() {
 	const arr = [1, 2, 3];
 
 	const observable = vivisect(arr)
-		.addEventListener(VX_EVENT_TYPE.ADD, logger, { alwaysCommit: true })
-		.addEventListener(VX_EVENT_TYPE.SET, logger)
-		.addEventListener(VX_EVENT_TYPE.BATCHED, logger)
-		.addEventListener(VX_EVENT_TYPE.DEL, logger);
+		.subscribe('add', logger, { alwaysCommit: true })
+		.subscribe('set', logger)
+		.subscribe('batched', logger)
+		.subscribe('del', logger);
 
 	routine(observable);
 
-	observable
-		.removeEventListener(VX_EVENT_TYPE.ADD, logger);
+	observable.unsubscribe('add', logger);
 
 	routine(observable);
 

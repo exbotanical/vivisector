@@ -1,23 +1,26 @@
-import { VxState } from '../types';
+import { ISubscription, ISubject } from '../types';
 
-interface VxPropertyDescriptor {
+interface ISubscribePropertyDescriptor {
 	[x: string]: PropertyDescriptor;
 }
 
-type VxStateDescriptors = object & VxPropertyDescriptor;
+type ISubscribeDescriptors = object & ISubscribePropertyDescriptor;
 
 const unboundSlice = Array.prototype.slice;
 const slice = Function.prototype.call.bind(unboundSlice);
 
 /**
  * @summary Shallow copy an object or array
+ *
+ * @internal
  */
-export function shallowCopy <T extends VxState> (base: T): T {
+export function shallowCopy<T>(base: T): T {
 	if (Array.isArray(base)) {
 		return slice(base);
 	}
 
-	const descriptors: VxStateDescriptors = Object.getOwnPropertyDescriptors(base);
+	const descriptors: ISubscribeDescriptors =
+		Object.getOwnPropertyDescriptors(base);
 
 	const keys = Reflect.ownKeys(descriptors);
 
@@ -35,24 +38,27 @@ export function shallowCopy <T extends VxState> (base: T): T {
 				configurable: true,
 				writable: !!descriptor.set,
 				enumerable: descriptor.enumerable,
-				value: base[key as keyof VxState]
+				value: base[key as keyof (any[] | object)]
 			};
 		}
 	}
 
-	return Object.create(
-		Object.getPrototypeOf(base),
-		descriptors
-	);
+	return Object.create(Object.getPrototypeOf(base), descriptors);
 }
 
 /**
  * @summary Define a non-configurable function property `value` with name `name` on a given object `context`
- * @param {string} name The name of the property
- * @param {Function} value The value of the function property
+ * @param name The name of the property
+ * @param value The value of the function property
+ *
+ * @internal
  */
-export function defineNonConfigurableProp (this: VxState, name: string, value: Function): void {
-	Object.defineProperty(this, name, {
+export function defineNonConfigurableProp(
+	this: ISubject,
+	name: string,
+	value: ISubscription
+): void {
+	Object.defineProperty<typeof this>(this, name, {
 		configurable: false,
 		enumerable: false,
 		writable: false,
@@ -63,27 +69,33 @@ export function defineNonConfigurableProp (this: VxState, name: string, value: F
 /**
  * @summary Evaluate whether a given target is an array,
  * and whether a given property exists on that array's prototype
- * @param {VxState} target
- * @param {string|symbol} prop
- * @returns {boolean}
+ * @param target
+ * @param prop
+ *
+ * @internal
  */
-export function isArrayProto (target: VxState, prop: string|symbol): boolean {
-	return Array.isArray(target) &&
-		Object.getOwnPropertyNames(Array.prototype)
-			.includes(prop);
+export function isArrayProto(target: unknown, prop: PropertyKey): boolean {
+	return (
+		Array.isArray(target) &&
+		Object.getOwnPropertyNames(Array.prototype).includes(prop as string)
+	);
 }
 
 /**
  * @summary Evaluate whether a given property is a number (i.e. an array index),
  * and whether it is out of bounds relative to a given target
- * @param {VxState} target
- * @param {string|symbol} prop
- * @returns {boolean}
+ * @param target
+ * @param prop
+ *
+ * @internal
  */
-export function isArrayPropOutOfBounds (target: VxState, prop: string|symbol): boolean {
+export function isArrayPropOutOfBounds(
+	target: unknown,
+	prop: PropertyKey
+): boolean {
 	const maybeIdx = Number(prop);
 
 	if (!Number.isNaN(maybeIdx)) return false;
 
-	return Array.isArray(target) && (maybeIdx > (target.length - 1));
+	return Array.isArray(target) && maybeIdx > target.length - 1;
 }

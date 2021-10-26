@@ -1,24 +1,15 @@
 module.exports = {
 	preset: 'ts-jest',
 	transform: {
-		'^.+\\.ts$': 'ts-jest',
-		'^.+\\.js$': 'babel-jest'
-
+		'^.+\\.ts$': 'ts-jest'
 	},
 	testEnvironment: 'node',
-	setupFilesAfterEnv: [
-		'jest-extended',
-		'<rootDir>/__tests__/setup.js'
-	],
-	testRegex: '.test.js$',
+	setupFilesAfterEnv: ['jest-extended', '<rootDir>/__tests__/setup.ts'],
+	testRegex: '.test.ts$',
 	coverageDirectory: './coverage',
 	collectCoverage: true,
-	collectCoverageFrom: [
-		'lib/**/*.ts'
-	],
-	coveragePathIgnorePatterns: [
-		'lib/utils/exceptions.ts'
-	],
+	collectCoverageFrom: ['src/**/*.ts'],
+	coveragePathIgnorePatterns: ['src/utils/exceptions.ts'],
 	coverageThreshold: {
 		global: {
 			branches: 0,
