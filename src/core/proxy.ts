@@ -1,9 +1,9 @@
 import { isArrayProto, isArrayPropOutOfBounds, shallowCopy } from '../utils';
 import { eventedArrayPrototypeResolver } from '../adapters';
+import type { ISubject } from '../types';
 import { BaseObservableFactory } from './factory';
 import { DoneFunctionBuilder } from './done';
 
-import type { ISubject } from '../types';
 
 const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
 

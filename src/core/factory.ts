@@ -1,4 +1,3 @@
-import { RootHandlerFactory } from './proxy';
 import {
 	defineNonConfigurableProp,
 	shallowCopy,
@@ -14,6 +13,7 @@ import type {
 	IVivisectorApi,
 	ISubject
 } from '../types';
+import { RootHandlerFactory } from './proxy';
 
 /**
  * Implements base state and shared functionality for a Vivisector observable
