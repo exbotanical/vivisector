@@ -1,0 +1,16 @@
+version: 2
+updates:
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 1
+    assignees:
+      - "MatthewZito"
+    pull-request-branch-name:
+      separator: "-"
+    commit-message:
+      prefix: "chore: "
+      include: "scope"
+

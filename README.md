@@ -36,7 +36,7 @@ const state = vivisect({
   lastName: '',
   email: ''
 })
-  .addEventListener('set', ({ prevState, nextState, done }) => {
+  .subscribe('set', ({ prevState, nextState, done }) => {
     if (!isValidEmail(nextState.email)) {
       emitErrorMessage();
       done(false);
@@ -117,7 +117,7 @@ const logAdditions = ({ type, prevState, nextState }) => {
 const users = vivisect(['Damo Suzuki', 'Soren Kierkegaard', 'Donald Knuth']);
 
 // every time an item is added to `users`, we want to invoke `logAdditions`
-users.addEventListener('add', logAdditions, { alwaysCommit: true });
+users.subscribe('add', logAdditions, { alwaysCommit: true });
 
 // let's bring someone fictional into the mix
 users.push('Elric of Melnibone');
@@ -135,16 +135,16 @@ The object's prototype is unaffected, save for the added event registrars (more 
 console.log(Object.values(albums)[0].findIndex(i => i.startsWith('T')));; // 0
 ```
 
-Event handlers are registered by calling `addEventListener`. This method will exist on every `vivisected` object:
+Event handlers are registered by calling `subscribe`. This method will exist on every `vivisected` object:
 
 ```js
-users.addEventListener(eventType, eventHandler, options);
+users.subscribe(eventType, eventHandler, options);
 ```
 
-And when we're done, we can remove the handler by passing a reference to it into the `removeEventListener` method:
+And when we're done, we can remove the handler by passing a reference to it into the `unsubscribe` method:
 
 ```js
-users.removeEventListener(eventType, eventHandlerRef);
+users.unsubscribe(eventType, eventHandlerRef);
 ```
 
 ### <a name="evtypes"></a> Event Types
@@ -164,8 +164,6 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 **Fires on:** Additive array functions; adding new properties
 
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.ADD`
-
 **Note:** Operations such as `Array.prototype.push` are considered `batched` events if provided more than a single argument
 
 #### set
@@ -181,8 +179,6 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 **Fires on:** Setting existing properties; mutating indexed accessors
 
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.SET`
-
 #### del
 
 An element or property has been deleted.
@@ -195,8 +191,6 @@ Callbacks will receive a function, `done`, and an object consisting of:
 | **nextState** | the next state, i.e. the result of the add event that was captured |
 
 **Fires on:** methods such as `pop`; `delete` called on a property
-
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.DEL`
 
 #### batched
 
@@ -211,13 +205,11 @@ Callbacks will receive a function, `done`, and an object consisting of:
 
 **Fires on:** methods such as `shift`, `unshift`, `push` when called with multiple elements
 
-**Type (TypeScript only)** `VX_LISTENER_INTERNALS.BATCHED`
-
 ### <a name="methods"></a> Methods
 
 Methods bound to all `vivisected` objects:
 
-#### addEventListener (eventName: VX_EVENT_TYPE, handler: VxEventHandler, { alwaysCommit = false }: { alwaysCommit?: boolean }): VxEventedObject
+#### subscribe (eventName: ISubscriptionEvent, handler: ISubscriptionCallback, opts?: ISubscriptionOpts) => IVivisectorApi
 
 Bind the callback `handler` to fire whenever an event of `eventName` has been triggered.
 
@@ -237,13 +229,13 @@ const logMsg = function (event, done) {
   if (event.nextState.length) done(true);
 });
 
-const languages = vivisect(['C', 'Go']).addEventListener('add', logMsg);
+const languages = vivisect(['C', 'Go']).subscribe('add', logMsg);
 
 languages.push('JavaScript');
 // "Added item such that ['C','Go'] becomes ['C','Go', 'JavaScript']"
 ```
 
-#### removeEventListener (eventName: VX_EVENT_TYPE, handler: VxEventHandler): void
+#### unsubscribe (eventName: ISubscriptionEvent, handler: ISubscriptionCallback, opts?: ISubscriptionOpts) => IVivisectorApi
 
 Remove an existing callback from the respective event-type to which it has been registered.
 
@@ -259,8 +251,8 @@ const logMsg = function (event) {
 });
 
 const queens = vivisect(['RuPaul', 'Alaska'])
-  .addEventListener('add', logMsg, { alwaysCommit: true })
-  .removeEventListener('add', logMsg);
+  .subscribe('add', logMsg, { alwaysCommit: true })
+  .unsubscribe('add', logMsg);
 
 queens.push('Bianca Del Rio');
 // no log - handler was removed ^

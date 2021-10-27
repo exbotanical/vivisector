@@ -10,7 +10,7 @@ import pkg from './package.json';
 
 const resolve = (fp) => path.resolve(__dirname, fp);
 
-const inputFileName = 'lib/index.ts';
+const inputFileName = 'src/index.ts';
 const moduleName = pkg.name.replace(/^@.*\//, '');
 const author = pkg.author;
 const banner = `
@@ -22,12 +22,12 @@ const banner = `
  */
 `;
 
-const external = [
-	...Object.keys(pkg.dependencies || {})
-];
+const external = [...Object.keys(pkg.dependencies || {})];
 
 const pluginsBase = [
-	typescript(),
+	typescript({
+		outputToFilesystem: false
+	}),
 	nodeResolve({
 		jsnext: true,
 		browser: true
@@ -53,9 +53,7 @@ export default [
 			banner
 		},
 		external,
-		plugins: [
-			...pluginsBase
-		]
+		plugins: [...pluginsBase]
 	},
 
 	/* UMD */
@@ -67,9 +65,7 @@ export default [
 			name: 'vivisector',
 			banner
 		},
-		plugins: [
-			...pluginsBase
-		]
+		plugins: [...pluginsBase]
 	},
 
 	/* Minified UMD */
@@ -81,10 +77,7 @@ export default [
 			name: 'vivisector',
 			banner
 		},
-		plugins: [
-			...pluginsBase,
-			terser()
-		]
+		plugins: [...pluginsBase, terser()]
 	},
 
 	/* ESM */
@@ -97,9 +90,7 @@ export default [
 			banner
 		},
 		external,
-		plugins: [
-			...pluginsBase
-		]
+		plugins: [...pluginsBase]
 	},
 
 	/* Types Declarations */
@@ -109,8 +100,6 @@ export default [
 			file: 'dist/vivisector.d.ts',
 			format: 'es'
 		},
-		plugins: [
-			dts()
-		]
+		plugins: [dts()]
 	}
 ];

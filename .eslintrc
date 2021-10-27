@@ -1,5 +1,8 @@
 {
-	"extends": "@magister_zito/typescript",
+	"extends": [
+		"@magister_zito/typescript",
+		"prettier"
+	],
 	"plugins": [
 		"jest"
 	],

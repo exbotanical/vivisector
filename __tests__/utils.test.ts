@@ -1,4 +1,4 @@
-import { shallowCopy } from '../lib/utils';
+import { shallowCopy } from '../src/utils';
 
 describe('evaluation of utilities', () => {
 	describe('evaluation of shallowCopy', () => {
@@ -36,9 +36,7 @@ describe('evaluation of utilities', () => {
 				c: 3,
 				d: {
 					e: 4,
-					f () {
-
-					}
+					f() {}
 				}
 			};
 
@@ -53,12 +51,10 @@ describe('evaluation of utilities', () => {
 				b: 2,
 				c: 3,
 				d: {
-					get e () {
+					get e() {
 						return 99;
 					},
-					set e (v) {
-
-					}
+					set e(v) {}
 				}
 			};
 
@@ -71,7 +67,7 @@ describe('evaluation of utilities', () => {
 
 		it('copies an object prototype', () => {
 			const o = Object.create({
-				thing () {
+				thing() {
 					return 99;
 				}
 			});

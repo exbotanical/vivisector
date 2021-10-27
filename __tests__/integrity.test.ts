@@ -1,22 +1,25 @@
-/* global vivisect:false */
+import { vivisect } from '../src';
+
+import type { TestArray, TestObject } from './types';
+
 describe('evaluation of vivisected object integrity', () => {
 	it('maintains object state as expected', () => {
 		const baseState = {
 			a: 1,
 			b: 2,
 			c: 3
-		};
+		} as TestObject;
 
-		const observable = vivisect(baseState)
-			.addEventListener('add', () => {}, { alwaysCommit: true })
-			.addEventListener('set', () => {}, { alwaysCommit: true })
-			.addEventListener('del', () => {}, { alwaysCommit: true })
-			.addEventListener('batched', () => {}, { alwaysCommit: true });
+		const observable = vivisect<typeof baseState>(baseState)
+			.subscribe('add', () => {}, { alwaysCommit: true })
+			.subscribe('set', () => {}, { alwaysCommit: true })
+			.subscribe('del', () => {}, { alwaysCommit: true })
+			.subscribe('batched', () => {}, { alwaysCommit: true });
 
 		expect(observable).toEqual(baseState);
 
-		baseState.q = 99;
-		observable.q = 99;
+		Object.assign(baseState, { q: 99 });
+		Object.assign(observable, { q: 99 });
 
 		expect(observable).toEqual(baseState);
 
@@ -35,10 +38,8 @@ describe('evaluation of vivisected object integrity', () => {
 		delete observable.q;
 
 		expect(observable).toEqual(baseState);
-
 		baseState.w.r = [];
 		observable.w.r = [];
-
 		baseState.w.r.push(1, 2, 3);
 		observable.w.r.push(1, 2, 3);
 
@@ -46,16 +47,16 @@ describe('evaluation of vivisected object integrity', () => {
 
 		expect(observable.w.r).toEqual(baseState.w.r);
 
-		expect(observable).toHaveProperty('addEventListener');
+		expect(observable).toHaveProperty('subscribe');
 	});
 
 	it('maintains array state as expected', () => {
 		const baseState = [1, 2, 3];
-		const observable = vivisect(baseState)
-			.addEventListener('add', () => {}, { alwaysCommit: true })
-			.addEventListener('set', () => {}, { alwaysCommit: true })
-			.addEventListener('del', () => {}, { alwaysCommit: true })
-			.addEventListener('batched', () => {}, { alwaysCommit: true });
+		const observable = vivisect<TestArray>(baseState)
+			.subscribe('add', () => {}, { alwaysCommit: true })
+			.subscribe('set', () => {}, { alwaysCommit: true })
+			.subscribe('del', () => {}, { alwaysCommit: true })
+			.subscribe('batched', () => {}, { alwaysCommit: true });
 
 		expect(baseState).toEqual(observable);
 
@@ -94,17 +95,17 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable[0]).toEqual(baseState[0]);
 		expect(observable.length).toBe(baseState.length);
 
-		expect(observable).toHaveProperty('addEventListener');
+		expect(observable).toHaveProperty('subscribe');
 	});
 
 	it('maintains array state and return values as expected', () => {
-		const baseState = [];
+		const baseState: number[] = [];
 		// push
-		const observable = vivisect(baseState)
-			.addEventListener('add', () => { }, { alwaysCommit: true })
-			.addEventListener('set', () => { }, { alwaysCommit: true })
-			.addEventListener('del', () => { }, { alwaysCommit: true })
-			.addEventListener('batched', () => { }, { alwaysCommit: true });
+		const observable = vivisect<TestArray>(baseState)
+			.subscribe('add', () => {}, { alwaysCommit: true })
+			.subscribe('set', () => {}, { alwaysCommit: true })
+			.subscribe('del', () => {}, { alwaysCommit: true })
+			.subscribe('batched', () => {}, { alwaysCommit: true });
 
 		expect(observable).toEqual(baseState);
 
@@ -120,6 +121,10 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable).toEqual(baseState);
 
 		// pop w/ unexpected args
+
+		// we need to ignore these errs because we're manually intercepting these methods
+		// and edge cases must be tested
+		// @ts-ignore
 		expect(observable.pop(1, 2, 3)).toBe(baseState.pop(1, 2, 3));
 		expect(observable).toEqual(baseState);
 
@@ -127,6 +132,7 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable.splice(0, 1, 1)).toEqual(baseState.splice(0, 1, 1));
 		expect(observable).toEqual(baseState);
 
+		// @ts-ignore
 		expect(observable.splice()).toEqual(baseState.splice());
 		expect(observable).toEqual(baseState);
 
@@ -146,11 +152,15 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable).toEqual(baseState);
 
 		// reverse w/ unexpected args
+		// @ts-ignore
 		expect(observable.reverse(1, 2, 3)).toEqual(baseState.reverse(1, 2, 3));
 		expect(observable).toEqual(baseState);
 
 		// sort
-		expect(observable.sort((a, b) => b - a)).toEqual(baseState.sort((a, b) => b - a));
+		// @ts-ignore
+		expect(observable.sort((a, b) => b - a)).toEqual(
+			baseState.sort((a, b) => b - a)
+		);
 		expect(observable).toEqual(baseState);
 
 		// sort w/ no args
@@ -158,6 +168,7 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable).toEqual(baseState);
 
 		// shift w/ unexpected args
+		// @ts-ignore
 		expect(observable.shift(1, 2, 3)).toBe(baseState.shift(1, 2, 3));
 		expect(observable).toEqual(baseState);
 

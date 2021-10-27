@@ -1,19 +1,21 @@
 {
   "include": [
-    "lib/**/*.ts"
+    "src"
   ],
   "compilerOptions": {
+		"composite": true,
+		"rootDir": "src",
     "declaration": true,
     "declarationDir": ".build",
     "emitDeclarationOnly": true,
     "module": "ESNext",
     "lib": ["ESNext"],
     "strict": true,
-    "esModuleInterop": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true
+		"noImplicitReturns": true,
+		"types": [],
+		"noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }
