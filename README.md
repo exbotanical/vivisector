@@ -2,7 +2,8 @@
 
 # Vivisector | Convert any object into an evented, reactive state machine ✂️
 
-[![Build Status](https://travis-ci.com/MatthewZito/vivisector.svg?branch=master)](https://travis-ci.com/MatthewZito/vivisector)
+[![Continuous Integration](https://github.com/MatthewZito/vivisector/actions/workflows/ci.yml/badge.svg)](https://github.com/MatthewZito/vivisector/actions/workflows/ci.yml)
+[![Continuous Deployment](https://github.com/MatthewZito/vivisector/actions/workflows/cd.yml/badge.svg)](https://github.com/MatthewZito/vivisector/actions/workflows/cd.yml)
 [![Coverage Status](https://coveralls.io/repos/github/MatthewZito/vivisector/badge.svg?branch=master)](https://coveralls.io/github/MatthewZito/vivisector?branch=master)
 [![npm version](https://badge.fury.io/js/vivisector.svg)](https://badge.fury.io/js/vivisector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
