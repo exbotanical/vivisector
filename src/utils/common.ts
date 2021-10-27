@@ -1,4 +1,4 @@
-import { ISubscription, ISubject } from '../types';
+import type { ISubscription } from '../types';
 
 interface ISubscribePropertyDescriptor {
 	[x: string]: PropertyDescriptor;
@@ -53,10 +53,10 @@ export function shallowCopy<T>(base: T): T {
  *
  * @internal
  */
-export function defineNonConfigurableProp(
-	this: ISubject,
+export function defineNonConfigurableProp<S>(
+	this: S,
 	name: string,
-	value: ISubscription
+	value: ISubscription<S>
 ): void {
 	Object.defineProperty<typeof this>(this, name, {
 		configurable: false,

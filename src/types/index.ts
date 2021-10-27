@@ -5,10 +5,10 @@ export type ISubject = Record<PropertyKey, any> | any[];
 export type ISubscriptionEvent = 'add' | 'del' | 'set' | 'batched';
 
 // core Vivisected object API
-export type IVivisectorApi = {
-	readonly subscribe: ISubscription;
-	readonly unsubscribe: ISubscription;
-} & ISubject;
+export type IVivisectorApi<S> = {
+	readonly subscribe: ISubscription<S>;
+	readonly unsubscribe: ISubscription<S>;
+} & S;
 
 // Done function for state mutation committal
 export interface IDoneFunction {
@@ -21,31 +21,31 @@ export interface ISubscriptionOpts {
 }
 
 // Represents a subscription to an event
-export interface ISubscription {
+export interface ISubscription<S> {
 	(
 		eventName: ISubscriptionEvent,
-		handler: ISubscriptionCallback,
+		handler: ISubscriptionCallback<S>,
 		opts?: ISubscriptionOpts
-	): IVivisectorApi;
+	): IVivisectorApi<S>;
 }
 
 // Store of subscriptions to subscribable events
-export type ISubscriptionStore = {
+export type ISubscriptionStore<S> = {
 	[key in ISubscriptionEvent]: Set<{
 		// TODO tether
-		handler: ISubscriptionCallback;
+		handler: ISubscriptionCallback<S>;
 		alwaysCommit: boolean;
 	}>;
 };
 
 // Callback to be invoked when a subscription is fired
-export interface ISubscriptionCallback {
-	(e: ISubscriptionEventMetadata, done: IDoneFunction): void;
+export interface ISubscriptionCallback<S> {
+	(e: ISubscriptionEventMetadata<S>, done: IDoneFunction): void;
 }
 
 // Subscribable event metadata passed to subscription callbacks
-export interface ISubscriptionEventMetadata {
+export interface ISubscriptionEventMetadata<S> {
 	type: ISubscriptionEvent;
-	prevState: ISubject;
-	nextState: ISubject;
+	prevState: S;
+	nextState: S;
 }

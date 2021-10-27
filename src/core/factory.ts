@@ -43,7 +43,7 @@ export abstract class BaseObservableFactory {
 	 * @summary Evaluates whether the given property is marked as non-configurable
 	 * @param prop The property presently being accessed
 	 */
-	protected isConfigurableProp(prop: PropertyKey): boolean {
+	public isConfigurableProp(prop: PropertyKey): boolean {
 		// see -> https://github.com/microsoft/TypeScript/issues/26255
 		// btw, this is where TypeScript's bizarre `Array.prototype.includes` approach could screw us over
 		// if I followed TS' way, I may only pass a string to `includes`, which means if we receive a symbol, we'll return false
@@ -56,7 +56,7 @@ export abstract class BaseObservableFactory {
 	 * @param context The context of the target object on which the
 	 * aforementioned listeners will be defined
 	 */
-	protected defineSubscribers(context: ISubject): IVivisectorApi {
+	protected defineSubscribers<S>(context: S): IVivisectorApi<S> {
 		defineNonConfigurableProp.call(
 			context,
 			'subscribe',
@@ -70,7 +70,7 @@ export abstract class BaseObservableFactory {
 
 				this.observers[eventName].add({ handler, alwaysCommit });
 
-				return context as IVivisectorApi;
+				return context;
 			}
 		);
 
@@ -96,11 +96,11 @@ export abstract class BaseObservableFactory {
 					}
 				});
 
-				return context as IVivisectorApi;
+				return context;
 			}
 		);
 
-		return context as IVivisectorApi;
+		return context as IVivisectorApi<S>;
 	}
 
 	/**
@@ -136,19 +136,12 @@ export class ProxiedObservableFactory extends BaseObservableFactory {
 	/**
 	 * @summary Root Proxy handler; injects event broadcasts into get|set|delete traps
 	 */
-	private rootHandler: ProxyHandler<ISubject>;
+	public static create<S extends ISubject>(initialState: S) {
+		const excisedInitialState = shallowCopy<S>(initialState);
+		const instance = new ProxiedObservableFactory();
 
-	constructor() {
-		super();
-
-		this.rootHandler = RootHandlerFactory.call(this);
-	}
-
-	public create(initialState: ISubject): IVivisectorApi {
-		const excisedInitialState = shallowCopy<ISubject>(initialState);
-
-		return this.defineSubscribers(
-			new Proxy(excisedInitialState, this.rootHandler)
+		return instance.defineSubscribers<S>(
+			new Proxy(excisedInitialState, RootHandlerFactory<S>(instance))
 		);
 	}
 }

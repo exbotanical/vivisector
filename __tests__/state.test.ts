@@ -1,5 +1,7 @@
-import { vivisect } from '..';
+import { vivisect } from '../src';
 import { forEachKeyValue } from './util';
+
+import type { TestArray, TestObject } from './types';
 
 describe('evaluation of state management, tracking', () => {
 	const callbacks = {
@@ -13,7 +15,7 @@ describe('evaluation of state management, tracking', () => {
 
 	it('should track array `prevState`, `nextState` as expected', () => {
 		const initialState = [1, 2, 3];
-		const observable = vivisect(initialState);
+		const observable = vivisect<TestArray>(initialState);
 
 		iterator((key, value) => {
 			observable.subscribe(key, value, { alwaysCommit: true });
@@ -152,7 +154,7 @@ describe('evaluation of state management, tracking', () => {
 
 	it('should track object `prevState`, `nextState` as expected', () => {
 		const initialState = { a: 1, b: 2, c: 3 };
-		const observable = vivisect(initialState);
+		const observable = vivisect<TestObject>(initialState);
 
 		iterator((key, value) => {
 			observable.subscribe(key, value, { alwaysCommit: true });

@@ -4,6 +4,7 @@ import type { ISubject } from '../types';
 import { BaseObservableFactory } from './factory';
 import { DoneFunctionBuilder } from './done';
 
+
 const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
 
 /**
@@ -12,8 +13,10 @@ const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
  *
  * @internal
  */
-export function RootHandlerFactory(this: BaseObservableFactory) {
-	const rootHandler: ProxyHandler<ISubject> = {
+export function RootHandlerFactory<S extends ISubject>(
+	base: BaseObservableFactory
+) {
+	const rootHandler: ProxyHandler<S> = {
 		get: (target, prop, recv) => {
 			// trap certain array prototype methods and take control of the events we raise for them
 			// this allows us to prevent concurrent events e.g. `set` and `del` both arising due to `shift`
@@ -25,7 +28,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 			// so here, we listen for one of these methods, then allow the call to `fall through`, where it
 			// can be handled by the underlying array
 			if (Array.isArray(target) && batchedMethods.includes(prop as any)) {
-				return eventedArrayPrototypeResolver.call(this, target, prop);
+				return eventedArrayPrototypeResolver.call(base, target, prop);
 			}
 
 			// we use reflection to mitigate violation of Proxy invariants, as described in the specification here:
@@ -41,7 +44,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 		},
 
 		set: (target, prop, value) => {
-			if (!this.isConfigurableProp(prop)) {
+			if (!base.isConfigurableProp(prop)) {
 				return false;
 			}
 
@@ -54,7 +57,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 			const done = DoneFunctionBuilder(() => Reflect.set(target, prop, value));
 
 			if (!(prop in prevState) || isArrayPropOutOfBounds(prevState, prop)) {
-				this.raiseEvent(
+				base.raiseEvent(
 					{
 						type: 'add',
 						prevState,
@@ -63,7 +66,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 					done
 				);
 			} else {
-				this.raiseEvent(
+				base.raiseEvent(
 					{
 						type: 'set',
 						prevState,
@@ -77,7 +80,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 		},
 
 		deleteProperty: (target, prop) => {
-			if (!this.isConfigurableProp(prop)) {
+			if (!base.isConfigurableProp(prop)) {
 				return false;
 			}
 
@@ -92,7 +95,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 
 				nextState.splice(numericProp, 1);
 
-				this.raiseEvent(
+				base.raiseEvent(
 					{
 						type: 'del',
 						prevState,
@@ -105,7 +108,7 @@ export function RootHandlerFactory(this: BaseObservableFactory) {
 			} else if (prop in prevState) {
 				Reflect.deleteProperty(nextState, prop);
 
-				this.raiseEvent(
+				base.raiseEvent(
 					{
 						type: 'del',
 						prevState,

@@ -1,21 +1,17 @@
 import { ProxiedObservableFactory } from './core/factory';
 import { isObject, VxException } from './utils';
 
-import type { IVivisectorApi } from './types';
-
-interface Vivisector {
-	(initialState: unknown): IVivisectorApi;
-}
-
 /**
- * @summary TODO
+ * @summary 'Vivisect' an object - render the object evented by
+ * proxying it through a subscribable interface
+ *
  * @param initialState
  *
  * @public
  */
-export const vivisect: Vivisector = (initialState) => {
+export const vivisect = <S>(initialState: S) => {
 	if (isObject(initialState) || Array.isArray(initialState)) {
-		return new ProxiedObservableFactory().create(initialState);
+		return ProxiedObservableFactory.create<S>(initialState);
 	}
 
 	throw VxException.create(

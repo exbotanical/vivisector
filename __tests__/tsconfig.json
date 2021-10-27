@@ -3,7 +3,7 @@
 	"references": [
 		{
 			"name": "vivisector",
-			"path": ".."
+			"path": "../src"
 		}
 	],
 	"compilerOptions": {
@@ -11,5 +11,5 @@
 		"rootDir": "..",
 		"target": "es5"
 	},
-	"include": ["."]
+	"include": [".", ".."]
 }

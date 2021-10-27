@@ -1,4 +1,6 @@
-import { vivisect } from '..';
+import { vivisect } from '../src';
+
+import type { TestArray, TestObject } from './types';
 
 describe('evaluation of vivisected object integrity', () => {
 	it('maintains object state as expected', () => {
@@ -6,9 +8,9 @@ describe('evaluation of vivisected object integrity', () => {
 			a: 1,
 			b: 2,
 			c: 3
-		};
+		} as TestObject;
 
-		const observable = vivisect(baseState)
+		const observable = vivisect<typeof baseState>(baseState)
 			.subscribe('add', () => {}, { alwaysCommit: true })
 			.subscribe('set', () => {}, { alwaysCommit: true })
 			.subscribe('del', () => {}, { alwaysCommit: true })
@@ -16,8 +18,8 @@ describe('evaluation of vivisected object integrity', () => {
 
 		expect(observable).toEqual(baseState);
 
-		baseState.q = 99;
-		observable.q = 99;
+		Object.assign(baseState, { q: 99 });
+		Object.assign(observable, { q: 99 });
 
 		expect(observable).toEqual(baseState);
 
@@ -36,10 +38,8 @@ describe('evaluation of vivisected object integrity', () => {
 		delete observable.q;
 
 		expect(observable).toEqual(baseState);
-
 		baseState.w.r = [];
 		observable.w.r = [];
-
 		baseState.w.r.push(1, 2, 3);
 		observable.w.r.push(1, 2, 3);
 
@@ -52,7 +52,7 @@ describe('evaluation of vivisected object integrity', () => {
 
 	it('maintains array state as expected', () => {
 		const baseState = [1, 2, 3];
-		const observable = vivisect(baseState)
+		const observable = vivisect<TestArray>(baseState)
 			.subscribe('add', () => {}, { alwaysCommit: true })
 			.subscribe('set', () => {}, { alwaysCommit: true })
 			.subscribe('del', () => {}, { alwaysCommit: true })
@@ -101,7 +101,7 @@ describe('evaluation of vivisected object integrity', () => {
 	it('maintains array state and return values as expected', () => {
 		const baseState: number[] = [];
 		// push
-		const observable = vivisect(baseState)
+		const observable = vivisect<TestArray>(baseState)
 			.subscribe('add', () => {}, { alwaysCommit: true })
 			.subscribe('set', () => {}, { alwaysCommit: true })
 			.subscribe('del', () => {}, { alwaysCommit: true })
@@ -121,6 +121,9 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable).toEqual(baseState);
 
 		// pop w/ unexpected args
+
+		// we need to ignore these errs because we're manually intercepting these methods
+		// and edge cases must be tested
 		// @ts-ignore
 		expect(observable.pop(1, 2, 3)).toBe(baseState.pop(1, 2, 3));
 		expect(observable).toEqual(baseState);
@@ -154,6 +157,7 @@ describe('evaluation of vivisected object integrity', () => {
 		expect(observable).toEqual(baseState);
 
 		// sort
+		// @ts-ignore
 		expect(observable.sort((a, b) => b - a)).toEqual(
 			baseState.sort((a, b) => b - a)
 		);

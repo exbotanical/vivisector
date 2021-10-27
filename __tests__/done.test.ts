@@ -1,13 +1,14 @@
 import { vivisect } from '../src';
 
 import type { ISubscriptionCallback } from '../src/types';
+import type { TestArray, TestObject } from './types';
 
 describe('evaluation of `done` state mutation committal', () => {
 	const commitKey = Symbol('commit');
 	const spy = jest.fn();
 
 	describe('evaluation of array mutations', () => {
-		const callback: ISubscriptionCallback = (
+		const callback: ISubscriptionCallback<TestArray> = (
 			{ prevState, nextState },
 			done
 		) => {
@@ -46,7 +47,7 @@ describe('evaluation of `done` state mutation committal', () => {
 		});
 
 		it('commits array mutations when `done` is invoked', () => {
-			const observable = vivisect([1, 2, 3])
+			const observable = vivisect<TestArray>([1, 2, 3])
 				.subscribe('add', callback)
 				.subscribe('set', callback)
 				.subscribe('del', callback)
@@ -78,6 +79,9 @@ describe('evaluation of `done` state mutation committal', () => {
 			observable.reverse();
 			expect(spy.mock.calls[7][0]).toEqual([1, 2, 22, commitKey]);
 
+			// @ts-ignore
+			// we don't care about the types, only about the event that
+			// will be emitted
 			observable.sort((a, b) => {
 				if (typeof a == 'number' && typeof b == 'number') return a - b;
 				return a;
@@ -90,11 +94,11 @@ describe('evaluation of `done` state mutation committal', () => {
 	});
 
 	describe('evaluation of object mutation', () => {
-		const callback: ISubscriptionCallback = (
+		const callback: ISubscriptionCallback<TestObject> = (
 			{ prevState, nextState },
 			done
 		) => {
-			if (nextState[commitKey]) done(true);
+			if (nextState[commitKey as any]) done(true);
 			// we'll pass the `prevState` back so we can assert against it
 			spy(prevState);
 		};
@@ -102,7 +106,7 @@ describe('evaluation of `done` state mutation committal', () => {
 		it('cancels object mutations when `done` is not invoked', () => {
 			const initialState = { a: 1, b: 2, c: 3 };
 
-			const observable = vivisect(initialState)
+			const observable = vivisect<TestObject>(initialState)
 				.subscribe('add', callback)
 				.subscribe('set', callback)
 				.subscribe('del', callback)
@@ -127,7 +131,7 @@ describe('evaluation of `done` state mutation committal', () => {
 		it('commits array mutations when `done` is invoked', () => {
 			const initialState = { a: 1, b: 2, c: 3 };
 
-			const observable = vivisect(initialState)
+			const observable = vivisect<TestObject>(initialState)
 				.subscribe('add', callback)
 				.subscribe('set', callback)
 				.subscribe('del', callback)

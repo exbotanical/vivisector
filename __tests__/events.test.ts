@@ -1,5 +1,7 @@
-import { vivisect } from '..';
+import { vivisect } from '../src';
 import { forEachKeyValue } from './util';
+
+import type { TestArray, TestObject } from './types';
 
 describe('evaluations of the base vivisector event emission', () => {
 	describe('evaluations of default events', () => {
@@ -13,7 +15,7 @@ describe('evaluations of the base vivisector event emission', () => {
 		const iterator = forEachKeyValue(callbacks);
 
 		it('vivisected arrays should emit default `add`, `del`, `get`, and `set` events', () => {
-			const arr = vivisect([1, 2, 3]);
+			const arr = vivisect<TestArray>([1, 2, 3]);
 
 			iterator((key, value) => {
 				arr.subscribe(key, value, { alwaysCommit: true });
@@ -64,7 +66,7 @@ describe('evaluations of the base vivisector event emission', () => {
 		});
 
 		it('vivisected objects should emit default `add`, `del`, `get`, and `set` events', () => {
-			const obj = vivisect({ a: 1, b: 2, c: 3 });
+			const obj = vivisect<TestObject>({ a: 1, b: 2, c: 3 });
 
 			iterator((key, value) => {
 				obj.subscribe(key, value, { alwaysCommit: true });
@@ -128,7 +130,7 @@ describe('evaluations of the base vivisector event emission', () => {
 		});
 
 		it('vivisected arrays should emit the (a) event name, (b) original state, (c) updated state', () => {
-			const arr = vivisect([1, 2, 3]);
+			const arr = vivisect<TestArray>([1, 2, 3]);
 
 			iterator((key, value) => {
 				arr.subscribe(key, value, { alwaysCommit: true });
@@ -189,7 +191,7 @@ describe('evaluations of the base vivisector event emission', () => {
 		});
 
 		it('vivisected objects should emit the (a) event name, (b) original state, (c) updated state', () => {
-			const obj = vivisect({ a: 1, b: 2, c: 3 });
+			const obj = vivisect<TestObject>({ a: 1, b: 2, c: 3 });
 
 			iterator((key, value) => {
 				obj.subscribe(key, value, { alwaysCommit: true });
@@ -261,7 +263,7 @@ describe('evaluation of event handler registration and excisement', () => {
 	};
 
 	it('should fire event handlers sequentially', () => {
-		const observable = vivisect({});
+		const observable = vivisect<TestObject>({});
 
 		observable
 			.subscribe('add', callbacks.add)
@@ -275,7 +277,7 @@ describe('evaluation of event handler registration and excisement', () => {
 	});
 
 	it('should unregister a given event handler', () => {
-		const observable = vivisect({});
+		const observable = vivisect<TestObject>({});
 
 		observable
 			.subscribe('add', callbacks.add)
