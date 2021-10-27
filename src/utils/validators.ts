@@ -1,4 +1,8 @@
-import type { ISubscriptionEvent } from '../types';
+import type {
+	ISubject,
+	ISubscriptionCallback,
+	ISubscriptionEvent
+} from '../types';
 import { VxException } from './exceptions';
 
 // must use >= v4.4 see https://github.com/microsoft/TypeScript/pull/44512
@@ -18,7 +22,7 @@ export interface IObject {
  */
 export function validateEventHandler(
 	handler: unknown
-): asserts handler is ISubscriptionEvent {
+): asserts handler is ISubscriptionCallback<ISubject> {
 	if (typeof handler !== 'function') {
 		throw VxException.create(
 			new VxException({
