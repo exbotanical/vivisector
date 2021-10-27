@@ -1,9 +1,9 @@
 import { isArrayProto, isArrayPropOutOfBounds, shallowCopy } from '../utils';
 import { eventedArrayPrototypeResolver } from '../adapters';
-import type { ISubject } from '../types';
 import { BaseObservableFactory } from './factory';
 import { DoneFunctionBuilder } from './done';
 
+import type { ISubject } from '../types'; // eslint-disable-line import/order
 
 const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
 
@@ -14,7 +14,7 @@ const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
  * @internal
  */
 export function RootHandlerFactory<S extends ISubject>(
-	base: BaseObservableFactory
+	base: BaseObservableFactory<S>
 ) {
 	const rootHandler: ProxyHandler<S> = {
 		get: (target, prop, recv) => {
@@ -28,7 +28,7 @@ export function RootHandlerFactory<S extends ISubject>(
 			// so here, we listen for one of these methods, then allow the call to `fall through`, where it
 			// can be handled by the underlying array
 			if (Array.isArray(target) && batchedMethods.includes(prop as any)) {
-				return eventedArrayPrototypeResolver.call(base, target, prop);
+				return eventedArrayPrototypeResolver(base, target, prop);
 			}
 
 			// we use reflection to mitigate violation of Proxy invariants, as described in the specification here:

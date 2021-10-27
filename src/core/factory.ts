@@ -21,8 +21,8 @@ import { RootHandlerFactory } from './proxy';
  *
  * @internal
  */
-export abstract class BaseObservableFactory {
-	protected observers: ISubscriptionStore;
+export abstract class BaseObservableFactory<S> {
+	protected observers: ISubscriptionStore<S>;
 	protected internals: string[];
 
 	protected constructor() {
@@ -57,7 +57,7 @@ export abstract class BaseObservableFactory {
 	 * aforementioned listeners will be defined
 	 */
 	protected defineSubscribers<S>(context: S): IVivisectorApi<S> {
-		defineNonConfigurableProp.call(
+		defineNonConfigurableProp<S>(
 			context,
 			'subscribe',
 			(eventName, handler, { alwaysCommit = false } = {}) => {
@@ -74,7 +74,7 @@ export abstract class BaseObservableFactory {
 			}
 		);
 
-		defineNonConfigurableProp.call(
+		defineNonConfigurableProp<S>(
 			context,
 			'unsubscribe',
 			(eventName, handler) => {
@@ -109,7 +109,7 @@ export abstract class BaseObservableFactory {
 	 * @param context The `this` value on which to call each instance
 	 */
 	public raiseEvent(
-		event: ISubscriptionEventMetadata,
+		event: ISubscriptionEventMetadata<S>,
 		done: IDoneFunction
 	): void {
 		this.observers[event.type].forEach(({ handler, alwaysCommit }) => {
@@ -132,7 +132,7 @@ export abstract class BaseObservableFactory {
  *
  * @internal
  */
-export class ProxiedObservableFactory extends BaseObservableFactory {
+export class ProxiedObservableFactory<S> extends BaseObservableFactory<S> {
 	/**
 	 * @summary Root Proxy handler; injects event broadcasts into get|set|delete traps
 	 */

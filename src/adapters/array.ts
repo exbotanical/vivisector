@@ -9,9 +9,9 @@ import { shallowCopy } from '../utils';
  *
  * @internal
  */
-export function eventedArrayPrototypeResolver(
-	this: BaseObservableFactory,
-	target: any[],
+export function eventedArrayPrototypeResolver<S extends any[]>(
+	context: BaseObservableFactory<S>,
+	target: S,
 	prop: PropertyKey
 ) {
 	const ogMethod = target[prop as any];
@@ -26,7 +26,7 @@ export function eventedArrayPrototypeResolver(
 				Array.prototype.shift.call(target)
 			);
 
-			this.raiseEvent(
+			context.raiseEvent(
 				{
 					type: 'batched',
 					prevState,
@@ -44,7 +44,7 @@ export function eventedArrayPrototypeResolver(
 				target.length = target.length - 1;
 			});
 
-			this.raiseEvent(
+			context.raiseEvent(
 				{
 					type: 'del',
 					prevState,
@@ -65,7 +65,7 @@ export function eventedArrayPrototypeResolver(
 				);
 				ret = nextState.unshift(...args);
 
-				this.raiseEvent(
+				context.raiseEvent(
 					{
 						type: 'batched',
 						prevState,
@@ -83,7 +83,7 @@ export function eventedArrayPrototypeResolver(
 
 			nextState.reverse();
 
-			this.raiseEvent(
+			context.raiseEvent(
 				{
 					type: 'batched',
 					prevState,
@@ -100,7 +100,7 @@ export function eventedArrayPrototypeResolver(
 
 			nextState.push(...args);
 
-			this.raiseEvent(
+			context.raiseEvent(
 				{
 					type: args.length > 1 ? 'batched' : 'add',
 					prevState,
@@ -119,7 +119,7 @@ export function eventedArrayPrototypeResolver(
 
 				ogMethod.apply(nextState, [arg]);
 
-				this.raiseEvent(
+				context.raiseEvent(
 					{
 						type: 'add',
 						prevState,
