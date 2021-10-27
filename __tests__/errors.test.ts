@@ -1,4 +1,4 @@
-import { vivisect } from '..';
+import { vivisect } from '../src';
 
 describe('evaluation of error handling', () => {
 	it('throws an error when provided a non-function event handler', () => {

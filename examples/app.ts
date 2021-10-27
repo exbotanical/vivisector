@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { vivisect } from '..';
+import { vivisect } from '../src';
 
 import type { ISubscriptionCallback } from '../src/types';
 
-const logger: ISubscriptionCallback = (
+const logger: ISubscriptionCallback<number[]> = (
 	{ type, prevState, nextState },
 	done
 ) => {
@@ -14,7 +14,7 @@ const logger: ISubscriptionCallback = (
 	if (nextState[0] !== 99) done(true);
 };
 
-function routine(observable) {
+function routine(observable: number[]) {
 	observable.push(1);
 	observable[3] = 4;
 
