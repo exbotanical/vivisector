@@ -45,9 +45,9 @@ export abstract class BaseObservableFactory<S> {
 	 */
 	public isConfigurableProp(prop: PropertyKey): boolean {
 		// see -> https://github.com/microsoft/TypeScript/issues/26255
-		// btw, this is where TypeScript's bizarre `Array.prototype.includes` approach could screw us over
-		// if I followed TS' way, I may only pass a string to `includes`, which means if we receive a symbol, we'll return false
-		// which would propagate to the proxy and lead to a invariant violation
+		// this is where TypeScript's bizarre approach to `Array.prototype.includes` could screw us over
+		// according to TS, we must invoke `includes` with a like-type; if we followed this dictate and `prop` were a symbol,
+		// we would return false...the return value would then propagate to the proxy, leading to an invariant violation
 		return !this.internals.includes(prop as any);
 	}
 

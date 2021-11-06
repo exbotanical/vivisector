@@ -26,8 +26,7 @@
 
 **Convert any object into an evented, reactive state machine.**
 
-`Vivisector` is a light-weight building block for pub/sub modeling, state management, and reactive programming.
-It works by enabling you to add event listeners to plain objects and arrays, binding *N* actions to their state mutations. Registered actions can then intercept state transitions and decide whether to commit or revert them.
+`Vivisector` is a light-weight building block for pub/sub modeling, state management, and reactive programming. Here, we may add event listeners to plain objects and arrays, binding *N* actions to their state mutations. Registered actions can then intercept state transitions and decide whether to commit or revert them.
 
 ```js
 const { vivisect } = require('vivisector-js');
@@ -107,7 +106,7 @@ const { vivisect } = require('vivisector'); // assuming cjs for this tutorial, b
 
 This function will take our object or array and return an evented copy.
 
-In this example, we'll `vivisect` an array and register a callback function for the `add` event. Our callback will be invoked whenever *new elements* are added to the array. We'll keep things simple for now by passing along the `alwaysCommit` option, which means any state transitions associated `add` events will always be committed.
+In this example, we'll `vivisect` an array and register a callback function for the `add` event. Our callback will be invoked whenever *new elements* are added to the array. We'll keep things simple for now by passing along the `alwaysCommit` option, which means state transitions associated with `add` events will always be committed.
 
 ```js
 const logAdditions = ({ type, prevState, nextState }) => {
