@@ -4,12 +4,6 @@ import type {
 	ISubscriptionOpts
 } from '../types';
 
-interface ISubscribePropertyDescriptor {
-	[x: string]: PropertyDescriptor;
-}
-
-type ISubscribeDescriptors = object & ISubscribePropertyDescriptor;
-
 const unboundSlice = Array.prototype.slice;
 const slice = Function.prototype.call.bind(unboundSlice);
 
@@ -23,8 +17,7 @@ export function shallowCopy<T>(base: T): T {
 		return slice(base);
 	}
 
-	const descriptors: ISubscribeDescriptors =
-		Object.getOwnPropertyDescriptors(base);
+	const descriptors: Record<any, any> = Object.getOwnPropertyDescriptors(base);
 
 	const keys = Reflect.ownKeys(descriptors);
 
@@ -42,7 +35,7 @@ export function shallowCopy<T>(base: T): T {
 				configurable: true,
 				writable: !!descriptor.set,
 				enumerable: descriptor.enumerable,
-				value: base[key as keyof (any[] | object)]
+				value: base[key as keyof T]
 			};
 		}
 	}

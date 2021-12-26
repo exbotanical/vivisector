@@ -5,11 +5,6 @@ import type {
 } from '../types';
 import { VxException } from './exceptions';
 
-// must use >= v4.4 see https://github.com/microsoft/TypeScript/pull/44512
-export interface IObject {
-	[key: PropertyKey]: any;
-}
-
 /**
  * @see https://github.com/microsoft/TypeScript/issues/26916
  */
@@ -66,6 +61,6 @@ export function validateEventName(
  *
  * @internal
  */
-export const isObject = (testValue: unknown): testValue is IObject => {
+export const isObject = (testValue: unknown): testValue is Record<any, any> => {
 	return {}.toString.call(testValue) == '[object Object]';
 };

@@ -1,7 +1,7 @@
 import type { IDoneFunction } from '../types';
 
 interface IDoneFunctionBuilder {
-	(ret: Function): IDoneFunction;
+	(ret: () => void): IDoneFunction;
 }
 
 /**

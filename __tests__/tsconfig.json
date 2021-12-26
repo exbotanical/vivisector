@@ -1,11 +1,5 @@
 {
 	"extends": "../tsconfig.json",
-	"references": [
-		{
-			"name": "vivisector",
-			"path": "../src"
-		}
-	],
 	"compilerOptions": {
 		"types": ["jest"],
 		"rootDir": "..",

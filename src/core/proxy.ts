@@ -36,7 +36,7 @@ export function RootHandlerFactory<S extends ISubject>(
 			const value = Reflect.get(target, prop, recv);
 
 			// recurse, and continue the chain of Proxies for nested props to ensure traps are executed upon access thereof
-			if (typeof value === 'object') {
+			if (typeof value === 'object' && value !== null) {
 				return new Proxy(value, rootHandler);
 			}
 
