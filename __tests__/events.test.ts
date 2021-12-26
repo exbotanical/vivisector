@@ -1,4 +1,6 @@
+/* eslint-disable jest/no-conditional-expect,jest/prefer-called-with */
 import { vivisect } from '../src';
+
 import { forEachKeyValue } from './util';
 
 import type { TestArray, TestObject } from './types';
@@ -101,7 +103,7 @@ describe('evaluations of the base vivisector event emission', () => {
 				}
 			});
 
-			obj.b; // eslint-disable-line no-unused-expressions
+			obj.b;
 
 			iterator((key, value) => {
 				if (key == 'del') {
@@ -172,7 +174,7 @@ describe('evaluations of the base vivisector event emission', () => {
 				}
 			});
 
-			arr[2]; // eslint-disable-line no-unused-expressions
+			arr[2];
 
 			arr[3] = 9;
 
@@ -233,7 +235,7 @@ describe('evaluations of the base vivisector event emission', () => {
 				}
 			});
 
-			obj.b; // eslint-disable-line no-unused-expressions
+			obj.b;
 
 			obj.a = 9;
 

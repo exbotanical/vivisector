@@ -42,7 +42,7 @@ describe('evaluation of `done` state mutation committal', () => {
 
 			// state should be exactly as it was to begin with
 			for (const [call] of spy.mock.calls) {
-				expect(call).toEqual(observable);
+				expect(call).toStrictEqual(observable);
 			}
 		});
 
@@ -56,30 +56,30 @@ describe('evaluation of `done` state mutation committal', () => {
 			observable.push(commitKey);
 
 			// remember, we're testing against the `prevState`
-			expect(spy.mock.calls[0][0]).toEqual([1, 2, 3]);
+			expect(spy.mock.calls[0][0]).toStrictEqual([1, 2, 3]);
 
 			observable.splice(0, 1, 12);
-			expect(spy.mock.calls[1][0]).toEqual([1, 2, 3, commitKey]);
+			expect(spy.mock.calls[1][0]).toStrictEqual([1, 2, 3, commitKey]);
 
 			observable[2] = 22;
-			expect(spy.mock.calls[2][0]).toEqual([12, 2, 3, commitKey]);
+			expect(spy.mock.calls[2][0]).toStrictEqual([12, 2, 3, commitKey]);
 
 			observable.push(99);
-			expect(spy.mock.calls[3][0]).toEqual([12, 2, 22, commitKey]);
+			expect(spy.mock.calls[3][0]).toStrictEqual([12, 2, 22, commitKey]);
 
 			observable.pop();
-			expect(spy.mock.calls[4][0]).toEqual([12, 2, 22, commitKey, 99]);
+			expect(spy.mock.calls[4][0]).toStrictEqual([12, 2, 22, commitKey, 99]);
 
 			observable.shift();
-			expect(spy.mock.calls[5][0]).toEqual([12, 2, 22, commitKey]);
+			expect(spy.mock.calls[5][0]).toStrictEqual([12, 2, 22, commitKey]);
 
 			observable.unshift(1);
-			expect(spy.mock.calls[6][0]).toEqual([2, 22, commitKey]);
+			expect(spy.mock.calls[6][0]).toStrictEqual([2, 22, commitKey]);
 
 			observable.reverse();
-			expect(spy.mock.calls[7][0]).toEqual([1, 2, 22, commitKey]);
+			expect(spy.mock.calls[7][0]).toStrictEqual([1, 2, 22, commitKey]);
 
-			// @ts-ignore
+			// @ts-expect-error
 			// we don't care about the types, only about the event that
 			// will be emitted
 			observable.sort((a, b) => {
@@ -87,9 +87,9 @@ describe('evaluation of `done` state mutation committal', () => {
 				return a;
 			});
 
-			expect(spy.mock.calls[8][0]).toEqual([commitKey, 22, 2, 1]);
+			expect(spy.mock.calls[8][0]).toStrictEqual([commitKey, 22, 2, 1]);
 
-			expect(spy.mock.calls.length).toBe(9);
+			expect(spy.mock.calls).toHaveLength(9);
 		});
 	});
 
@@ -125,7 +125,7 @@ describe('evaluation of `done` state mutation committal', () => {
 			Object.assign(observable, { r: 1 });
 
 			observable.q = () => {};
-			expect(observable).toEqual(initialState);
+			expect(observable).toStrictEqual(initialState);
 		});
 
 		it('commits array mutations when `done` is invoked', () => {
@@ -138,22 +138,30 @@ describe('evaluation of `done` state mutation committal', () => {
 				.subscribe('batched', callback);
 
 			observable[commitKey] = 'a';
-			expect(spy.mock.calls[0][0]).toEqual(initialState);
+			expect(spy.mock.calls[0][0]).toStrictEqual(initialState);
 
 			delete observable.b;
-			expect(spy.mock.calls[1][0]).toEqual({
+			expect(spy.mock.calls[1][0]).toStrictEqual({
 				...initialState,
 				[commitKey]: 'a'
 			});
 
 			observable.c = {};
-			expect(spy.mock.calls[2][0]).toEqual({ a: 1, c: 3, [commitKey]: 'a' });
+			expect(spy.mock.calls[2][0]).toStrictEqual({
+				a: 1,
+				c: 3,
+				[commitKey]: 'a'
+			});
 
 			observable.d = 99;
-			expect(spy.mock.calls[3][0]).toEqual({ a: 1, c: {}, [commitKey]: 'a' });
+			expect(spy.mock.calls[3][0]).toStrictEqual({
+				a: 1,
+				c: {},
+				[commitKey]: 'a'
+			});
 
 			observable.alice = 'pharoah';
-			expect(spy.mock.calls[4][0]).toEqual({
+			expect(spy.mock.calls[4][0]).toStrictEqual({
 				a: 1,
 				c: {},
 				d: 99,
@@ -161,7 +169,7 @@ describe('evaluation of `done` state mutation committal', () => {
 			});
 
 			Object.assign(observable, { r: 1 });
-			expect(spy.mock.calls[5][0]).toEqual({
+			expect(spy.mock.calls[5][0]).toStrictEqual({
 				a: 1,
 				c: {},
 				d: 99,
@@ -170,7 +178,7 @@ describe('evaluation of `done` state mutation committal', () => {
 			});
 
 			observable.q = () => {};
-			expect(spy.mock.calls[6][0]).toEqual({
+			expect(spy.mock.calls[6][0]).toStrictEqual({
 				a: 1,
 				c: {},
 				d: 99,
@@ -180,7 +188,7 @@ describe('evaluation of `done` state mutation committal', () => {
 			});
 
 			Object.assign(observable, { a: 12 }, { q: 2 });
-			expect(spy.mock.calls[7][0]).toEqual({
+			expect(spy.mock.calls[7][0]).toStrictEqual({
 				a: 1,
 				c: {},
 				d: 99,
@@ -190,7 +198,7 @@ describe('evaluation of `done` state mutation committal', () => {
 				q: expect.any(Function)
 			});
 
-			expect(spy.mock.calls[8][0]).toEqual({
+			expect(spy.mock.calls[8][0]).toStrictEqual({
 				a: 12,
 				c: {},
 				d: 99,
@@ -200,7 +208,7 @@ describe('evaluation of `done` state mutation committal', () => {
 				q: expect.any(Function)
 			});
 
-			expect(spy.mock.calls.length).toBe(9);
+			expect(spy.mock.calls).toHaveLength(9);
 		});
 	});
 });

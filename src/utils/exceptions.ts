@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 interface ISourceReference {
 	filename: string;
 	lineno: number;
@@ -9,7 +10,7 @@ interface IExceptionArguments {
 }
 
 /**
- * @summary Base implementation model for extended errors
+ * Base implementation model for extended errors
  *
  * @internal
  */
@@ -38,12 +39,13 @@ export class VxError extends BaseVxError {
 }
 
 /**
- * @summary Exception metadata builder
+ * Exception metadata builder
  *
  * @internal
  */
 export class VxException {
 	public reason: string;
+
 	public source?: ISourceReference;
 
 	constructor({ reason, source }: IExceptionArguments) {
@@ -52,7 +54,7 @@ export class VxException {
 	}
 
 	/**
-	 * @summary Build an error object with the given exception metadata instance
+	 * Build an error object with the given exception metadata instance
 	 * @param instance
 	 */
 	static create(instance: VxException): VxError {
@@ -60,7 +62,7 @@ export class VxException {
 	}
 
 	/**
-	 * @summary Serialize the source metadata into a string
+	 * Serialize the source metadata into a string
 	 */
 	serializeSource(): string {
 		if (!this.source) return '';
@@ -71,7 +73,7 @@ export class VxException {
 	}
 
 	/**
-	 * @summary Serialize the exception metadata into a string
+	 * Serialize the exception metadata into a string
 	 */
 	serialize(): string {
 		return `${this.reason}${this.serializeSource()}`;

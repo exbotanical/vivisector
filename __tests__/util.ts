@@ -8,7 +8,9 @@ export function forEachKeyValue<T extends IIteratedCallback>(
 ) {
 	const kv = Object.entries(obj);
 
-	return function (fn: T) {
-		kv.forEach(([k, v]) => fn(k as ISubscriptionEvent, v));
+	return function forEach(fn: T) {
+		kv.forEach(([k, v]) => {
+			fn(k as ISubscriptionEvent, v);
+		});
 	};
 }

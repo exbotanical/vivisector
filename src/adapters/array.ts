@@ -1,9 +1,10 @@
-import { BaseObservableFactory } from '../core/factory';
 import { DoneFunctionBuilder } from '../core/done';
 import { shallowCopy } from '../utils';
 
+import type { BaseObservableFactory } from '../core/factory';
+
 /**
- * @summary Define evented analogs on a proxied array prototype
+ * Define evented analogs on a proxied array prototype
  * @param target
  * @param prop
  *
@@ -28,9 +29,9 @@ export function eventedArrayPrototypeResolver<S extends any[]>(
 
 			context.raiseEvent(
 				{
-					type: 'batched',
+					nextState,
 					prevState,
-					nextState
+					type: 'batched'
 				},
 				done
 			);
@@ -41,14 +42,14 @@ export function eventedArrayPrototypeResolver<S extends any[]>(
 		if (prop == 'pop') {
 			const ret = nextState.pop();
 			const done = DoneFunctionBuilder(() => {
-				target.length = target.length - 1;
+				target.length -= 1;
 			});
 
 			context.raiseEvent(
 				{
-					type: 'del',
+					nextState,
 					prevState,
-					nextState
+					type: 'del'
 				},
 				done
 			);
@@ -67,9 +68,9 @@ export function eventedArrayPrototypeResolver<S extends any[]>(
 
 				context.raiseEvent(
 					{
-						type: 'batched',
+						nextState,
 						prevState,
-						nextState
+						type: 'batched'
 					},
 					done
 				);
@@ -85,9 +86,9 @@ export function eventedArrayPrototypeResolver<S extends any[]>(
 
 			context.raiseEvent(
 				{
-					type: 'batched',
+					nextState,
 					prevState,
-					nextState
+					type: 'batched'
 				},
 				done
 			);
@@ -102,9 +103,9 @@ export function eventedArrayPrototypeResolver<S extends any[]>(
 
 			context.raiseEvent(
 				{
-					type: args.length > 1 ? 'batched' : 'add',
+					nextState,
 					prevState,
-					nextState
+					type: args.length > 1 ? 'batched' : 'add'
 				},
 				done
 			);
@@ -121,9 +122,9 @@ export function eventedArrayPrototypeResolver<S extends any[]>(
 
 				context.raiseEvent(
 					{
-						type: 'add',
+						nextState,
 						prevState,
-						nextState
+						type: 'add'
 					},
 					done
 				);

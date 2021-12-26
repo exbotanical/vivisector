@@ -4,11 +4,12 @@ import type {
 	ISubscriptionOpts
 } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const unboundSlice = Array.prototype.slice;
 const slice = Function.prototype.call.bind(unboundSlice);
 
 /**
- * @summary Shallow copy an object or array
+ * Shallow copy an object or array
  *
  * @internal
  */
@@ -17,12 +18,12 @@ export function shallowCopy<T>(base: T): T {
 		return slice(base);
 	}
 
-	const descriptors: Record<any, any> = Object.getOwnPropertyDescriptors(base);
+	const descriptors: Record<string, PropertyDescriptor> =
+		Object.getOwnPropertyDescriptors(base);
 
 	const keys = Reflect.ownKeys(descriptors);
 
-	for (let i = 0; i < keys.length; i++) {
-		const key: any = keys[i];
+	for (const key of keys as string[]) {
 		const descriptor = descriptors[key];
 
 		if (!descriptor.writable) {
@@ -33,9 +34,9 @@ export function shallowCopy<T>(base: T): T {
 		if (descriptor.get || descriptor.set) {
 			descriptors[key] = {
 				configurable: true,
-				writable: !!descriptor.set,
 				enumerable: descriptor.enumerable,
-				value: base[key as keyof T]
+				value: base[key as keyof T],
+				writable: !!descriptor.set
 			};
 		}
 	}
@@ -44,7 +45,7 @@ export function shallowCopy<T>(base: T): T {
 }
 
 /**
- * @summary Define a non-configurable function property `value` with name `name` on a given object `context`
+ * Define a non-configurable function property `value` with name `name` on a given object `context`
  * @param name The name of the property
  * @param value The value of the function property
  *
@@ -62,13 +63,13 @@ export function defineNonConfigurableProp<S>(
 	Object.defineProperty<typeof context>(context, name, {
 		configurable: false,
 		enumerable: false,
-		writable: false,
-		value
+		value,
+		writable: false
 	});
 }
 
 /**
- * @summary Evaluate whether a given target is an array,
+ * Evaluate whether a given target is an array,
  * and whether a given property exists on that array's prototype
  * @param target
  * @param prop
@@ -83,7 +84,7 @@ export function isArrayProto(target: unknown, prop: PropertyKey): boolean {
 }
 
 /**
- * @summary Evaluate whether a given property is a number (i.e. an array index),
+ * Evaluate whether a given property is a number (i.e. an array index),
  * and whether it is out of bounds relative to a given target
  * @param target
  * @param prop

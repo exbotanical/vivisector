@@ -1,9 +1,10 @@
 {
 	"extends": "../tsconfig.json",
+
 	"compilerOptions": {
-		"types": ["jest"],
+		"types": ["node", "jest"],
 		"rootDir": "..",
-		"target": "es5"
+		"target": "ES5"
 	},
-	"include": [".", ".."]
+	"include": ["../src", "."]
 }

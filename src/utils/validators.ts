@@ -1,16 +1,17 @@
+import { VxException } from './exceptions';
+
 import type {
 	ISubject,
 	ISubscriptionCallback,
 	ISubscriptionEvent
 } from '../types';
-import { VxException } from './exceptions';
 
 /**
  * @see https://github.com/microsoft/TypeScript/issues/26916
  */
 
 /**
- * @summary Validate a provided event handler
+ * Validate a provided event handler
  * @param handler
  *
  * @internal
@@ -28,7 +29,7 @@ export function validateEventHandler(
 }
 
 /**
- * @summary Validate a provided event name
+ * Validate a provided event name
  * @param eventName
  * @param validEvents - a list of possible valid event names
  *
@@ -56,7 +57,7 @@ export function validateEventName(
 }
 
 /**
- * @summary Evaluate whether `testValue` is a plain object
+ * Evaluate whether `testValue` is a plain object
  * @param testValue
  *
  * @internal

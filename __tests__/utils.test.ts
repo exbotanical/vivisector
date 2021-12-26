@@ -11,7 +11,7 @@ describe('evaluation of utilities', () => {
 
 			const cp = shallowCopy(o);
 
-			expect(o).toEqual(cp);
+			expect(o).toStrictEqual(cp);
 		});
 
 		it('copies a nested-depth object', () => {
@@ -26,7 +26,7 @@ describe('evaluation of utilities', () => {
 
 			const cp = shallowCopy(o);
 
-			expect(o).toEqual(cp);
+			expect(o).toStrictEqual(cp);
 		});
 
 		it('copies an object with methods', () => {
@@ -42,7 +42,7 @@ describe('evaluation of utilities', () => {
 
 			const cp = shallowCopy(o);
 
-			expect(o).toEqual(cp);
+			expect(o).toStrictEqual(cp);
 		});
 
 		it('copies an object with getters and setters', () => {
@@ -60,7 +60,7 @@ describe('evaluation of utilities', () => {
 
 			const cp = shallowCopy(o);
 
-			expect(o).toEqual(cp);
+			expect(o).toStrictEqual(cp);
 			expect(o.d.e).toBe(99);
 			expect(o.d.e).toBe(cp.d.e);
 		});

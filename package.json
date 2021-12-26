@@ -30,7 +30,7 @@
     "node": ">= 10"
   },
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.json --no-fix .",
+    "lint": "eslint --ext .js,.ts,.json --fix .",
     "test": "jest --bail --coverage __tests__",
     "test:watch": "jest --watch",
     "prebuild": "pnpm clean",

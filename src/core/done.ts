@@ -5,13 +5,15 @@ interface IDoneFunctionBuilder {
 }
 
 /**
- * @summary Construct a done committal function
+ * Construct a done committal function
  *
  * @internal
  */
 export const DoneFunctionBuilder: IDoneFunctionBuilder = (ret) => {
 	const done: IDoneFunction = (commit) => {
-		if (commit) return ret();
+		if (commit) {
+			ret();
+		}
 	};
 
 	return done;
