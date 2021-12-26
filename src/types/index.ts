@@ -1,14 +1,14 @@
 // valid state
-export type ISubject = Record<PropertyKey, any> | any[];
+export type ISubject = any[] | Record<PropertyKey, any>;
 
 // valid subscribable events
-export type ISubscriptionEvent = 'add' | 'del' | 'set' | 'batched';
+export type ISubscriptionEvent = 'add' | 'batched' | 'del' | 'set';
 
 // core Vivisected object API
-export type IVivisectorApi<S> = {
+export type IVivisectorApi<S> = S & {
 	readonly subscribe: ISubscription<S>;
 	readonly unsubscribe: ISubscription<S>;
-} & S;
+};
 
 // Done function for state mutation committal
 export interface IDoneFunction {

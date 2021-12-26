@@ -1,4 +1,6 @@
+/* eslint-disable no-undefined */
 import { vivisect } from '../src';
+
 import { forEachKeyValue } from './util';
 
 import type { TestArray, TestObject } from './types';
@@ -146,10 +148,10 @@ describe('evaluation of state management, tracking', () => {
 			expect.any(Function)
 		);
 
-		expect(callbacks.add.mock.calls.length).toBe(1);
-		expect(callbacks.set.mock.calls.length).toBe(1);
-		expect(callbacks.del.mock.calls.length).toBe(3);
-		expect(callbacks.batched.mock.calls.length).toBe(5);
+		expect(callbacks.add.mock.calls).toHaveLength(1);
+		expect(callbacks.set.mock.calls).toHaveLength(1);
+		expect(callbacks.del.mock.calls).toHaveLength(3);
+		expect(callbacks.batched.mock.calls).toHaveLength(5);
 	});
 
 	it('should track object `prevState`, `nextState` as expected', () => {
@@ -275,8 +277,8 @@ describe('evaluation of state management, tracking', () => {
 			expect.any(Function)
 		);
 
-		expect(callbacks.del.mock.calls.length).toBe(3);
-		expect(callbacks.add.mock.calls.length).toBe(3);
-		expect(callbacks.set.mock.calls.length).toBe(3);
+		expect(callbacks.del.mock.calls).toHaveLength(3);
+		expect(callbacks.add.mock.calls).toHaveLength(3);
+		expect(callbacks.set.mock.calls).toHaveLength(3);
 	});
 });

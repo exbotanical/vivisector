@@ -1,9 +1,12 @@
+/* eslint-disable max-classes-per-file */
 import {
 	defineNonConfigurableProp,
 	shallowCopy,
 	validateEventHandler,
 	validateEventName
 } from '../utils';
+
+import { RootHandlerFactory } from './proxy';
 
 import type {
 	IDoneFunction,
@@ -13,7 +16,6 @@ import type {
 	IVivisectorApi,
 	ISubject
 } from '../types';
-import { RootHandlerFactory } from './proxy';
 
 /**
  * Implements base state and shared functionality for a Vivisector observable
@@ -23,6 +25,7 @@ import { RootHandlerFactory } from './proxy';
  */
 export abstract class BaseObservableFactory<S> {
 	protected observers: ISubscriptionStore<S>;
+
 	protected internals: string[];
 
 	protected constructor() {
@@ -31,16 +34,16 @@ export abstract class BaseObservableFactory<S> {
 		 */
 		this.observers = {
 			add: new Set(),
+			batched: new Set(),
 			del: new Set(),
-			set: new Set(),
-			batched: new Set()
+			set: new Set()
 		} as const;
 
 		this.internals = ['subscribe', 'unsubscribe'];
 	}
 
 	/**
-	 * @summary Evaluates whether the given property is marked as non-configurable
+	 * Evaluates whether the given property is marked as non-configurable
 	 * @param prop The property presently being accessed
 	 */
 	public isConfigurableProp(prop: PropertyKey): boolean {
@@ -52,7 +55,30 @@ export abstract class BaseObservableFactory<S> {
 	}
 
 	/**
-	 * @summary Programmatically define `subscribe`, `unsubscribe` on the proxied object
+	 * Serially invokes each handler of the given event type
+	 * @param event An object containing data about the event
+	 * @param context The `this` value on which to call each instance
+	 */
+	public raiseEvent(
+		event: ISubscriptionEventMetadata<S>,
+		done: IDoneFunction
+	): void {
+		this.observers[event.type].forEach(({ alwaysCommit, handler }) => {
+			let finalDoneFunction = done;
+
+			// tested via public API
+			// istanbul ignore next
+			if (alwaysCommit) {
+				done(true);
+				finalDoneFunction = () => {};
+			}
+
+			handler(event, finalDoneFunction);
+		});
+	}
+
+	/**
+	 * Programmatically define `subscribe`, `unsubscribe` on the proxied object
 	 * @param context The context of the target object on which the
 	 * aforementioned listeners will be defined
 	 */
@@ -68,7 +94,7 @@ export abstract class BaseObservableFactory<S> {
 
 				validateEventHandler(handler);
 
-				this.observers[eventName].add({ handler, alwaysCommit });
+				this.observers[eventName].add({ alwaysCommit, handler });
 
 				return context;
 			}
@@ -102,39 +128,16 @@ export abstract class BaseObservableFactory<S> {
 
 		return context as IVivisectorApi<S>;
 	}
-
-	/**
-	 * @summary Serially invokes each handler of the given event type
-	 * @param event An object containing data about the event
-	 * @param context The `this` value on which to call each instance
-	 */
-	public raiseEvent(
-		event: ISubscriptionEventMetadata<S>,
-		done: IDoneFunction
-	): void {
-		this.observers[event.type].forEach(({ handler, alwaysCommit }) => {
-			let finalDoneFunction = done;
-
-			// tested via public API
-			// istanbul ignore next
-			if (alwaysCommit) {
-				done(true);
-				finalDoneFunction = () => {};
-			}
-
-			handler(event, finalDoneFunction);
-		});
-	}
 }
 
 /**
- * @summary Create proxies
+ * Create proxies
  *
  * @internal
  */
 export class ProxiedObservableFactory<S> extends BaseObservableFactory<S> {
 	/**
-	 * @summary Root Proxy handler; injects event broadcasts into get|set|delete traps
+	 * Root Proxy handler; injects event broadcasts into get|set|delete traps
 	 */
 	public static create<S extends ISubject>(initialState: S) {
 		const excisedInitialState = shallowCopy<S>(initialState);

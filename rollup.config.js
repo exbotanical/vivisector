@@ -2,10 +2,11 @@ import path from 'path';
 
 import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
+import { nodeResolve } from '@rollup/plugin-node-resolve'; // eslint-disable-line import/namespace
 import typescript from '@rollup/plugin-typescript';
 import dts from 'rollup-plugin-dts';
+import { terser } from 'rollup-plugin-terser';
+
 import pkg from './package.json';
 
 const resolve = (fp) => path.resolve(__dirname, fp);
@@ -29,8 +30,8 @@ const pluginsBase = [
 		outputToFilesystem: false
 	}),
 	nodeResolve({
-		jsnext: true,
-		browser: true
+		browser: true,
+		jsnext: true
 	}),
 	commonjs({
 		extensions: ['.js', '.ts']
@@ -45,14 +46,14 @@ const pluginsBase = [
 export default [
 	/* CommonJS */
 	{
+		external,
 		input: inputFileName,
 		output: {
-			file: pkg.main,
-			format: 'cjs',
+			banner,
 			exports: 'named',
-			banner
+			file: pkg.main,
+			format: 'cjs'
 		},
-		external,
 		plugins: [...pluginsBase]
 	},
 
@@ -60,10 +61,10 @@ export default [
 	{
 		input: inputFileName,
 		output: {
+			banner,
 			file: pkg.browser,
 			format: 'umd',
-			name: 'vivisector',
-			banner
+			name: 'vivisector'
 		},
 		plugins: [...pluginsBase]
 	},
@@ -72,24 +73,24 @@ export default [
 	{
 		input: inputFileName,
 		output: {
+			banner,
 			file: pkg.browser.replace(/\.js$/, '.min.js'),
 			format: 'umd',
-			name: 'vivisector',
-			banner
+			name: 'vivisector'
 		},
 		plugins: [...pluginsBase, terser()]
 	},
 
 	/* ESM */
 	{
+		external,
 		input: inputFileName,
 		output: {
-			file: pkg.module,
-			format: 'es',
+			banner,
 			exports: 'named',
-			banner
+			file: pkg.module,
+			format: 'es'
 		},
-		external,
 		plugins: [...pluginsBase]
 	},
 

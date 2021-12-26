@@ -1,9 +1,7 @@
 module.exports = {
-	setupFilesAfterEnv: ['jest-extended', '<rootDir>/__tests__/setup.ts'],
-	testRegex: '.test.ts$',
-	coverageDirectory: './coverage',
 	collectCoverage: true,
 	collectCoverageFrom: ['src/**/*.ts'],
+	coverageDirectory: './coverage',
 	coveragePathIgnorePatterns: [
 		'src/utils/exceptions.ts',
 		'src/utils/validators.ts'
@@ -17,5 +15,7 @@ module.exports = {
 		}
 	},
 	errorOnDeprecated: true,
+	setupFilesAfterEnv: ['jest-extended', '<rootDir>/__tests__/setup.ts'],
+	testRegex: '.test.ts$',
 	verbose: true
 };

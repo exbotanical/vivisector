@@ -1,2 +1,2 @@
 export type TestArray = PropertyKey[];
-export type TestObject = { [k: PropertyKey]: any };
+export interface TestObject { [k: PropertyKey]: any }

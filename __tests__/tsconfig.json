@@ -1,15 +1,10 @@
 {
 	"extends": "../tsconfig.json",
-	"references": [
-		{
-			"name": "vivisector",
-			"path": "../src"
-		}
-	],
+
 	"compilerOptions": {
-		"types": ["jest"],
+		"types": ["node", "jest"],
 		"rootDir": "..",
-		"target": "es5"
+		"target": "ES5"
 	},
-	"include": [".", ".."]
+	"include": ["../src", "."]
 }

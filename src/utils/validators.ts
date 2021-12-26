@@ -1,21 +1,17 @@
+import { VxException } from './exceptions';
+
 import type {
 	ISubject,
 	ISubscriptionCallback,
 	ISubscriptionEvent
 } from '../types';
-import { VxException } from './exceptions';
-
-// must use >= v4.4 see https://github.com/microsoft/TypeScript/pull/44512
-export interface IObject {
-	[key: PropertyKey]: any;
-}
 
 /**
  * @see https://github.com/microsoft/TypeScript/issues/26916
  */
 
 /**
- * @summary Validate a provided event handler
+ * Validate a provided event handler
  * @param handler
  *
  * @internal
@@ -33,7 +29,7 @@ export function validateEventHandler(
 }
 
 /**
- * @summary Validate a provided event name
+ * Validate a provided event name
  * @param eventName
  * @param validEvents - a list of possible valid event names
  *
@@ -61,11 +57,11 @@ export function validateEventName(
 }
 
 /**
- * @summary Evaluate whether `testValue` is a plain object
+ * Evaluate whether `testValue` is a plain object
  * @param testValue
  *
  * @internal
  */
-export const isObject = (testValue: unknown): testValue is IObject => {
+export const isObject = (testValue: unknown): testValue is Record<any, any> => {
 	return {}.toString.call(testValue) == '[object Object]';
 };

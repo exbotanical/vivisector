@@ -1,14 +1,15 @@
-import { isArrayProto, isArrayPropOutOfBounds, shallowCopy } from '../utils';
 import { eventedArrayPrototypeResolver } from '../adapters';
-import { BaseObservableFactory } from './factory';
+import { isArrayProto, isArrayPropOutOfBounds, shallowCopy } from '../utils';
+
 import { DoneFunctionBuilder } from './done';
 
-import type { ISubject } from '../types'; // eslint-disable-line import/order
+import type { ISubject } from '../types';
+import type { BaseObservableFactory } from './factory';
 
 const batchedMethods = ['shift', 'unshift', 'push', 'reverse', 'sort', 'pop'];
 
 /**
- * @summary Construct a base proxy handler with an implicit context
+ * Construct a base proxy handler with an implicit context
  * @returns {ProxyHandler<?>} Base proxy handler
  *
  * @internal
@@ -17,6 +18,50 @@ export function RootHandlerFactory<S extends ISubject>(
 	base: BaseObservableFactory<S>
 ) {
 	const rootHandler: ProxyHandler<S> = {
+		deleteProperty: (target, prop) => {
+			if (!base.isConfigurableProp(prop)) {
+				return false;
+			}
+
+			const [prevState, nextState] = [shallowCopy(target), shallowCopy(target)];
+
+			const ret = true;
+
+			// tested via public API
+			// istanbul ignore next
+			if (Array.isArray(nextState)) {
+				const numericProp = Number(prop);
+
+				nextState.splice(numericProp, 1);
+
+				base.raiseEvent(
+					{
+						nextState,
+						prevState,
+						type: 'del'
+					},
+					DoneFunctionBuilder(() => target.splice(numericProp, 1))
+				);
+
+				return ret;
+			} else if (prop in prevState) {
+				Reflect.deleteProperty(nextState, prop);
+
+				base.raiseEvent(
+					{
+						nextState,
+						prevState,
+						type: 'del'
+					},
+					DoneFunctionBuilder(() => Reflect.deleteProperty(target, prop))
+				);
+
+				return ret;
+			}
+			// istanbul ignore next
+			return ret;
+		},
+
 		get: (target, prop, recv) => {
 			// trap certain array prototype methods and take control of the events we raise for them
 			// this allows us to prevent concurrent events e.g. `set` and `del` both arising due to `shift`
@@ -36,7 +81,7 @@ export function RootHandlerFactory<S extends ISubject>(
 			const value = Reflect.get(target, prop, recv);
 
 			// recurse, and continue the chain of Proxies for nested props to ensure traps are executed upon access thereof
-			if (typeof value === 'object') {
+			if (typeof value === 'object' && value !== null) {
 				return new Proxy(value, rootHandler);
 			}
 
@@ -59,67 +104,23 @@ export function RootHandlerFactory<S extends ISubject>(
 			if (!(prop in prevState) || isArrayPropOutOfBounds(prevState, prop)) {
 				base.raiseEvent(
 					{
-						type: 'add',
+						nextState,
 						prevState,
-						nextState
+						type: 'add'
 					},
 					done
 				);
 			} else {
 				base.raiseEvent(
 					{
-						type: 'set',
+						nextState,
 						prevState,
-						nextState
+						type: 'set'
 					},
 					done
 				);
 			}
 
-			return ret;
-		},
-
-		deleteProperty: (target, prop) => {
-			if (!base.isConfigurableProp(prop)) {
-				return false;
-			}
-
-			const [prevState, nextState] = [shallowCopy(target), shallowCopy(target)];
-
-			const ret = true;
-
-			// tested via public API
-			// istanbul ignore next
-			if (Array.isArray(nextState)) {
-				const numericProp = Number(prop);
-
-				nextState.splice(numericProp, 1);
-
-				base.raiseEvent(
-					{
-						type: 'del',
-						prevState,
-						nextState
-					},
-					DoneFunctionBuilder(() => target.splice(numericProp, 1))
-				);
-
-				return ret;
-			} else if (prop in prevState) {
-				Reflect.deleteProperty(nextState, prop);
-
-				base.raiseEvent(
-					{
-						type: 'del',
-						prevState,
-						nextState
-					},
-					DoneFunctionBuilder(() => Reflect.deleteProperty(target, prop))
-				);
-
-				return ret;
-			}
-			// istanbul ignore next
 			return ret;
 		}
 	};

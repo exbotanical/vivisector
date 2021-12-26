@@ -1,19 +1,28 @@
 {
 	"extends": [
-		"@magister_zito/typescript",
+		"@magister_zito",
 		"prettier"
 	],
-	"plugins": [
-		"jest"
-	],
-	"env": {
-		"jest/globals": true
-	},
 	"ignorePatterns": [
-		"node_modules",
 		".build",
-		"caches",
-		"coverage",
-		"dist"
+		"coverage"
+	],
+	"rules": {
+		"@typescript-eslint/no-unsafe-call": "off",
+		"@typescript-eslint/no-unsafe-member-access": "off",
+		"@typescript-eslint/no-unsafe-argument": "off",
+		"@typescript-eslint/no-unsafe-assignment": "off"
+	},
+	"overrides": [
+		{
+			"files": ["**/*.ts"],
+			"parserOptions": {
+				"project": [
+					"tsconfig.json", 
+					"__tests__/tsconfig.json",
+					"examples/tsconfig.json"
+				]
+			}
+		}
 	]
 }

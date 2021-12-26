@@ -1,17 +1,19 @@
 import type { IDoneFunction } from '../types';
 
 interface IDoneFunctionBuilder {
-	(ret: Function): IDoneFunction;
+	(ret: () => void): IDoneFunction;
 }
 
 /**
- * @summary Construct a done committal function
+ * Construct a done committal function
  *
  * @internal
  */
 export const DoneFunctionBuilder: IDoneFunctionBuilder = (ret) => {
 	const done: IDoneFunction = (commit) => {
-		if (commit) return ret();
+		if (commit) {
+			ret();
+		}
 	};
 
 	return done;

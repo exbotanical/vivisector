@@ -2,7 +2,7 @@ import { ProxiedObservableFactory } from './core/factory';
 import { isObject, VxException } from './utils';
 
 /**
- * @summary 'Vivisect' an object - render the object evented by
+ * 'Vivisect' an object - render the object evented by
  * proxying it through a subscribable interface
  *
  * @param initialState
